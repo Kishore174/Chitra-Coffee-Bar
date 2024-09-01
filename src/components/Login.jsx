@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const Login = () => {
   return (
     <div className="flex justify-center items-center min-h-screen  bg-gradient-to-br from-red-800 to-red-500">
-      <div className="flex flex-col lg:flex-row w-[90%] md:w-[80%] lg:w-[900px] lg:h-[600px] bg-white rounded-lg shadow-lg overflow-hidden">
+      <div className="flex flex-col lg:flex-row w-[90%] md:w-[80%] lg:w-[900px] lg:h-[500px] bg-white rounded-lg shadow-lg overflow-hidden">
         {/* Left Panel */}
         <div className="flex flex-col justify-center items-center w-full lg:w-1/2 bg-gradient-to-br from-red-800 to-red-500 text-white p-10">
           <img src={logo} alt="logo" className="h-24 w-24 md:h-36 md:w-36 mb-4" />
