@@ -13,7 +13,6 @@ const Table = () => {
       contactNumber: '9876543210',
       email: 'dilip@azerotech.com',
       mapLink: 'https://maps.google.com?q=Katpadi',
-
     },
     {
       id: 2,
@@ -29,13 +28,13 @@ const Table = () => {
   ];
 
   return (
-    <div className="p-4 md:p-6 min-h-screen bg-gray-100">
-      <h2 className="text-2xl font-semibold mb-4">My Audit</h2>
+    <div className="p-4 md:p-6 min-h-screen ">
+      <h2 className="text-2xl poppins-semibold mb-4">MY ADUIT</h2>
 
       {/* Desktop View */}
-      <div className="hidden md:block overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200">
-          <thead className="bg-red-600 text-white">
+      <div className="hidden md:block overflow-x-auto  rounded-lg">
+        <table className="min-w-full bg-white border   border-gray-200">
+          <thead className="bg-red-600 text-white poppins-semibold ">
             <tr>
               <th className="px-4 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase">S.No</th>
               <th className="px-4 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase">Shop Details</th>
@@ -49,29 +48,32 @@ const Table = () => {
               <tr key={audit.id}>
                 <td className="px-4 py-4 border-b border-gray-200 text-sm text-gray-700">{index + 1}</td>
                 <td className="px-4 py-4 border-b border-gray-200 text-sm text-gray-700">
-                  <div className="font-semibold">{audit.shopName}</div>
+                  <div className='poppins-regular '>
+                  <div className=" ">{audit.shopName}</div>
                   <div>{audit.ownerName}</div>
                   <div>{audit.address}</div>
                   <a href={audit.mapLink} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">
                     Map Link
                   </a>
+                  </div>
+                  
                 </td>
-                <td className={`px-4 py-4 border-b border-gray-200 text-sm ${audit.auditStatus === 'Completed' ? 'text-green-600' : 'text-red-600'}`}>
+                <td className={`px-4 py-4 border-b poppins-regular  border-gray-200 text-sm ${audit.auditStatus === 'Completed' ? 'text-green-600' : 'text-red-600'}`}>
                   {audit.auditStatus}
                 </td>
-                <td className="px-4 py-4 border-b border-gray-200 text-sm text-gray-700">
+                <td className="px-4 py-4 border-b poppins-regular  border-gray-200 text-sm text-gray-700">
                   <div>{audit.contactNumber}</div>
                   <a href={`mailto:${audit.email}`} className="text-blue-500 hover:underline">
                     {audit.email}
                   </a>
                 </td>
-                <td className="px-4 py-4 border-b border-gray-200 text-sm">
+                <td className="px-4  py-4 border-b poppins-regular  border-gray-200 text-sm">
                   {audit.auditStatus === 'Pending' ? (
                     <Link to="/add-audit">
                       <BsArrowRight className="text-red-600 text-2xl" />
                     </Link>
                   ) : (
-                    <span className="text-blue-500">View | Edit</span>
+                    <span className="text-blue-500 poppins-regular ">View | Edit</span>
                   )}
                 </td>
               </tr>
@@ -79,16 +81,15 @@ const Table = () => {
           </tbody>
         </table>
       </div>
-
-      {/* Mobile View */}
+ 
       <div className="md:hidden">
         {audits.map((audit, index) => (
-          <div key={audit.id} className="bg-white mb-4 p-4 rounded-lg shadow">
+          <div key={audit.id} className="bg-white mb-4 p-4 rounded-lg  shadow">
             <div className="flex justify-between items-center mb-2">
-              <h2 className="text-lg font-semibold">{audit.shopName}</h2>
+              <h2 className="text-lg poppins-regular">{audit.shopName}</h2>
               <span className="text-sm text-gray-500">#{index + 1}</span>
             </div>
-            <div className="text-sm text-gray-700">
+            <div className="text-sm text-gray-700 poppins-regular">
               <p><strong>Owner:</strong> {audit.ownerName}</p>
               <p><strong>Address:</strong> {audit.address}</p>
               <p><strong>Contact:</strong> {audit.contactNumber}</p>
@@ -96,12 +97,12 @@ const Table = () => {
               <p><strong>Status:</strong> <span className={audit.auditStatus === 'Completed' ? 'text-green-600' : 'text-red-600'}>{audit.auditStatus}</span></p>
             </div>
             <div className="flex justify-end space-x-2 mt-2">
-              {audit.auditStatus === 'Pending' ? (
+              {audit.auditStatus === 'Pending' ?   (
                 <Link to="/add-audit">
                   <BsArrowRight className="text-red-600 text-2xl" />
                 </Link>
               ) : (
-                <span className="text-blue-500">View | Edit</span>
+                <span className="text-blue-500">View|Edit</span>
               )}
             </div>
           </div>

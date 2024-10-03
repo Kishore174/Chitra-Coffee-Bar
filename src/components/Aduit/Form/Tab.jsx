@@ -22,6 +22,7 @@ const Tab = () => {
     }
   };
 
+
   const handleBack = () => {
     const currentIndex = tabs.indexOf(activeTab);
     if (currentIndex > 0) {
@@ -34,12 +35,12 @@ const Tab = () => {
     setTimeout(() => {
       setOpenDialog(false);
       navigate("/aduit");
-    }, 2000); // Dialog will automatically close after 2 seconds
+    }, 2000);  
   };
 
   return (
     <div className="w-full  mx-auto p-4">
-      {/* Tab Header */}
+  
       <div className="flex flex-wrap border-b border-gray-300">
         {tabs.map((tab) => (
           <button
@@ -54,7 +55,7 @@ const Tab = () => {
         ))}
       </div>
 
-      {/* Tab Content */}
+     
       <div className="p-4 bg-white">
         {activeTab === 'Home' && <Home />}
         {activeTab === 'Bunzo' && <Bunzo />}
@@ -63,7 +64,7 @@ const Tab = () => {
         {activeTab === 'Live Kitchen Production' && <LiveKitchenProduction />}
       </div>
 
-      {/* Navigation Buttons */}
+    
       <div className="flex flex-col sm:flex-row justify-between mt-4 space-y-2 sm:space-y-0 sm:space-x-4">
         <Button
           variant="outlined"
@@ -78,13 +79,11 @@ const Tab = () => {
             Submit
           </Button>
         ) : (
-          <Button variant="contained" color="primary" onClick={handleNext}>
+          <Button variant="contained" className='bg-red-600' onClick={handleNext}>
             Next
           </Button>
         )}
       </div>
-
-      {/* Success Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>
           <CheckCircleIcon style={{ color: 'green', marginRight: '8px' }} />

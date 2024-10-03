@@ -23,22 +23,45 @@ const Home = () => {
         const location = await getLocation();
         const dateTime = new Date().toLocaleString();
         
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
         const img = new Image();
         img.src = imageSrc;
 
         img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // Set canvas size to match the image
           canvas.width = img.width;
           canvas.height = img.height;
+
+          // Draw the image on the canvas
           ctx.drawImage(img, 0, 0);
+
+          // Set font style for overlay text
           ctx.font = '20px Arial';
           ctx.fillStyle = 'white';
-          ctx.fillText(`Date: ${dateTime}`, 10, img.height - 60);
-          ctx.fillText(`Location: ${location}`, 10, img.height - 30);
+          ctx.strokeStyle = 'black';
+          ctx.lineWidth = 3;
+
+          // Define the position for text (bottom left corner)
+          const textX = 10;
+          const textY1 = img.height - 60;
+          const textY2 = img.height - 30;
+
+          // Draw stroke for better readability against various backgrounds
+          ctx.strokeText(`Date: ${dateTime}`, textX, textY1);
+          ctx.strokeText(`Location: ${location}`, textX, textY2);
+
+          // Draw the text on the image
+          ctx.fillText(`Date: ${dateTime}`, textX, textY1);
+          ctx.fillText(`Location: ${location}`, textX, textY2);
+
+          // Get the final image with overlayed text
           const dataUrl = canvas.toDataURL();
+
+          // Update state with the new image
           setCapturedImages(prevImages => [...prevImages, dataUrl]);
-          setImageData(prevData => ({ ...prevData, [title]: { imageSrc, dataUrl, location, dateTime } }));
+          setImageData(prevData => ({ ...prevData, [title]:{ imageSrc, dataUrl, location, dateTime } }));
         };
       };
       reader.readAsDataURL(file);
@@ -74,7 +97,6 @@ const Home = () => {
 
   return (
     <div className="p-4 sm:p-6 md:p-8 lg:p-10 bg-gray-50 min-h-screen">
-      {/* Image Capture Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
         {['Shop Front Photo', 'Selfie Photo Shop', 'Counter', 'Kitchen'].map((title) => (
           <div
@@ -104,7 +126,7 @@ const Home = () => {
         ))}
       </div>
 
-      {/* Ratings and Details Section */}
+     
       <div className="border rounded-lg p-4 sm:p-6 bg-white shadow-lg">
         <h3 className="text-lg font-semibold text-gray-800 mb-6">Ratings and Details</h3>
         <div className="space-y-4">
@@ -118,8 +140,7 @@ const Home = () => {
           ].map(category => (
             <div key={category} className="border rounded-lg p-4 bg-gray-100 shadow-md">
               <h4 className="text-md font-semibold text-gray-800 mb-4 capitalize">{category.replace(/([A-Z])/g, ' $1')}</h4>
-              <div className="flex flex-col mb-4">
-                <label className="text-gray-600 mb-2">Rating:</label>
+              <div className="flex flex-col mb-4">  
                 <ReactStars
                   count={5}
                   value={formData[category].rating}
@@ -129,7 +150,7 @@ const Home = () => {
                 />
               </div>
               <div className="flex flex-col mb-4">
-                <label className="text-gray-600 mb-2">Stock Available (Liters):</label>
+                <label className="text-gray-600 mb-2">Stock Available (Liters)</label>
                 <input
                   type="number"
                   name="stock"
@@ -139,7 +160,7 @@ const Home = () => {
                 />
               </div>
               <div className="flex flex-col">
-                <label className="text-gray-600 mb-2">Remark:</label>
+                <label className="text-gray-600 mb-2">Remark</label>
                 <textarea
                   name="remark"
                   value={formData[category].remark}
@@ -147,6 +168,7 @@ const Home = () => {
                   className="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   rows="4"
                 />
+
               </div>
             </div>
           ))}

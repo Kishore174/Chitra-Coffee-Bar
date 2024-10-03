@@ -3,7 +3,7 @@ import logo from "../Assets/logo01.png";
 
 const Profile = () => {
   return (
-    <div className="profile-container max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg">
+    <div className="profile-container max-w-4xl  poppins-regular mx-auto p-8 bg-white rounded-lg shadow-lg">
       <div className="flex items-center mb-8">
         <img
           src={logo}

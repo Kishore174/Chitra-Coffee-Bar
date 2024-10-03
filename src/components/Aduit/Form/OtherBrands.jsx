@@ -23,19 +23,19 @@ const ProductEntry = ({ name }) => (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div className="flex flex-col">
         <Typography variant="subtitle2" color="textSecondary">
-          Quantity:
+          Quantity
         </Typography>
         <TextField label="Quantity" type="number" variant="outlined" fullWidth />
       </div>
       <div className="flex flex-col">
         <Typography variant="subtitle2" color="textSecondary">
-          Source Price:
+          Source Price
         </Typography>
         <TextField label="Source Price" type="number" variant="outlined" fullWidth />
       </div>
       <div className="flex flex-col">
         <Typography variant="subtitle2" color="textSecondary">
-          Selling Price:
+          Selling Price
         </Typography>
         <TextField label="Selling Price" type="number" variant="outlined" fullWidth />
       </div>

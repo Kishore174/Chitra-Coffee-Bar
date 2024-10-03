@@ -24,7 +24,7 @@ const SideMenu = () => {
   };
 
   return (
-    <div className={` ${isOpen ? 'w-64' : 'w-0'} bg-white shadow-lg h-auto md:w-64 transition-width duration-300 ease-in-out hidden md:block`}>
+    <div className={` ${isOpen ? 'w-64  ' : 'w-0'} fixed z-20  h-screen bg-white shadow-lg  w-64  transition-width duration-300 ease-in-out hidden md:block`}>
       {/* Sidebar is hidden on mobile screens and only shown on medium screens and larger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -34,7 +34,7 @@ const SideMenu = () => {
       </button>
 
       {/* Sidebar content */}
-      <aside className={`h-full overflow-y-auto ${isOpen ? 'block' : 'hidden'} md:block`}>
+      < div className={`h-full  overflow-y-auto ${isOpen ? 'block' : 'hidden'} md:block`}>
         <Link to="dashboard">
           <div className="flex justify-center mx-auto p-5">
             <img src={logo} alt="Logo" className="h-16 w-16" />
@@ -50,7 +50,7 @@ const SideMenu = () => {
                 <Link to={item.path}>
                   <button
                     className={`flex items-center space-x-4 p-2 font-semibold rounded w-full ${
-                      isActive ? 'bg-red-500 text-white' : 'text-black'
+                      isActive ? 'bg-red-500 poppins-semibold text-white' : ' poppins-regular text-black'
                     }`}
                     onClick={() => setActiveButton(item.name)}
                   >
@@ -75,7 +75,7 @@ const SideMenu = () => {
             
           </li>
         </ul>
-      </aside>
+      </ div>
     </div>
   );
 };
