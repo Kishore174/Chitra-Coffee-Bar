@@ -30,8 +30,7 @@ const Table = () => {
   return (
     <div className="p-4 md:p-6 min-h-screen ">
       <h2 className="text-2xl poppins-semibold mb-4">MY ADUIT</h2>
-
-      {/* Desktop View */}
+ 
       <div className="hidden md:block overflow-x-auto  rounded-lg">
         <table className="min-w-full bg-white border   border-gray-200">
           <thead className="bg-red-600 text-white poppins-semibold ">

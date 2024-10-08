@@ -12,6 +12,10 @@ import AddAudit from './components/Aduit/Form/AddAudit';
 import Profile from './components/Profile';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import AddAduit from './components/Aduit/Pages/AddAduit';
+import TeaAduit from './components/Aduit/Pages/audit/TeaAduit';
+import Coffee from './components/Aduit/Pages/audit/Coffee';
+import LiveSnacks from './components/Aduit/Pages/audit/LiveSnacks';
  
 
 function App() {
@@ -32,8 +36,15 @@ function App() {
               <Route path="myshop" element={<MyShop />} />
               <Route path="AddShop" element={<AddShop />} />
               <Route path="aduit" element={<Table />} />
-              <Route path="Add-audit" element={<AddAudit />} />
+              <Route path="Add-audit" element={<AddAduit />} />
               <Route path="Profile" element={<Profile />} />
+              <Route path="Tea" element={<TeaAduit />} />
+              <Route path="coffee" element={<Coffee/>} />
+              <Route path="livesnacks" element={<LiveSnacks/>} />
+
+            
+              
+
 
 
 

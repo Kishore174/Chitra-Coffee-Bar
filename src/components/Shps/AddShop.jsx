@@ -14,6 +14,7 @@ const AddShop = () => {
     location: '',
     onboardingDate: '',
     renewalDate: '',
+    
   });
 
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -26,10 +27,10 @@ const AddShop = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Show the dialog
+     
     setDialogVisible(true);
 
-    // Clear form fields
+    
     setFormData({
       shopName: '',
       shopPhoto: '',
@@ -43,7 +44,7 @@ const AddShop = () => {
       renewalDate: '',
     });
 
-    // Automatically close the dialog after 3 seconds
+     
     setTimeout(() => {
       setDialogVisible(false);
       navigate("/myshop");
@@ -210,3 +211,4 @@ const AddShop = () => {
 };
 
 export default AddShop;
+ 

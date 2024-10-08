@@ -82,8 +82,7 @@ const MyShop = () => {
             ))}
           </tbody>
         </table>
-
-        {/* Tablet & Mobile View */}
+ 
         <div className="lg:hidden">
           {shops.map((shop, index) => (
             <div key={shop.id} className="bg-white mb-4 p-4 rounded-lg shadow">
