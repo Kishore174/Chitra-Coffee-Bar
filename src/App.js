@@ -16,6 +16,8 @@ import AddAduit from './components/Aduit/Pages/AddAduit';
 import TeaAduit from './components/Aduit/Pages/audit/TeaAduit';
 import Coffee from './components/Aduit/Pages/audit/Coffee';
 import LiveSnacks from './components/Aduit/Pages/audit/LiveSnacks';
+import Bunzo from './components/Aduit/Pages/audit/Bunzo';
+import Bakshanam from './components/Aduit/Form/Bakshanam';
  
 
 function App() {
@@ -41,6 +43,10 @@ function App() {
               <Route path="Tea" element={<TeaAduit />} />
               <Route path="coffee" element={<Coffee/>} />
               <Route path="livesnacks" element={<LiveSnacks/>} />
+              <Route path="Bunzo" element={<Bunzo/>} />
+              <Route path="bakshanm" element={<Bakshanam/>} />
+
+
 
             
               
