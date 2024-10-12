@@ -13,10 +13,8 @@ const audits = [
   { id: 1, image: tea, alt: "tea", label: "Audit Tea", link: "/tea" },
   { id: 2, image: coffee, alt: "coffee", label: "Audit Coffee", link: "/coffee" },
   { id: 3, image: livesnacks, alt: "snacks", label: "Live Snacks", link: "/livesnacks" },
-  { id: 4, image: bunzo, alt: "bunzo", label: "bunzo", link: "/Bunzo" },
-  // { id: 5, image: bunzo, alt: "bunzo", label: "bunzo", link: "/Bunzo" },
-  { id: 5, image: bakshanam, alt: "bakshanm", label: "bakshanam", link: "/bakshanam" },
-
+  { id: 4, image: bunzo, alt: "bunzo", label: "Bakary Products", link: "/Bunzo" },
+ 
 
 ];
 
