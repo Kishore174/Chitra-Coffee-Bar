@@ -18,6 +18,10 @@ import Coffee from './components/Aduit/Pages/audit/Coffee';
 import LiveSnacks from './components/Aduit/Pages/audit/LiveSnacks';
 import Bunzo from './components/Aduit/Pages/audit/Bunzo';
 import Bakshanam from './components/Aduit/Form/Bakshanam';
+import Next01 from './components/Aduit/Pages/Next01';
+import InsideKitichen from './components/Aduit/Pages/InsideKitichen';
+import OutSideShop from './components/Aduit/Pages/OutSideShop';
+import Branding from './components/Aduit/Pages/Branding';
  
 
 function App() {
@@ -45,6 +49,14 @@ function App() {
               <Route path="livesnacks" element={<LiveSnacks/>} />
               <Route path="Bunzo" element={<Bunzo/>} />
               <Route path="bakshanm" element={<Bakshanam/>} />
+              <Route path="nextProcess" element={<Next01/>} />
+              <Route path="Kitchenarea" element={<InsideKitichen/>} />
+              <Route path="Outsideshop" element={<OutSideShop/>} />
+              <Route path="Branding" element={<Branding/>} />
+
+
+
+
 
 
 
