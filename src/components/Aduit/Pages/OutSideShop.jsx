@@ -43,7 +43,7 @@ const OutSideShop = () => {
     }
   };
 
-  // Handlers for shop board condition
+  
   const handleShopBoardConditionClick = (condition) => {
     setSelectedShopBoardCondition(condition);
   };
@@ -88,8 +88,8 @@ const OutSideShop = () => {
   };
 
   return (
-    <><div className="p-4 flex flex-wrap mx-auto justify-center gap-4">
-          <div className="border rounded-lg shadow-md p-4 w-full sm:w-1/2 lg:w-1/4">
+    <><div className="p-4 flex flex-wrap mx-auto justify-start gap-4">
+          <div className="border rounded-lg shadow-md p-4 w-full   sm:w-1/2 lg:w-1/4">
               <h2 className="text-xl font-semibold mb-2">Customer Area Lighting</h2>
               <div className="flex space-x-4 mb-4 justify-center">
                   {['Yes', 'No'].map((lighting) => (
@@ -253,6 +253,7 @@ const OutSideShop = () => {
                   onChange={handleLollipopStandPhotoCapture}
                   className="hidden" />
           </div>
+          
 
       </div><Link to="/Branding">
 

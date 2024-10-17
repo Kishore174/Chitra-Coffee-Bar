@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { CameraIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
 
 const Next01 = () => {
   const [selectedDiningArea, setSelectedDiningArea] = useState(null);
@@ -27,6 +29,7 @@ const Next01 = () => {
   const juiceFileInputRef = useRef(null);
   const snackFileInputRef = useRef(null);
   const dustBinFileInputRef = useRef(null);
+  const navigate = useNavigate()
 
   const handleAromaClick = (area, aroma) => {
     switch (area) {
@@ -77,6 +80,9 @@ const Next01 = () => {
 
   return (
     <div className="p-6 poppins-regular">
+<button onClick={() => navigate(-1)} className="text-gray-700 flex hover:text-red-600 transition duration-200">
+            <MdKeyboardDoubleArrowLeft className="w-6 h-6" /> Back
+          </button>
       <div className="flex flex-wrap space-x-4">
         {/* Dining Area Section */}
         <div className="bg-white shadow-md rounded-md p-4 mb-4 w-1/4">
@@ -293,7 +299,7 @@ const Next01 = () => {
           />
         </div>
 
-        {/* Dust Bin Section */}
+    
         <div className="bg-white shadow-md rounded-md p-4 mb-4 w-1/4">
           <h2 className="text-lg font-semibold mb-2">Dust Bin</h2>
           <div className="flex space-x-4 mb-4">

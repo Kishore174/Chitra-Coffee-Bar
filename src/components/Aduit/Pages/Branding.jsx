@@ -106,7 +106,7 @@ const Branding = () => {
   };
 
   return (
-    <div className="p-4 flex flex-wrap mx-auto justify-center gap-4">
+    <div className="p-4 flex flex-wrap mx-auto justify-start gap-4">
       <div className="border rounded-lg shadow-md p-4 w-full sm:w-1/2 lg:w-1/4">
         <h2 className="text-xl font-semibold mb-2">Menu Brand</h2>
         <div className="flex space-x-4 mb-4 justify-center">
@@ -162,7 +162,7 @@ const Branding = () => {
         />
       </div>
 
-      <div className="border rounded-lg shadow-md p-4 w-full sm:w-1/2 lg:w-1/4">
+      <div className="border rounded-lg shadow-md p-4 w-full  flex flex-col justify-between sm:w-1/2 lg:w-1/4">
         <h2 className="text-xl font-semibold mb-2">Map</h2>
         <div className="flex space-x-4 mb-4 justify-center">
           <h1 className='pt-3'>Available</h1>
