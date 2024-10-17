@@ -23,16 +23,26 @@ const InsideKitchen = () => {
   const [sinkImagePreview, setSinkImagePreview] = useState(null);
   const [sinkRating, setSinkRating] = useState(0); // New state for sink rating
   const [previewImage, setPreviewImage] = useState(null);
+  const [previewKitchinImage, setPreviewKitchenImage] = useState(null);
+  const [previewWorkTableImage, setPreviewWorkTableImage] = useState(null);
+
+
+
   const [isSubmitted, setIsSubmitted] = useState(false); 
+  const [isKitchenSubmitted, setIsKitchenSubmitted] = useState(false); 
+  
+  const [isWorkTableSubmitted, setIsWorkTableSubmitted] = useState(false); 
+
+
   // New state for Work Table
   const [selectedWorkTableRemark, setSelectedWorkTableRemark] = useState('');
   const [workTableUserRemark, setWorkTableUserRemark] = useState('');
-  const [workTableImagePreview, setWorkTableImagePreview] = useState(null);
+  const [workTableImagePreview, setWorkTableImagePreview] = useState([]);
   const [workTableRating, setWorkTableRating] = useState(0); // New state for work table rating
   const [selectedKitchenFloorRemark, setSelectedKitchenFloorRemark] = useState('');
   const [kitchenFloorUserRemark, setKitchenFloorUserRemark] = useState('');
   const [kitchenFloorRating, setKitchenFloorRating] = useState(0);
-  const [kitchenFloorImagePreview, setKitchenFloorImagePreview] = useState('');
+  const [kitchenFloorImagePreview, setKitchenFloorImagePreview] = useState([]);
   const kitchenFloorFileInputRef = useRef(null);
   const snackFileInputRef = useRef(null);
   const milkFileInputRef = useRef(null);
@@ -44,6 +54,8 @@ const [selectedExhaustFanCondition, setSelectedExhaustFanCondition] = useState('
 const [selectedExhaustFanRemark, setSelectedExhaustFanRemark] = useState('');
 const [exhaustFanUserRemark, setExhaustFanUserRemark] = useState('');
 const [exhaustFanRating, setExhaustFanRating] = useState(0);
+ 
+ 
 const [exhaustFanImagePreview, setExhaustFanImagePreview] = useState([]);
 const exhaustFanFileInputRef = useRef(null);
 const handleExhaustFanConditionClick = (condition) => {
@@ -69,7 +81,81 @@ const handleExhaustFanConditionClick = (condition) => {
  
     e.target.value = null; // Reset input value
 };
+const removeImage = (index) => {
+  setExhaustFanImagePreview((prev) => prev.filter((_, i) => i !== index));
+};
+
  
+const handleImageClick = (image) => {
+  setPreviewImage(image);
+};
+ 
+const handleClosePreview = () => {
+  setPreviewImage(null);
+};
+
+ 
+const handleSubmit = () => {
+   
+  setIsSubmitted(true);  
+};
+//
+const handleKitchenConditionClick = (condition) => {
+  setSelectedKitchenFloorRemark(condition);
+};
+
+ ;
+
+ 
+const handleKitchenFloorPhotoCapture=(e) =>{
+  const files = Array.from(e.target.files);
+  files.forEach((file) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setKitchenFloorImagePreview((prev) => [...prev, reader.result]);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  e.target.value = null; // Reset input value
+};
+const removeKitchenImage = (index) => {
+setKitchenFloorImagePreview((prev) => prev.filter((_, i) => i !== index));
+};
+
+
+const handleKitchenClick = (image) => {
+setPreviewKitchenImage(image);
+};
+
+const handleCloseKitchenPreview = () => {
+setPreviewKitchenImage(null);
+};
+
+
+const handleKitchenSubmit = () => {
+ 
+setIsKitchenSubmitted(true);  
+};
+ 
+const removeWorkTableImage = (index) => {
+  setWorkTableImagePreview((prev) => prev.filter((_, i) => i !== index));
+  };
+  
+  
+  const handleWorkTableClick = (image) => {
+  setPreviewWorkTableImage(image);
+  };
+  
+  const handleCloseWorkTablePreview = () => {
+  setPreviewWorkTableImage(null);
+  };
+  
+  
+  const handleWorkTableSubmit = () => {
+   
+  setIsWorkTableSubmitted(true);  
+  };
   const handleSnackRemarkClick = (remark) => {
     setSelectedSnackRemark(remark);
   };
@@ -132,15 +218,17 @@ const handleExhaustFanConditionClick = (condition) => {
   };
 
   // New function for Work Table photo capture
-  const handleWorkTablePhotoCapture = (event) => {
-    const file = event.target.files[0];
-    if (file) {
+  const handleWorkTablePhotoCapture = (e) => {
+    const files = Array.from(e.target.files);
+    files.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setWorkTableImagePreview(reader.result);
+        setWorkTableImagePreview((prev) => [...prev, reader.result]);
       };
       reader.readAsDataURL(file);
-    }
+    });
+  
+    e.target.value = null; // Reset input value
   };
 
   const triggerSnackFileInput = () => {
@@ -172,36 +260,9 @@ const handleExhaustFanConditionClick = (condition) => {
     kitchenFloorFileInputRef.current.click();
   };
   
-  const handleKitchenFloorPhotoCapture = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setKitchenFloorImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+ 
   // Remove image preview
-  const removeImage = (index) => {
-    setExhaustFanImagePreview((prev) => prev.filter((_, i) => i !== index));
-  };
 
-  // Open image in preview
-  const handleImageClick = (image) => {
-    setPreviewImage(image);
-  };
-
-  // Close image preview
-  const handleClosePreview = () => {
-    setPreviewImage(null);
-  };
-
-  // Handle form submission
-  const handleSubmit = () => {
-    // Logic to handle submission can be added here
-    setIsSubmitted(true); // Set form as submitted
-  };
 
   return (
     <>
@@ -395,7 +456,7 @@ const handleExhaustFanConditionClick = (condition) => {
           </div>
 
           {/* Card for Work Table */}
-          <div className="border rounded-lg shadow-md p-4 w-full sm:w-1/2 lg:w-1/4">
+          <div className="border relative rounded-lg shadow-md p-4 w-full sm:w-1/2 lg:w-1/4">
               <h2 className="text-xl font-semibold mb-2">Work Table</h2>
               <div className="flex space-x-4 mb-4">
                   {['Good', 'Bad'].map((remark) => (
@@ -426,27 +487,78 @@ const handleExhaustFanConditionClick = (condition) => {
                       </span>
                   ))}
               </div>
-              {workTableImagePreview && (
-                  <div className="mt-4 mb-4">
-                      <img src={workTableImagePreview} alt="Work Table Captured" className="h-24 w-24 border rounded-md object-cover" />
-                  </div>
-              )}
-              <button
-                  type="button"
-                  className="flex items-center justify-center w-full py-2 text-black border rounded-lg hover:bg-red-600 hover:text-white transition duration-200"
-                  onClick={triggerWorkTableFileInput}
-              >
-                  <CameraIcon className="w-5 h-5 mr-2" />
-                  Capture Work Table Photo
-              </button>
+              <div className="flex flex-wrap gap-2 mb-4">
+
+              {workTableImagePreview.map((image, index) => (
+          <div key={index} className="relative">
+            <img
+              src={image}
+              alt={`Kitchen Light ${index + 1}`}
+              className="h-12 w-12 border rounded-md object-cover cursor-pointer"
+              onClick={() => handleWorkTableClick(image)}
+            />
+            <button
+              onClick={() => removeWorkTableImage(index)}
+              className="absolute top-0 right-0 text-red-500 hover:text-red-700"
+            >
+              <XMarkIcon className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+               <div
+          onClick={triggerWorkTableFileInput}
+          className="h-12 w-12 border rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-200"
+        >
+          <PlusIcon className="w-8 h-8 text-gray-600" />
+        </div>
               <input
                   type="file"
                   accept="image/*"
                   ref={workTableFileInputRef}
                   onChange={handleWorkTablePhotoCapture}
-                  className="hidden" />
+                  className="hidden" 
+                  multiple/>
           </div>
-          <div className="border rounded-lg shadow-md p-4 w-full sm:w-1/2 lg:w-1/4">
+          <button
+        onClick={handleWorkTableSubmit}
+        className={`mt-4 w-full text-center mx-auto py-2 rounded-md text-white ${isWorkTableSubmitted ? 'bg-green-600' : 'bg-red-600 hover:bg-red-700'}`}
+      >
+        {isWorkTableSubmitted ? (
+          <div className="flex items-center justify-center">
+            <span>Submitted</span>
+          </div>
+        ) : (
+          'Submit'
+        )}
+      </button>
+
+      {/* Image Preview Modal */}
+      {previewWorkTableImage && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="relative bg-white p-4 rounded-lg">
+            <img src={workTableImagePreview} alt="Preview" className="max-h-96 max-w-full rounded" />
+            <button
+              onClick={handleCloseWorkTablePreview}
+              className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+            >
+              <XMarkIcon  className="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+      )}
+      {isWorkTableSubmitted && (
+        <div className="absolute -top-2 -right-2">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" className="w-10 h-10">
+            <path
+              fillRule="evenodd"
+              d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </div>
+      )}
+          </div>
+          <div className="border rounded-lg relative shadow-md p-4 w-full sm:w-1/2 lg:w-1/4">
               <h2 className="text-xl font-semibold mb-2">Kitchen Floor</h2>
               <div className="flex space-x-4 mb-4">
                   {['Good', 'Bad'].map((remark) => (
@@ -477,25 +589,77 @@ const handleExhaustFanConditionClick = (condition) => {
                       </span>
                   ))}
               </div>
-              {kitchenFloorImagePreview && (
-                  <div className="mt-4 mb-4">
-                      <img src={kitchenFloorImagePreview} alt="Kitchen Floor Captured" className="h-24 w-24 border rounded-md object-cover" />
-                  </div>
-              )}
-              <button
-                  type="button"
-                  className="flex items-center justify-center w-full py-2 text-black border rounded-lg hover:bg-red-600 hover:text-white transition duration-200"
-                  onClick={triggerKitchenFloorFileInput}
-              >
-                  <CameraIcon className="w-5 h-5 mr-2" />
-                  Capture Kitchen Floor Photo
-              </button>
-              <input
-                  type="file"
-                  accept="image/*"
-                  ref={kitchenFloorFileInputRef}
-                  onChange={handleKitchenFloorPhotoCapture}
-                  className="hidden" />
+              <div className="flex flex-wrap gap-2 mb-4">
+              {kitchenFloorImagePreview.map((image, index) => (
+          <div key={index} className="relative">
+            <img
+              src={image}
+              alt={`Kitchen Light ${index + 1}`}
+              className="h-12 w-12 border rounded-md object-cover cursor-pointer"
+              onClick={() => handleKitchenClick(image)}
+            />
+            <button
+              onClick={() => removeKitchenImage(index)}
+              className="absolute top-0 right-0 text-red-500 hover:text-red-700"
+            >
+              <XMarkIcon className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+              <div
+          onClick={triggerKitchenFloorFileInput}
+          className="h-12 w-12 border rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-200"
+        >
+          <PlusIcon className="w-8 h-8 text-gray-600" />
+        </div>
+        <input
+        type="file"
+        accept="image/*"
+        ref={kitchenFloorFileInputRef}
+        onChange={handleKitchenFloorPhotoCapture}
+        className="hidden"
+        multiple
+      />
+</div>
+      {/* Submit Button */}
+      <button
+        onClick={handleKitchenSubmit}
+        className={`mt-4 w-full text-center mx-auto py-2 rounded-md text-white ${isKitchenSubmitted ? 'bg-green-600' : 'bg-red-600 hover:bg-red-700'}`}
+      >
+        {isKitchenSubmitted ? (
+          <div className="flex items-center justify-center">
+            <span>Submitted</span>
+          </div>
+        ) : (
+          'Submit'
+        )}
+      </button>
+
+      {/* Image Preview Modal */}
+      {previewKitchinImage && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="relative bg-white p-4 rounded-lg">
+            <img src={kitchenFloorImagePreview} alt="Preview" className="max-h-96 max-w-full rounded" />
+            <button
+              onClick={handleCloseKitchenPreview}
+              className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+            >
+              <XMarkIcon  className="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+      )}
+      {isKitchenSubmitted && (
+        <div className="absolute -top-2 -right-2">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" className="w-10 h-10">
+            <path
+              fillRule="evenodd"
+              d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </div>
+      )}
           </div>
           <div className="border rounded-lg relative shadow-md p-4 w-full sm:w-1/2 lg:w-1/4 ">
               <h2 className="text-xl font-semibold mb-2">Exhaust Fan</h2>
