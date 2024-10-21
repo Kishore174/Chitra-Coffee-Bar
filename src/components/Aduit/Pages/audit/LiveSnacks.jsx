@@ -2,6 +2,8 @@ import React, { useState,useRef } from 'react';
 import { CameraIcon } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
 import { MdArrowBack } from 'react-icons/md';
+import {   PlusIcon, XMarkIcon } from '@heroicons/react/24/solid';
+
 const LiveSnacks = () => {
   const [bajjiAvailable, setBajjiAvailable] = useState(null);
   const [samosaAvailable, setSamosaAvailable] = useState(null);
@@ -44,6 +46,41 @@ const LiveSnacks = () => {
       ))}
     </div>
   );
+  
+  const [liveSnackImagePreview, setLiveSnackmagePreview] = useState([]);
+  const [isliveSnackSubmitted, setIsLiveSnackSubmitted] = useState(false);
+  const [previewLiveSnackImage, setPreviewLiveSnackImage] = useState(null);
+  
+ 
+  const liveSnackFileInputRef = useRef(null);
+
+  
+  const triggerLiveSnackFileInput = () => {
+    liveSnackFileInputRef.current.click();
+  };
+
+  const handleLiveSnackPhotoCapture = (e) => {
+    const files = Array.from(e.target.files);
+    const newImages = files.map(file => URL.createObjectURL(file));
+    setLiveSnackmagePreview((prevImages) => [...prevImages, ...newImages]);
+  };
+
+  const removeLiveSnackImage = (index) => {
+    setLiveSnackmagePreview((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
+
+  const handleLiveSnackClick = (image) => {
+    setPreviewLiveSnackImage(image);
+  };
+
+  const handleCloseLiveSnack = () => {
+    setPreviewLiveSnackImage(null);
+  };
+
+  const handleLiveSnackSubmit = () => {
+    setIsLiveSnackSubmitted(true);
+    // Add your submission logic here
+  };
 
   return (
     <div className="flex flex-col lg:flex-row w-full space-x-1 border mx-auto p-8 bg-gray-50 rounded-lg shadow-lg">
@@ -132,38 +169,87 @@ const LiveSnacks = () => {
         <h2 className="text-lg font-semibold mt-4">Overall Rating</h2>
         {renderRatingStars(overallRating)}
       </div>
-      <div className='w-full lg:w-1/2 flex flex-col items-center bg-white p-6 rounded-lg shadow-md mt-6 lg:mt-0'>
-        <h2 className="text-2xl  poppins-semibold mb-6">Capture Counter Photo (live)
-        </h2>
-        <div className='flex flex-col items-center mb-4'>
-          {capturedPhoto && (
-            <img src={capturedPhoto} alt="Captured" className="w-full h-auto max-w-md mb-4" />
-          )}
-          <button
-            type="button"
-            className="flex items-center justify-center w-full max-w-md py-3 px-5 text-black border  poppins-medium rounded-lg hover:bg-red-600 hover:text-white transition duration-200"
-            onClick={triggerFileInput}
+   
+      <div className='w-full lg:w-1/2 flex  relative flex-col justify-between items-center bg-white p-6 rounded-lg shadow-md mt-6 lg:mt-0'>
+       
+      <div>
+      <h2 className="text-2xl poppins-semibold mb-6">Capture Counter Photo (live)</h2>
+
+     
+        <div className="flex flex-wrap gap-2 mb-4">
+          
+          {liveSnackImagePreview.map((image, index) => (
+            <div key={index} className="relative">
+              <img
+                src={image}
+                alt={`Hand Wash ${index + 1}`}
+                className="h-24 w-24 border rounded-md object-cover cursor-pointer"
+                onClick={() => handleLiveSnackClick(image)}
+              />
+              <button
+                onClick={() => removeLiveSnackImage(index)}
+                className="absolute top-0 right-0 text-red-500 hover:text-red-700"
+              >
+                <XMarkIcon className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+          <div
+            onClick={triggerLiveSnackFileInput}
+            className="h-12 w-12 border rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-200"
           >
-            <CameraIcon className="w-5 h-5 mr-2" />
-            Capture Photo
-          </button>
+            <PlusIcon className="w-8 h-8 text-gray-600" />
+          </div>
           <input
             type="file"
             accept="image/*"
-            ref={fileInputRef}
-            onChange={handlePhotoCapture}
+            ref={liveSnackFileInputRef}
+            onChange={handleLiveSnackPhotoCapture}
             className="hidden"
+            multiple
           />
         </div>
-
-        <div className="mt-auto w-full">
-          <button
-            type="submit"
-            className="w-full py-3    bg-red-500 text-white  poppins-medium rounded-lg hover:bg-red-600 hover:text-white transition duration-200"
-          >
-            Submit Audit
-          </button>
         </div>
+     
+        <button
+          onClick={handleLiveSnackSubmit}
+          className={`mt-4 w-full   text-center mx-auto py-2 rounded-md text-white ${isliveSnackSubmitted ? 'bg-green-600' : 'bg-red-600 hover:bg-red-700'}`}
+        >
+          {isliveSnackSubmitted ? (
+            <div className="flex items-center justify-center">
+              <span>Submitted</span>
+            </div>
+          ) : (
+            'Submit'
+          )}
+        </button>
+   
+      
+
+        {previewLiveSnackImage && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+            <div className="relative bg-white p-4 rounded-lg">
+              <img src={previewLiveSnackImage} alt="Preview" className="max-h-96 max-w-full rounded" />
+              <button
+                onClick={handleCloseLiveSnack}
+                className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+              >
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+            </div>
+          </div>
+        )}
+        {isliveSnackSubmitted && (
+          <div className="absolute -top-2 -right-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" className="w-10 h-10">
+              <path
+                fillRule="evenodd"
+                d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </div>
+        )}
       </div>
     </div>
   );

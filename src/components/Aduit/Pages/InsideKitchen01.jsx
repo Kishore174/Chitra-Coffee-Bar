@@ -71,7 +71,7 @@ const InsideKitchen01 = () => {
           <div
             key={brightness}
             onClick={() => handleKitchenLightBrightnessClick(brightness)}
-            className={`cursor-pointer px-2 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
+            className={`cursor-pointer px-4  rounded-full border flex items-center justify-center transition-colors duration-200 
               hover:bg-green-600 hover:text-white ${selectedKitchenLightBrightness === brightness ? 'bg-green-600 text-white' : 'bg-white text-gray-700 border-gray-300'}`}
           >
             {brightness}

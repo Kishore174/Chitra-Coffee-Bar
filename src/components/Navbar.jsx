@@ -96,8 +96,6 @@ const Navbar = () => {
           </div>
         )}
       </div>
-
-      {/* Desktop view: User info aligned to the right */}
       <div className="flex items-center justify-end space-x-3 ml-auto">
         <img
           src={logo}
