@@ -9,18 +9,63 @@ const MenuBrandSection = () => {
   const [rating, setRating] = useState(0);
   const [remark, setRemark] = useState(''); // State for remarks
   const [isMenuAvailable, setIsMenuAvailable] = useState(null); // State for menu availability
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    return `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+  };
 
-  const handleMenuPhotoCapture = (e) => {
+  const getLocation = () => {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          resolve(`Lat: ${latitude.toFixed(2)}, Long: ${longitude.toFixed(2)}`);
+        },
+        (error) => {
+          resolve("Location unavailable"); // Use fallback if location access is denied
+        }
+      );
+    });
+  };
+
+  const handleMenuPhotoCapture =async (e) => {
     const files = Array.from(e.target.files);
+    const dateTime = getCurrentDateTime();
+    const location = await getLocation();
+
     files.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setMenuImagePreview((prev) => [...prev, reader.result]);
+        const img = new Image();
+        img.src = reader.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          // Draw the image onto the canvas
+          ctx.drawImage(img, 0, 0);
+
+          // Set watermark style
+          ctx.font = '16px Arial';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+          ctx.fillRect(10, img.height - 60, 220, 50); // background rectangle
+          ctx.fillStyle = 'black';
+          ctx.fillText(`Location: ${location}`, 15, img.height - 40);
+          ctx.fillText(`Date: ${dateTime}`, 15, img.height - 20);
+
+          // Convert canvas to data URL and store it in the state
+          const watermarkedImage = canvas.toDataURL('image/png');
+          setMenuImagePreview((prev) => [...prev, watermarkedImage]);
+        };
       };
       reader.readAsDataURL(file);
     });
+
     e.target.value = null;
   };
+
 
   const removeMenuImage = (index) => {
     setMenuImagePreview((prev) => prev.filter((_, i) => i !== index));
@@ -127,7 +172,7 @@ const MenuBrandSection = () => {
         />
       </div>
 
-      <button
+      {/* <button
         onClick={handleMenuSubmit}
         className={`mt-4 w-full text-center mx-auto py-2 rounded-md text-white ${
           isMenuSubmitted ? 'bg-green-600' : 'bg-red-600 hover:bg-red-700'
@@ -140,7 +185,7 @@ const MenuBrandSection = () => {
         ) : (
           'Submit'
         )}
-      </button>
+      </button> */}
 
       {previewMenuImage && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
@@ -155,7 +200,7 @@ const MenuBrandSection = () => {
           </div>
         </div>
       )}
-      {isMenuSubmitted && (
+      {/* {isMenuSubmitted && (
          <div className="absolute -top-2 -right-2">
          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" className="w-10 h-10">
            <path
@@ -165,7 +210,7 @@ const MenuBrandSection = () => {
            />
          </svg>
        </div>
-      )}
+      )} */}
     </div>
   );
 };

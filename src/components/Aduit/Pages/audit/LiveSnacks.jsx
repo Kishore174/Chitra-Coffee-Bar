@@ -18,13 +18,60 @@ const LiveSnacks = () => {
   const handleRating = (rate) => {
     setOverallRating(rate);
   };
-  const handlePhotoCapture = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setCapturedPhoto(imageUrl);
-      setPhotoCount(photoCount + 1);
-    }
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    return `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+  };
+
+  const getLocation = () => {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          resolve(`Lat: ${latitude.toFixed(2)}, Long: ${longitude.toFixed(2)}`);
+        },
+        (error) => {
+          resolve("Location unavailable"); // Use fallback if location access is denied
+        }
+      );
+    });
+  };
+  const handleLiveSnackPhotoCapture =async(e) => {
+    const files = Array.from(e.target.files);
+    const dateTime = getCurrentDateTime();
+    const location = await getLocation();
+
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const img = new Image();
+        img.src = reader.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          // Draw the image onto the canvas
+          ctx.drawImage(img, 0, 0);
+
+          // Set watermark style
+          ctx.font = '16px Arial';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+          ctx.fillRect(10, img.height - 60, 220, 50); // background rectangle
+          ctx.fillStyle = 'black';
+          ctx.fillText(`Location: ${location}`, 15, img.height - 40);
+          ctx.fillText(`Date: ${dateTime}`, 15, img.height - 20);
+
+          // Convert canvas to data URL and store it in the state
+          const watermarkedImage = canvas.toDataURL('image/png');
+          setLiveSnackmagePreview((prev) => [...prev, watermarkedImage]);
+        };
+      };
+      reader.readAsDataURL(file);
+    });
+
+    e.target.value = null;
   };
 
   const triggerFileInput = () => {
@@ -59,11 +106,7 @@ const LiveSnacks = () => {
     liveSnackFileInputRef.current.click();
   };
 
-  const handleLiveSnackPhotoCapture = (e) => {
-    const files = Array.from(e.target.files);
-    const newImages = files.map(file => URL.createObjectURL(file));
-    setLiveSnackmagePreview((prevImages) => [...prevImages, ...newImages]);
-  };
+  
 
   const removeLiveSnackImage = (index) => {
     setLiveSnackmagePreview((prevImages) => prevImages.filter((_, i) => i !== index));
@@ -84,8 +127,8 @@ const LiveSnacks = () => {
 
   return (
     <div className="flex flex-col lg:flex-row w-full space-x-1 border mx-auto p-8 bg-gray-50 rounded-lg shadow-lg">
-      <div className="flex flex-col w-full lg:w-1/2 bg-white p-6 rounded-lg shadow-md">
-      <div className="flex items-center mb-6">
+      <div className="  w-full   bg-white p-6 rounded-lg shadow-md">
+      <div className="flex items-center mb-6 ">
           {/* Back arrow */}
           <button onClick={() => navigate(-1)} className="text-gray-700 hover:text-red-600 transition duration-200">
             <MdArrowBack className="w-6 h-6" />
@@ -93,8 +136,8 @@ const LiveSnacks = () => {
           <h1 className="text-2xl poppins-semibold ml-4">Live Snacks</h1>
         </div>
 
-        {/* Bajji availability */}
-        <div className="flex  space-x-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div className="   items-center mb-4 w-full">
           <h2 className="text-lg font-semibold">Bajji</h2>
           <div className="flex space-x-4 mb-2">
             {['Available', 'Not Available'].map((status) => (
@@ -110,7 +153,7 @@ const LiveSnacks = () => {
         </div>
 
         {/* Samosa availability */}
-        <div className="flex  space-x-5 mb-4">
+        <div className=" items-center mb-4 w-full">
           <h2 className="text-lg font-semibold">Samosa</h2>
           <div className="flex space-x-4 mb-2">
             {['Available', 'Not Available'].map((status) => (
@@ -126,7 +169,7 @@ const LiveSnacks = () => {
         </div>
 
         {/* Bonda availability */}
-        <div className="flex  space-x-5 mb-4">
+        <div className=" items-center mb-4 w-full">
           <h2 className="text-lg font-semibold">Bonda</h2>
           <div className="flex space-x-4 mb-2">
             {['Available', 'Not Available'].map((status) => (
@@ -142,7 +185,7 @@ const LiveSnacks = () => {
         </div>
 
         {/* Medhu Vadai availability */}
-        <div className="flex  space-x-5 mb-4">
+        <div className="  items-center mb-4 w-full">
           <h2 className="text-lg font-semibold">Medhu Vadai</h2>
           <div className="flex space-x-4 mb-2">
             {['Available', 'Not Available'].map((status) => (
@@ -156,7 +199,7 @@ const LiveSnacks = () => {
             ))}
           </div>
         </div>
-
+</div>
         {/* Remark Section */}
         <textarea
           className="p-2 border rounded w-full mt-4"
@@ -168,9 +211,9 @@ const LiveSnacks = () => {
         {/* Overall Rating Section */}
         <h2 className="text-lg font-semibold mt-4">Overall Rating</h2>
         {renderRatingStars(overallRating)}
-      </div>
+    
    
-      <div className='w-full lg:w-1/2 flex  relative flex-col justify-between items-center bg-white p-6 rounded-lg shadow-md mt-6 lg:mt-0'>
+      
        
       <div>
       <h2 className="text-2xl poppins-semibold mb-6">Capture Counter Photo (live)</h2>
@@ -251,7 +294,7 @@ const LiveSnacks = () => {
           </div>
         )}
       </div>
-    </div>
+      </div>
   );
 };
 

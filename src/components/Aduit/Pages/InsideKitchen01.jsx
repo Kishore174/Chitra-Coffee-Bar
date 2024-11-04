@@ -25,20 +25,64 @@ const InsideKitchen01 = () => {
   const triggerKitchenLightFileInput = () => {
     kitchenLightFileInputRef.current.click();
   };
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    return `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+  };
+
+  const getLocation = () => {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          resolve(`Lat: ${latitude.toFixed(2)}, Long: ${longitude.toFixed(2)}`);
+        },
+        (error) => {
+          resolve("Location unavailable"); // Use fallback if location access is denied
+        }
+      );
+    });
+  };
 
   // Handle file selection and image previews
-  const handleKitchenLightPhotoCapture = (e) => {
+  const handleKitchenLightPhotoCapture = async(e) => {
     const files = Array.from(e.target.files);
+    const dateTime = getCurrentDateTime();
+    const location = await getLocation();
+
     files.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setKitchenLightImagePreviews((prev) => [...prev, reader.result]);
+        const img = new Image();
+        img.src = reader.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          // Draw the image onto the canvas
+          ctx.drawImage(img, 0, 0);
+
+          // Set watermark style
+          ctx.font = '16px Arial';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+          ctx.fillRect(10, img.height - 60, 220, 50); // background rectangle
+          ctx.fillStyle = 'black';
+          ctx.fillText(`Location: ${location}`, 15, img.height - 40);
+          ctx.fillText(`Date: ${dateTime}`, 15, img.height - 20);
+
+          // Convert canvas to data URL and store it in the state
+          const watermarkedImage = canvas.toDataURL('image/png');
+          setKitchenLightImagePreviews((prev) => [...prev, watermarkedImage]);
+        };
       };
       reader.readAsDataURL(file);
     });
 
-    e.target.value = null; // Reset input value
+    e.target.value = null;
   };
+
 
   // Remove image preview
   const removeImage = (index) => {
@@ -64,22 +108,24 @@ const InsideKitchen01 = () => {
   return (
     <div className="border relative rounded-lg shadow-md p-4 w-full sm:w-1/2 lg:w-1/4">
       <h2 className="text-xl font-semibold mb-2">Kitchen Light</h2>
+<div className='mb-2'>
+      <label className="text-sm font-medium text-gray-500 mb-2 block">Conditon</label>
 
-      {/* Brightness Buttons */}
       <div className="flex space-x-4 mb-4">
         {['Working', 'Not Working'].map((brightness) => (
           <div
             key={brightness}
             onClick={() => handleKitchenLightBrightnessClick(brightness)}
-            className={`cursor-pointer px-4  rounded-full border flex items-center justify-center transition-colors duration-200 
+            className={`cursor-pointer px-2 py-1.5  whitespace-nowrap  rounded-full border flex items-center justify-center transition-colors duration-200 
               hover:bg-green-600 hover:text-white ${selectedKitchenLightBrightness === brightness ? 'bg-green-600 text-white' : 'bg-white text-gray-700 border-gray-300'}`}
           >
             {brightness}
           </div>
         ))}
       </div>
+      </div>
 
-      {/* Remarks Buttons */}
+      <label className="text-sm font-medium text-gray-500 mb-2 block">Hygiene</label>
       <div className="flex space-x-4 mb-4">
         {['Good', 'Bad'].map((remark) => (
           <div
@@ -93,8 +139,8 @@ const InsideKitchen01 = () => {
         ))}
       </div>
 
-      {/* User Remark Input */}
-      <input
+      <label className="text-sm font-medium text-gray-500 mb-2 block">Enter Remark</label>
+      <textarea
         type="text"
         placeholder="Enter your remark..."
         value={kitchenLightUserRemark}
@@ -102,7 +148,8 @@ const InsideKitchen01 = () => {
         className="border rounded-md p-2 w-full mb-2"
       />
 
-      {/* Star Rating */}
+<div className="mb-4">
+<h3 className="  text-gray-700 text-sm">Rate Kitchen Light experience</h3>
       <div className="flex items-center mb-4">
         {[...Array(5)].map((_, index) => (
           <span
@@ -113,6 +160,7 @@ const InsideKitchen01 = () => {
             ★
           </span>
         ))}
+      </div>
       </div>
 
       {/* Image Previews and File Input */}
@@ -154,7 +202,7 @@ const InsideKitchen01 = () => {
       />
 
       {/* Submit Button */}
-      <button
+      {/* <button
         onClick={handleSubmit}
         className={`mt-4 w-full text-center mx-auto py-2 rounded-md text-white ${isSubmitted ? 'bg-green-600' : 'bg-red-600 hover:bg-red-700'}`}
       >
@@ -165,7 +213,7 @@ const InsideKitchen01 = () => {
         ) : (
           'Submit'
         )}
-      </button>
+      </button> */}
 
       {/* Image Preview Modal */}
       {previewImage && (
@@ -181,7 +229,7 @@ const InsideKitchen01 = () => {
           </div>
         </div>
       )}
-      {isSubmitted && (
+      {/* {isSubmitted && (
         <div className="absolute -top-2 -right-2">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" className="w-10 h-10">
             <path
@@ -191,7 +239,7 @@ const InsideKitchen01 = () => {
             />
           </svg>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

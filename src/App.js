@@ -22,6 +22,10 @@ import Next01 from './components/Aduit/Pages/Next01';
 import InsideKitichen from './components/Aduit/Pages/InsideKitichen';
 import OutSideShop from './components/Aduit/Pages/OutSideShop';
 import Branding from './components/Aduit/Pages/Branding';
+import Auditers from './components/Aduit/Pages/Auditers/Auditers';
+import AddAuditer from './components/Aduit/Pages/Auditers/AddAuditer';
+import Setting from './components/Aduit/Pages/Setting/Setting';
+import Rotes from './components/Aduit/Pages/Setting/Rotes';
  
 
 function App() {
@@ -53,6 +57,14 @@ function App() {
               <Route path="Kitchenarea" element={<InsideKitichen/>} />
               <Route path="Outsideshop" element={<OutSideShop/>} />
               <Route path="Branding" element={<Branding/>} />
+              <Route path="Auditers" element={<Auditers/>} />
+              <Route path="add-Auditers" element={<AddAuditer/>} />
+              <Route path="setting" element={<Setting/>} />
+              <Route path="rotes" element={<Rotes/>} />
+
+
+
+
 
 
 

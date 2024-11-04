@@ -102,7 +102,7 @@ const Navbar = () => {
           alt="User Profile"
           className="h-8 w-8 rounded-full object-cover"
         />
-        <span className="text-gray-700 poppins-semibold">Azero Tech</span>
+        <span className="text-gray-700 poppins-semibold ">Azero Tech</span>
         <FaChevronDown className="text-gray-500" />
       </div>
     </div>

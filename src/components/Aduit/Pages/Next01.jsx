@@ -26,10 +26,16 @@ const Next01 = () => {
      <SnackCounterSection/>
      <DustbinSection/>
       </div>
-      <Link to="/Kitchenarea">
+      {/* <Link to="/Kitchenarea">
        
        <button className='bg-red-500 text-white  w-5/6 py-2  mx-auto flex items-center text-center  mt-12  rounded-md hover:bg-red-600'>
     <span className='text-center  mx-auto'> Go Inside Kitchen</span> 
+       </button>
+     </Link> */}
+        <Link to="/add-audit">
+       
+       <button className='bg-red-500 text-white  w-5/6 py-2  mx-auto flex items-center text-center  mt-12  rounded-md hover:bg-red-600'>
+    <span className='text-center  mx-auto'>Submit</span> 
        </button>
      </Link>
     </div>

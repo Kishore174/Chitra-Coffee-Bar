@@ -6,6 +6,7 @@ import MapSection from './Branding/MapSection';
 import BunzoSection from './Branding/BunzoSection';
 import BakshanamSection from './Branding/BakshanamSection';
 import { MdKeyboardDoubleArrowLeft } from 'react-icons/md';
+import PillarBrandSection from './Branding/PillarBrandSection';
 
 const Branding = () => {
   const navigate = useNavigate()
@@ -21,7 +22,14 @@ const Branding = () => {
  <BunzoSection/>
 
       <BakshanamSection/>
+      <PillarBrandSection/>
     </div>
+    <Link to="/add-audit">
+       
+       <button className='bg-red-500 text-white  w-5/6 py-2  mx-auto flex items-center text-center  mt-12  rounded-md hover:bg-red-600'>
+    <span className='text-center  mx-auto'>Submit</span> 
+       </button>
+     </Link>
     </div>
   );
 };

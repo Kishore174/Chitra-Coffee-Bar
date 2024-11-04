@@ -16,6 +16,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "chart.js": "^4.4.4",
+    "dayjs": "^1.11.13",
     "exif-js": "^2.3.0",
     "exiftool": "^0.0.3",
     "react": "^18.3.1",

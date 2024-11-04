@@ -9,16 +9,59 @@ const JuiceBarSection = () => {
   const [rating, setRating] = useState(0);
   const [selectedJuiceBarRemark, setSelectedJuiceBarRemark] = useState(null);
   const [selectedJuiceBar, setSelectedJuiceBar] = useState(null); // State for selected aroma
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    return `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+  };
 
-  const handleJuiceBarPhotoCapture = (e) => {
+  const getLocation = () => {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          resolve(`Lat: ${latitude.toFixed(2)}, Long: ${longitude.toFixed(2)}`);
+        },
+        (error) => {
+          resolve("Location unavailable"); // Use fallback if location access is denied
+        }
+      );
+    });
+  };
+  const handleJuiceBarPhotoCapture =async (e) => {
     const files = Array.from(e.target.files);
+    const dateTime = getCurrentDateTime();
+    const location = await getLocation();
+
     files.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setJuiceBarImagePreview((prev) => [...prev, reader.result]);
+        const img = new Image();
+        img.src = reader.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          // Draw the image onto the canvas
+          ctx.drawImage(img, 0, 0);
+
+          // Set watermark style
+          ctx.font = '16px Arial';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+          ctx.fillRect(10, img.height - 60, 220, 50); // background rectangle
+          ctx.fillStyle = 'black';
+          ctx.fillText(`Location: ${location}`, 15, img.height - 40);
+          ctx.fillText(`Date: ${dateTime}`, 15, img.height - 20);
+
+          // Convert canvas to data URL and store it in the state
+          const watermarkedImage = canvas.toDataURL('image/png');
+          setJuiceBarImagePreview((prev) => [...prev, watermarkedImage]);
+        };
       };
       reader.readAsDataURL(file);
     });
+
     e.target.value = null;
   };
 
@@ -59,10 +102,13 @@ const JuiceBarSection = () => {
 
   return (
     <div className="p-4 bg-white marker:flex flex-col justify-between relative shadow-md rounded-md mb-4">
-      <h2 className="text-lg font-semibold mb-2">Juice Bar Section</h2>
-
-      {/* Aroma Selection */}
+      <h2 className="text-lg font-semibold text-center mb-2">Juice Bar Section</h2>
+<div className='mb-4'>
+      <label className="text-sm font-medium text-gray-500 mb-2 block">avaliable</label>
+ 
       <div className="flex space-x-3 mb-2">
+
+
         {['Yes', 'No'].map((option) => (
           <div
             key={option}
@@ -70,15 +116,17 @@ const JuiceBarSection = () => {
             className={`cursor-pointer px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
               ${selectedJuiceBar === option 
                 ? 'bg-green-600 text-white' 
-                : 'bg-gray-200 text-gray-700 hover:bg-green-600 hover:text-white'}`}
+                : '  text-gray-700 hover:bg-green-600 hover:text-white'}`}
           >
             {option}
           </div>
         ))}
       </div>
-
-      {/* Remark Section */}
+      </div>
+ 
       <div className="mb-4">
+    <label className="text-sm font-medium text-gray-500 mb-2 block">Hygiene</label>
+
         <div className="flex gap-2">
           {['Good', 'Bad'].map((remark) => (
             <div
@@ -95,7 +143,7 @@ const JuiceBarSection = () => {
 
       {/* Rating Section */}
       <div className="mb-4">
-        <h3 className="font-semibold">Rate your juice bar experience:</h3>
+        <h3 className="font-semibold">Rate your juice bar experience</h3>
         <div className="flex">
           {[1, 2, 3, 4, 5].map((star) => (
             <StarIcon
@@ -139,7 +187,7 @@ const JuiceBarSection = () => {
           multiple
         />
       </div>
-
+{/* 
       <button
         onClick={handleJuiceBarSubmit}
         className={`mt-4 w-full text-center mx-auto py-2 rounded-md text-white ${
@@ -153,7 +201,7 @@ const JuiceBarSection = () => {
         ) : (
           'Submit'
         )}
-      </button>
+      </button> */}
 
       {previewJuiceBarImage && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
@@ -168,7 +216,7 @@ const JuiceBarSection = () => {
           </div>
         </div>
       )}
-      {isJuiceBarSubmitted && (
+      {/* {isJuiceBarSubmitted && (
         <div className="absolute -top-2 -right-2">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" className="w-10 h-10">
             <path
@@ -178,7 +226,7 @@ const JuiceBarSection = () => {
             />
           </svg>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

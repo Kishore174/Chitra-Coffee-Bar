@@ -1,42 +1,41 @@
-import React from 'react';
+import React from 'react'
 import { FaPlus } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { GrEdit } from 'react-icons/gr';
 import { MdDelete } from 'react-icons/md';
-
-const MyShop = () => {
-  const shops = [
-    {
-      id: 1,
-      name: 'R K Tea',
-      location: '¾, Main road, Katpadi',
-      contact: '9876543210',
-      email: 'dilip@azerotech.com',
-      franchise: 'Kumar',
-      partnership: 'Partnership',
-      mapLink: 'https://maps.google.com?q=Katpadi',
-    },
-    {
-      id: 2,
-      name: 'Raj Coffee Bar',
-      location: '1, 3rd avenue, Vellore',
-      contact: '9677659728',
-      email: 'dilipvinoth@gmail.com',
-      franchise: 'Kishore',
-      partnership: 'Partnership',
-      mapLink: 'https://maps.google.com?q=Vellore',
-    },
-  ];
-
+import { EyeIcon } from '@heroicons/react/24/outline';
+import { BsEye } from 'react-icons/bs';
+const Auditers = () => {
+    const shops = [
+        {
+          id: 1,
+          name: 'kishore',
+          location: '¾, Main road, Katpadi',
+          contact: '9876543210',
+          email: 'dilip@azerotech.com',
+          documents:'aadhar',
+         
+    
+          mapLink: 'https://maps.google.com?q=Katpadi',
+        },
+        {
+          id: 2,
+          name: 'unni',
+          location: '1, 3rd avenue, Vellore',
+          contact: '9677659728',
+          email: 'dilipvinoth@gmail.com',
+          documents:'pancard',
+          mapLink: 'https://maps.google.com?q=Vellore',
+        },
+      ];
   return (
     <div className="p-4 md:p-6 min-h-screen">
  
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-6">
-        <h1 className="text-2xl md:text-3xl font-semibold mb-4 md:mb-0">My Shop</h1>
-        <Link to="/addshop">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-end mb-4 md:mb-6">
+        <Link to="/add-Auditers">
           <button className="bg-red-600 text-white rounded-lg p-3 flex items-center">
             <FaPlus className="mr-2" />
-            Add Shop
+            Add Auditers
           </button>
         </Link>
       </div>
@@ -46,7 +45,7 @@ const MyShop = () => {
         <table className="w-full bg-white border hidden lg:table">
           <thead className="bg-red-600 text-white">
             <tr>
-              {['S.No', 'Shop Name', 'Location', 'Contact Details', 'Franchise Name', 'Partnership', 'Action'].map((header, idx) => (
+              {['S.No', 'Name', 'Location', 'Contact Details', 'Documents',  'Action'].map((header, idx) => (
                 <th key={idx} className="px-2 py-3 border-b-2 border-gray-300 text-left text-xs md:text-sm font-semibold uppercase tracking-wider">
                   {header}
                 </th>
@@ -70,10 +69,9 @@ const MyShop = () => {
                     {shop.email}
                   </a>
                 </td>
-                <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.franchise}</td>
-                <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.partnership}</td>
+                <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.documents}</td>
                 <td className="px-2 py-4 border-b border-gray-200 space-x-2 text-xs md:text-sm">
-                  <button className="text-blue-500 hover:underline">View</button>
+                  <button className="text-blue-500 hover:underline"><BsEye /></button>
                   <button className="text-green-500 hover:underline"><GrEdit /></button>
                   <button className="text-red-500 hover:underline"><MdDelete size={20} /></button>
                 </td>
@@ -110,7 +108,7 @@ const MyShop = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default MyShop;
+export default Auditers
