@@ -26,6 +26,12 @@ import Auditers from './components/Aduit/Pages/Auditers/Auditers';
 import AddAuditer from './components/Aduit/Pages/Auditers/AddAuditer';
 import Setting from './components/Aduit/Pages/Setting/Setting';
 import Rotes from './components/Aduit/Pages/Setting/Rotes';
+import SetRoutes from './components/Aduit/Pages/SetRoutes';
+import Employee from './components/Aduit/Pages/Employee/Employee';
+import Stock from './components/Aduit/Pages/Stock&Store/Stock';
+import { WallPainting } from './components/Aduit/Pages/WallPanting/WallPanting';
+import Recording from './components/Aduit/Pages/Recording/Recording';
+ 
  
 
 function App() {
@@ -61,6 +67,16 @@ function App() {
               <Route path="add-Auditers" element={<AddAuditer/>} />
               <Route path="setting" element={<Setting/>} />
               <Route path="rotes" element={<Rotes/>} />
+              <Route path="SetRoutes" element={<SetRoutes/>} />
+              <Route path="employee" element={<Employee/>} />
+              <Route path="Stock" element={<Stock/>} />
+              <Route path="Wallpanting" element={<WallPainting/>} />
+              <Route path="Recording" element={<Recording/>} />
+
+
+
+
+
 
 
 

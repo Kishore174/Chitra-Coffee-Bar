@@ -105,4 +105,17 @@
     font-weight: 900;
     font-style: italic;
   }
+  @keyframes wave {
+    0%, 100% {
+      transform: scaleY(1);
+    }
+    50% {
+      transform: scaleY(1.5);
+    }
+  }
+  
+  .animate-wave {
+    animation: wave 0.5s ease-in-out infinite;
+    transition: height 0.1s ease-in-out;
+  }
   

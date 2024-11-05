@@ -1,29 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { FaTachometerAlt, FaStore, FaClipboardCheck, FaUser, FaBars, FaSignOutAlt, FaTools, FaBiking } from 'react-icons/fa';
-import { Link, useLocation } from 'react-router-dom';
+import { FaTachometerAlt, FaStore, FaClipboardCheck, FaUser, FaSignOutAlt, FaTools, FaAngleDown } from 'react-icons/fa';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from "../Assets/logo01.png";
-import { useNavigate } from 'react-router-dom';
 
 const SideMenu = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   const [activeButton, setActiveButton] = useState(localStorage.getItem('activeButton') || 'Dashboard');
-  
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
+  const [openDropdown, setOpenDropdown] = useState(null);
+
   const menuItems = [
     { name: 'Dashboard', icon: FaTachometerAlt, path: '/dashboard' },
     { name: 'My Shops', icon: FaStore, path: '/myshop' },
-    { name: 'Audits', icon: FaClipboardCheck, path: '/aduit' },
-    { name: 'Auditers', icon: FaUser, path: '/Auditers' },
-    
+    { name: 'Audits', icon: FaUser, path: '/aduit' },
     { name: 'Profile', icon: FaUser, path: '/profile' },
-    { name: 'settings', icon: FaTools, path: '/setting ' },
-    { name: 'Routes', icon: FaBiking, path: '/setting ' },
-
-
-
+    { name: 'Settings', icon: FaTools, path: '/setting' },
+    {
+      name: 'Routes',
+      icon: FaClipboardCheck,
+      subRoutes: [
+        { name: 'Create Routes', path: 'rotes' },
+        { name: 'Set Routes', path: '/SetRoutes' },
+      ]
+    }
   ];
 
   const handleLogout = () => {
@@ -31,9 +32,15 @@ const SideMenu = () => {
     console.log('Logging out...');
   };
 
+  const handleDropdownToggle = (name) => {
+    setOpenDropdown((prev) => (prev === name ? null : name));
+  };
+
   useEffect(() => {
     const currentPath = location.pathname;
-    const currentItem = menuItems.find(item => item.path === currentPath);
+    const currentItem = menuItems.find(
+      item => item.path === currentPath || item.subRoutes?.some(sub => sub.path === currentPath)
+    );
     if (currentItem) {
       setActiveButton(currentItem.name);
       localStorage.setItem('activeButton', currentItem.name);
@@ -42,8 +49,6 @@ const SideMenu = () => {
 
   return (
     <div>
-       
-      {/* Sidebar */}
       <div
         className={`fixed z-20 h-screen bg-white shadow-lg w-64 transition-transform duration-300 ease-in-out 
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
@@ -54,26 +59,52 @@ const SideMenu = () => {
               <img src={logo} alt="Logo" className="h-16 w-16" />
             </div>
           </Link>
-          <ul className="space-y-6 p-4"> 
+          <ul className="space-y-6 p-4">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeButton === item.name;
 
               return (
                 <li key={item.name}>
-                  <Link to={item.path}>
+                  <div className="flex flex-col">
                     <button
-                      className={`flex items-center space-x-4 p-2 font-semibold rounded w-full ${isActive ? 'bg-red-500 poppins-semibold text-white' : 'poppins-regular text-black'}`}
+                      className={`flex items-center justify-between space-x-4 p-2 font-semibold rounded w-full ${isActive ? 'bg-red-500 text-white' : 'text-black'}`}
                       onClick={() => {
-                        setActiveButton(item.name);
-                        localStorage.setItem('activeButton', item.name);
-                        setIsSidebarOpen(false);  
-                      }} 
+                        if (item.subRoutes) {
+                          handleDropdownToggle(item.name);
+                        } else {
+                          setActiveButton(item.name);
+                          localStorage.setItem('activeButton', item.name);
+                          setIsSidebarOpen(false);
+                          navigate(item.path);
+                        }
+                      }}
                     >
-                      <Icon className="h-6 w-6" />
-                      <span>{item.name}</span>
+                      <div className="flex items-center space-x-4">
+                        <Icon className="h-6 w-6" />
+                        <span>{item.name}</span>
+                      </div>
+                      {item.subRoutes && <FaAngleDown className={`transition-transform ${openDropdown === item.name ? 'rotate-180' : ''}`} />}
                     </button>
-                  </Link>
+
+                    {/* Sub-routes dropdown */}
+                    {item.subRoutes && openDropdown === item.name && (
+                      <ul className="ml-8 mt-2 space-y-2">
+                        {item.subRoutes.map((sub) => (
+                          <li key={sub.name}>
+                            <Link to={sub.path}>
+                              <button
+                                className={`flex items-center space-x-4 p-2 font-medium rounded w-full ${location.pathname === sub.path ? 'bg-gray-300 text-black' : 'text-gray-600'}`}
+                                onClick={() => setIsSidebarOpen(false)}
+                              >
+                                <span>{sub.name}</span>
+                              </button>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 </li>
               );
             })}
@@ -90,7 +121,6 @@ const SideMenu = () => {
         </div>
       </div>
 
- 
       {isSidebarOpen && (
         <div
           onClick={() => setIsSidebarOpen(false)}
