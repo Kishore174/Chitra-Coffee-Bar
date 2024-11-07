@@ -92,26 +92,30 @@ const OutSideShop = () => {
   };
   const navigate = useNavigate()
   return (
-    <div className='   poppins-regular max-w-5xl  md:ml-28'>
-<button onClick={() => navigate(-1)} className="text-gray-700 flex hover:text-red-600 transition duration-200">
-            <MdKeyboardDoubleArrowLeft className="w-6 h-6" /> Back
-          </button>
-    <div className="p-4 flex flex-wrap mx-auto  justify-start gap-4">
-         
-<CustomerAreaLightingSection/>
-        <ShopBoardSection/>
+    <div className="poppins-regular max-w-5xl mx-auto md:ml-28 px-4 md:px-6 lg:px-8">
+    {/* Back Button */}
+    <button
+      onClick={() => navigate(-1)}
+      className="text-gray-700 flex items-center hover:text-red-600 transition duration-200 mb-4"
+    >
+      <MdKeyboardDoubleArrowLeft className="w-6 h-6 mr-1" />
+      Back
+    </button>
 
-        <LollipopStandSection/>
-          
+    {/* Section Layout */}
+    <div className="p-4 flex flex-wrap justify-center md:justify-start gap-4">
+      {/* <CustomerAreaLightingSection /> */}
+      <ShopBoardSection />
+      <LollipopStandSection />
+    </div>
 
-      </div>
-      <Link to="/add-audit">
-       
-       <button className='bg-red-500 text-white  w-5/6 py-2  mx-auto flex items-center text-center  mt-12  rounded-md hover:bg-red-600'>
-    <span className='text-center  mx-auto'>Submit</span> 
-       </button>
-     </Link>
-          </div>
+    {/* Submit Button */}
+    <Link to="/add-audit" className="w-full flex justify-center mt-8">
+      <button className="bg-red-500 text-white w-full sm:w-3/4 md:w-full lg:w-full xl:w-full py-2 rounded-md hover:bg-red-600 transition duration-200">
+        Submit
+      </button>
+    </Link>
+  </div>
   );
 };
 

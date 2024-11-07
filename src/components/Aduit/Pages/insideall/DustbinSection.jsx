@@ -12,6 +12,7 @@ const DustbinSection = () => {
     const now = new Date();
     return `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
   };
+  const [ dustbinRemark, setDustbinRemark] = useState('');
 
   const getLocation = () => {
     return new Promise((resolve, reject) => {
@@ -132,7 +133,14 @@ const DustbinSection = () => {
           ))}
         </div>
       </div>
-
+      <label className="text-sm font-medium text-gray-500 mb-2 block"> Remark</label>
+      <textarea
+        type="text"
+        placeholder="Enter your remark..."
+        value={ dustbinRemark}
+        onChange={(e) => setDustbinRemark(e.target.value)}
+        className="border rounded-md p-2 w-full mb-2"
+      />
       <div className="flex flex-wrap gap-2 mb-4">
         {dustbinImagePreview.map((image, index) => (
           <div key={index} className="relative">

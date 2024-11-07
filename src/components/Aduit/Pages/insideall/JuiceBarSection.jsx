@@ -13,6 +13,7 @@ const JuiceBarSection = () => {
     const now = new Date();
     return `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
   };
+  const [ juiceBarRemark, setJuiceBarRemark] = useState('');
 
   const getLocation = () => {
     return new Promise((resolve, reject) => {
@@ -154,7 +155,14 @@ const JuiceBarSection = () => {
           ))}
         </div>
       </div>
-
+      <label className="text-sm font-medium text-gray-500 mb-2 block"> Remark</label>
+      <textarea
+        type="text"
+        placeholder="Enter your remark..."
+        value={ juiceBarRemark}
+        onChange={(e) => setJuiceBarRemark(e.target.value)}
+        className="border rounded-md p-2 w-full mb-2"
+      />
       <div className="flex flex-wrap gap-2 mb-4">
         {juiceBarImagePreview.map((image, index) => (
           <div key={index} className="relative">

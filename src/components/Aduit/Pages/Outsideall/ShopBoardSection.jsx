@@ -8,6 +8,8 @@ const ShopBoardSection = () => {
   const shopFileInputRef = useRef();
   const [rating, setRating] = useState(0);
   const [selectedShopRemark, setSelectedShopRemark] = useState(null);
+  const [ shopBoardRemark, setShopBoardRemark] = useState('');
+
   const [isShopAvailable, setIsShopAvailable] = useState(null); // State for shop availability
   const getCurrentDateTime = () => {
     const now = new Date();
@@ -94,13 +96,13 @@ const ShopBoardSection = () => {
   };
 
   return (
-    <div className="p-4 bg-white relative flex flex-col justify-between shadow-md rounded-md mb-4">
+    <div className="p-4 bg-white relative  shadow-md rounded-md mb-4">
       <h2 className="text-lg font-semibold mb-2">Shop Board Section</h2>
 
       {/* Availability Section */}
       <div className="mb-4">
       <label className="text-sm font-medium text-gray-500 mb-2 block">Available</label>
-        <div className="flex gap-4">
+        <div className="flex gap-2">
           {['Yes', 'No'].map((option) => (
             <div
               key={option}
@@ -144,7 +146,14 @@ const ShopBoardSection = () => {
           ))}
         </div>
       </div>
-
+      <label className="text-sm font-medium text-gray-500 mb-2 block"> Remark</label>
+      <textarea
+        type="text"
+        placeholder="Enter your remark..."
+        value={ shopBoardRemark}
+        onChange={(e) => setShopBoardRemark(e.target.value)}
+        className="border rounded-md p-2 w-full mb-2"
+      />
       <div className="flex flex-wrap gap-2 mb-4">
         {shopImagePreview.map((image, index) => (
           <div key={index} className="relative">

@@ -18,6 +18,7 @@ const AddShop = () => {
     commercialAgreement: null,
     gstCertificate: null,
   });
+  const [propertyType, setPropertyType] = useState('');
 
   const [dialogVisible, setDialogVisible] = useState(false);
   const navigate = useNavigate();
@@ -54,12 +55,58 @@ const AddShop = () => {
       navigate("/myshop");
     }, 3000);
   };
+  const handlePropertyTypeChange = (e) => {
+    setPropertyType(e.target.value);
+  };
+
 
   return (
     <div className="p-8 max-w-5xl mx-auto bg-white rounded-lg shadow-md">
       <h2 className="text-3xl font-semibold text-gray-800 mb-8">Add Shop</h2>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Shop Name */}
+       {/* Property Type */}
+<div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700" htmlFor="propertyType">
+    Property Type
+  </label>
+  <select
+    id="propertyType"
+  
+    value={propertyType}
+    onChange={handlePropertyTypeChange}
+    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+  >
+    <option value="" disabled>Select property type</option>
+    <option value="rent">Rent</option>
+    <option value="own">Own</option>
+  </select>
+</div>
+  
+ {propertyType === 'rent' ? (
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700" htmlFor="rentalAgreement">
+              Rental Agreement
+            </label>
+            <input
+              id="rentalAgreement"
+              type="file"
+              onChange={handleFileChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+            />
+          </div>
+        ) : propertyType === 'own' ? (
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700" htmlFor="ecard">
+              E-Card
+            </label>
+            <input
+              id="ecard"
+              type="file"
+              onChange={handleFileChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+            />
+          </div>
+        ) : null}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700" htmlFor="shopName">
             Shop Name
@@ -193,7 +240,7 @@ const AddShop = () => {
         {/* Renewal Date */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700" htmlFor="renewalDate">
-            Renewal Date
+          Commercial Renewal Date
           </label>
           <input
             id="renewalDate"

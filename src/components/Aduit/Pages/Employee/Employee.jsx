@@ -40,7 +40,7 @@ const Employee = () => {
           {tabs.map((tab) => (
             <button
               key={tab}
-              className={`flex-1 py-2 px-2 text-center text-sm sm:text-base ${
+              className={`flex-1 py-2  whitespace-nowrap poppins-semibold px-2 text-center text-sm sm:text-base ${
                 activeTab === tab ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600'
               } rounded`}
               onClick={() => setActiveTab(tab)}

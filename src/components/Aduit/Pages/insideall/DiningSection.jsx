@@ -8,6 +8,7 @@ const DiningSection = () => {
   const diningFileInputRef = useRef();
   const [rating, setRating] = useState(0); // State for storing rating
   const [selectedDiningRemark, setSelectedDiningRemark] = useState(null); // State for selected remark
+  const [ diningRemark, setDiningRemark] = useState('');
 
   const getCurrentDateTime = () => {
     const now = new Date();
@@ -135,7 +136,14 @@ const DiningSection = () => {
         ))}
       </div>
     </div>
-  
+    <label className="text-sm font-medium text-gray-500 mb-2 block"> Remark</label>
+      <textarea
+        type="text"
+        placeholder="Enter your remark..."
+        value={ diningRemark}
+        onChange={(e) => setDiningRemark(e.target.value)}
+        className="border rounded-md p-2 w-full mb-2"
+      />
     {/* Image Preview Section */}
     <div className="flex flex-wrap gap-2 mb-6">
       {diningImagePreview.map((image, index) => (

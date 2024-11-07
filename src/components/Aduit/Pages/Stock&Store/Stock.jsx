@@ -85,7 +85,8 @@ const Stock = () => {
           ))}
         </div>
 
-        {/* Remark Input */}
+        <h3 className="font-semibold">Remark</h3>
+   
         <textarea
           placeholder="Add a remark..."
           value={remark}

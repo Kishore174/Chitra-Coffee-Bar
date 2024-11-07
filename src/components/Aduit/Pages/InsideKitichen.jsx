@@ -615,7 +615,9 @@ const removeSinkImage = (index) => {
                         <div onClick={triggerSnackFileInput}
           className="h-12 w-12 border rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-200"
         >
-          <PlusIcon clName="w-8 h-8 text-gray-600" />
+                  <PlusIcon className="w-8 h-8 text-gray-600" />
+
+        </div>
         </div>
               <input
                   typasse="file"
@@ -624,7 +626,7 @@ const removeSinkImage = (index) => {
                   onChange={handleSnackPhotoCapture}
                   className="hidden" 
                   multiple/>
-          </div>
+          
            {/* <button
         onClick={handleSnackSubmit}
         className={`mt-4 w-full text-center mx-auto py-2 rounded-md text-white ${isSnackSubmitted? 'bg-green-600' : 'bg-red-600 hover:bg-red-700'}`}
@@ -1020,7 +1022,7 @@ const removeSinkImage = (index) => {
                   </div>
                   <div className='mb-2'>
                    
-                   <h3 className="  text-gray-700 text-sm">Rate Sink experience</h3>
+                   <h3 className="  text-gray-700 text-sm">Rate Work Table experience</h3>
               <div className="flex items-center mb-4">
                   {[...Array(5)].map((_, index) => (
                       <span
@@ -1122,7 +1124,7 @@ const removeSinkImage = (index) => {
               </div>
               </div>
               <div>
-              <label className="text-sm font-medium text-gray-500 mb-2 block">Enter Remark</label>
+              <label className="text-sm font-medium text-gray-500 mb-2 block"> Remark</label>
 
           
               <textarea
@@ -1222,7 +1224,7 @@ const removeSinkImage = (index) => {
   <h2 className="text-xl font-semibold mb-4 text-gray-800">Exhaust Fan</h2>
 <div className='mb-2'>
   <label className="text-sm font-medium text-gray-500 mb-2 block">Condition</label>
-<div className="flex justify-between space-x-2 p-1 mb-4">
+<div className="flex  space-x-2 p-1 mb-4">
   {['Working', 'Not Working'].map((condition) => (
     <div
       key={condition}
@@ -1252,7 +1254,7 @@ const removeSinkImage = (index) => {
     ))}
   </div>
   </div>
-  <label className="text-sm font-medium text-gray-500 mb-2 block">Enter Remark</label>
+  <label className="text-sm font-medium text-gray-500 mb-2 block"> Remark</label>
   <textarea
     type="text"
     placeholder="Enter your remark..."

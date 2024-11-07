@@ -6,8 +6,8 @@ const WaveAnimation = ({ isRecording }) => {
   return (
     <div className={`flex items-center justify-center mt-4 transition-opacity duration-300 ${isRecording ? 'opacity-100' : 'opacity-0'}`}>
       <div className="flex space-x-1">
-        <div className="w-2 h-6 bg-blue-500 animate-wave"></div>
-        <div className="w-2 h-8 bg-blue-500 animate-wave"></div>
+        <div className="w-2 h-6 mb-3 bg-blue-500 animate-wave"></div>
+        <div className="w-2 h-8 -mt-2 bg-blue-500 animate-wave"></div>
         <div className="w-2 h-5 bg-blue-500 animate-wave"></div>
         <div className="w-2 h-7 bg-blue-500 animate-wave"></div>
         <div className="w-2 h-6 bg-blue-500 animate-wave"></div>

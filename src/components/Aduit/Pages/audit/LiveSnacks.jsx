@@ -200,7 +200,7 @@ const LiveSnacks = () => {
           </div>
         </div>
 </div>
-        {/* Remark Section */}
+         
         <textarea
           className="p-2 border rounded w-full mt-4"
           placeholder="Add a remark for all snacks"

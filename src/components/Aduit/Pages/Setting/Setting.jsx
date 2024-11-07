@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
  
-import { BikeScooter } from '@mui/icons-material';
+import { BakeryDining, BikeScooter, BrandingWatermarkSharp } from '@mui/icons-material';
 import { GrBike } from 'react-icons/gr';
+import { MdBrandingWatermark, MdOutlineBakeryDining } from 'react-icons/md';
 
 const Setting = () => {
   const settings = [
-    { name: 'Create Rotes', icon: <GrBike className="h-8 w-8 text-red-500" />, path: '/rotes' },
+    { name: 'Snacks', icon: <MdOutlineBakeryDining className="h-8 w-8 text-red-500" />, path: '/backeryproducts ' },
+    { name: 'Brand Name', icon: <BrandingWatermarkSharp className="h-8 w-8 text-red-500" />, path: '/BrandName ' },
  
   ];
 

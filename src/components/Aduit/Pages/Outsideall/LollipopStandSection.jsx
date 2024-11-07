@@ -13,6 +13,7 @@ const LollipopStandSection = () => {
     const now = new Date();
     return `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
   };
+  const [ LollipopRemark, setLollipopRemark] = useState('');
 
   const getLocation = () => {
     return new Promise((resolve, reject) => {
@@ -132,7 +133,7 @@ const LollipopStandSection = () => {
           ))}
         </div>
       </div>
-
+    
       {/* Rating Section */}
       <div className="mb-4">
         <h3 className="font-medium text-gray-700 text-sm">Rate your lollipop experience</h3>
@@ -146,7 +147,14 @@ const LollipopStandSection = () => {
           ))}
         </div>
       </div>
-
+      <label className="text-sm font-medium text-gray-500 mb-2 block"> Remark</label>
+      <textarea
+        type="text"
+        placeholder="Enter your remark..."
+        value={ LollipopRemark}
+        onChange={(e) => setLollipopRemark(e.target.value)}
+        className="border rounded-md p-2 w-full mb-2"
+      />
       <div className="flex flex-wrap gap-2 mb-4">
         {lollipopImagePreview.map((image, index) => (
           <div key={index} className="relative">

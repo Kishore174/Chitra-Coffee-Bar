@@ -26,11 +26,15 @@ import Auditers from './components/Aduit/Pages/Auditers/Auditers';
 import AddAuditer from './components/Aduit/Pages/Auditers/AddAuditer';
 import Setting from './components/Aduit/Pages/Setting/Setting';
 import Rotes from './components/Aduit/Pages/Setting/Rotes';
-import SetRoutes from './components/Aduit/Pages/SetRoutes';
+import SetRoutes from './components/Aduit/Pages/Setting/SetRoutes';
 import Employee from './components/Aduit/Pages/Employee/Employee';
 import Stock from './components/Aduit/Pages/Stock&Store/Stock';
 import { WallPainting } from './components/Aduit/Pages/WallPanting/WallPanting';
 import Recording from './components/Aduit/Pages/Recording/Recording';
+import AuditReport from './components/Report/AuditReport';
+import BakerProducts from './components/Aduit/Pages/Setting/BakerProducts';
+import Dressing from './components/Aduit/Pages/Dressing/Dressing';
+import BrandName from './components/Aduit/Pages/Setting/BrandName';
  
  
 
@@ -72,6 +76,14 @@ function App() {
               <Route path="Stock" element={<Stock/>} />
               <Route path="Wallpanting" element={<WallPainting/>} />
               <Route path="Recording" element={<Recording/>} />
+              <Route path="Report" element={<AuditReport/>} />
+              <Route path="backeryproducts" element={<BakerProducts/>} />
+              <Route path="Dressing" element={<Dressing/>} />
+              <Route path="BrandName" element={<BrandName/>} />
+
+
+
+
 
 
 

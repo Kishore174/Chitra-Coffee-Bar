@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import dayjs from 'dayjs';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { BsArrowRight } from "react-icons/bs";
-const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+import { auditdata } from '../../Assets/data';
+const daysOfWeek = [ 'Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const Table = () => {
   const [selectedDate, setSelectedDate] = useState(dayjs().startOf('week'));
-
+  const navigate = useNavigate(); 
   const audits = [
     {
       id: 1,
@@ -48,7 +49,7 @@ const Table = () => {
     return dayjs().startOf('week').add(index, 'day');
   });
 
-  // New Filtering Logic: Match the day of the week with the selectedDate's weekday
+  
   const filteredAudits = audits.filter(audit => {
     return dayjs(audit.date).isSame(selectedDate, 'day');
   });
@@ -121,7 +122,9 @@ const Table = () => {
                         <BsArrowRight className="text-red-600 text-2xl" />
                       </Link>
                     ) : (
-                      <span className="text-blue-500 poppins-regular">View | Edit</span>
+                      <Link to= "/Report" >
+                      <button  className="text-blue-500 poppins-regular">View </button>
+                      </Link>
                     )}
                   </td>
                 </tr>

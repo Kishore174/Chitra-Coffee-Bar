@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { FaTachometerAlt, FaStore, FaClipboardCheck, FaUser, FaSignOutAlt, FaTools, FaAngleDown } from 'react-icons/fa';
+import { FaTachometerAlt, FaStore, FaClipboardCheck, FaUser, FaSignOutAlt, FaTools, FaAngleDown, FaRoute } from 'react-icons/fa';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from "../Assets/logo01.png";
+import { AiOutlineAudit } from "react-icons/ai";
 
 const SideMenu = () => {
   const location = useLocation();
@@ -14,12 +15,14 @@ const SideMenu = () => {
   const menuItems = [
     { name: 'Dashboard', icon: FaTachometerAlt, path: '/dashboard' },
     { name: 'My Shops', icon: FaStore, path: '/myshop' },
-    { name: 'Audits', icon: FaUser, path: '/aduit' },
+    { name: 'Audits', icon:FaClipboardCheck, path: '/aduit' },
+    { name: 'Auditer', icon:AiOutlineAudit , path: '/Auditers' },
+
     { name: 'Profile', icon: FaUser, path: '/profile' },
     { name: 'Settings', icon: FaTools, path: '/setting' },
     {
       name: 'Routes',
-      icon: FaClipboardCheck,
+      icon: FaRoute,
       subRoutes: [
         { name: 'Create Routes', path: 'rotes' },
         { name: 'Set Routes', path: '/SetRoutes' },

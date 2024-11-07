@@ -33,9 +33,9 @@ const Auditers = () => {
  
       <div className="flex flex-col md:flex-row items-start md:items-center justify-end mb-4 md:mb-6">
         <Link to="/add-Auditers">
-          <button className="bg-red-600 text-white rounded-lg p-3 flex items-center">
-            <FaPlus className="mr-2" />
-            Add Auditers
+        <button className="bg-red-600 text-white rounded-lg poppins-semibold py-1 px-3 flex items-center">
+            {/* <FaPlus className="mr-2" /> */}
+            Add Auditer
           </button>
         </Link>
       </div>

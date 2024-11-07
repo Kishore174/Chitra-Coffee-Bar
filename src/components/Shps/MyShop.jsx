@@ -34,8 +34,8 @@ const MyShop = () => {
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-6">
         <h1 className="text-2xl md:text-3xl font-semibold mb-4 md:mb-0">My Shop</h1>
         <Link to="/addshop">
-          <button className="bg-red-600 text-white rounded-lg p-3 flex items-center">
-            <FaPlus className="mr-2" />
+          <button className="bg-red-600 text-white rounded-lg poppins-semibold py-1 px-3 flex items-center">
+            {/* <FaPlus className="mr-2" /> */}
             Add Shop
           </button>
         </Link>

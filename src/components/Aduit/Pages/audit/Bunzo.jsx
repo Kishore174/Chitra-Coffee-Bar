@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import OtherBrand from '../../Form/OtherBrands';
 import { Link } from 'react-router-dom';
-
+import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline'; // Import icons
 const Bunzo = () => {
   const [activeTab, setActiveTab] = useState('Bunzo'); // Set default to Bunzo
   const [details, setDetails] = useState({ productName: '', quantity: 0, expirationDate: '' });
-  const [capturedPhoto, setCapturedPhoto] = useState('');
-  const fileInputRef = useRef(null);
+  const [liveSnackImagePreview, setLiveSnackImagePreview] = useState([]);
+  const [previewLiveSnackImage, setPreviewLiveSnackImage] = useState(null);
+  const liveSnackFileInputRef = useRef(null);
 
   // Example product details for each brand
   const productDetails = {
@@ -15,15 +16,15 @@ const Bunzo = () => {
       quantity: "",
       expirationDate: '',
     },
-    bakshanm : {
-      productName: ' ',
-      quantity: '' ,
-      expirationDate: ' ',
+    bakshanm: {
+      productName: '',
+      quantity: '',
+      expirationDate: '',
     },
-     OtherBrands: {
-      productName: ' ',
-      quantity:  '',
-      expirationDate: ' ',
+    OtherBrands: {
+      productName: '',
+      quantity: '',
+      expirationDate: '',
     },
   };
 
@@ -42,19 +43,36 @@ const Bunzo = () => {
     }));
   };
 
-  const handlePhotoCapture = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setCapturedPhoto(imageUrl);
+  // Handle the image capture and preview
+  const handleLiveSnackPhotoCapture = (e) => {
+    const files = e.target.files;
+    const newImages = Array.from(files).map((file) => URL.createObjectURL(file));
+    setLiveSnackImagePreview((prevImages) => [...prevImages, ...newImages]);
+  };
+
+  const triggerLiveSnackFileInput = () => {
+    if (liveSnackFileInputRef.current) {
+      liveSnackFileInputRef.current.click();
     }
   };
 
-  const triggerFileInput = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+  // Handle the image preview on click
+  const handleLiveSnackClick = (image) => {
+    setPreviewLiveSnackImage(image);
   };
+
+  // Handle closing the image preview
+  const handleCloseLiveSnack = () => {
+    setPreviewLiveSnackImage(null);
+  };
+
+  // Remove image from preview list
+  const removeLiveSnackImage = (index) => {
+    setLiveSnackImagePreview((prevImages) =>
+      prevImages.filter((_, i) => i !== index)
+    );
+  };
+
 
   return (
     <div className="p-4 border max-w-screen-md mx-auto rounded shadow-md bg-white">
@@ -79,20 +97,38 @@ const Bunzo = () => {
         <div className="border-t pt-4">
           <h2 className="text-xl font-bold mb-4">{activeTab} Product Details</h2>
           <div className="flex items-center space-x-4">
+            {/* Product Name as a Select field for Bunzo and Bakshan */}
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700" htmlFor="product-name">
                 Product Name
               </label>
-              <input
-                id="product-name"
-                name="productName"
-                type="text"
-                value={details.productName}
-                onChange={handleChange}
-                placeholder="Enter product name"
-                className="mt-1 p-2 border rounded w-full"
-              />
+              {(activeTab === 'Bunzo' || activeTab === 'bakshanm') ? (
+                <select
+                  id="product-name"
+                  name="productName"
+                  value={details.productName}
+                  onChange={handleChange}
+                  className="mt-1 p-2 border rounded w-full"
+                >
+                  <option value="">Select Product</option>
+                  {/* Add options for each product */}
+                  <option value="Product1">Product 1</option>
+                  <option value="Product2">Product 2</option>
+                  <option value="Product3">Product 3</option>
+                </select>
+              ) : (
+                <input
+                  id="product-name"
+                  name="productName"
+                  type="text"
+                  value={details.productName}
+                  onChange={handleChange}
+                  placeholder="Enter product name"
+                  className="mt-1 p-2 border rounded w-full"
+                />
+              )}
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700" htmlFor="quantity">
                 Qty
@@ -107,9 +143,10 @@ const Bunzo = () => {
                 className="mt-1 p-2 border rounded w-24"
               />
             </div>
+           { activeTab !== 'OtherBrands'&& 
             <div>
               <label className="block text-sm font-medium text-gray-700" htmlFor="expiration-date">
-                Expiration Date
+                Expiry Date
               </label>
               <input
                 id="expiration-date"
@@ -119,43 +156,66 @@ const Bunzo = () => {
                 onChange={handleChange}
                 className="mt-1 p-2 border rounded"
               />
-            </div>
+            </div>}
           </div>
 
-          {/* Photo Capture Section */}
-          <div className="w-full flex flex-col items-center bg-white p-6 rounded-lg shadow-md mt-6">
-            <h2 className="text-2xl font-semibold mb-6">Capture Product Photo</h2>
-            <div className="flex flex-col items-center mb-4">
-              {capturedPhoto && (
-                <img src={capturedPhoto} alt="Captured" className="w-full h-auto max-w-md mb-4" />
-              )}
-              <button
-                type="button"
-                className="flex items-center justify-center w-full max-w-md py-3 px-5 text-black border rounded-lg hover:bg-red-600 hover:text-white transition duration-200"
-                onClick={triggerFileInput}
-              >
-                Capture Photo
-              </button>
-              <input
-                type="file"
-                accept="image/*"
-                ref={fileInputRef}
-                onChange={handlePhotoCapture}
-                className="hidden"
-              />
+          <div className="flex flex-wrap gap-2 mb-4">
+            {previewLiveSnackImage && (
+              <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div className="relative bg-white p-4 rounded-lg">
+                  <img
+                    src={previewLiveSnackImage}
+                    alt="Preview"
+                    className="max-h-96 max-w-full rounded"
+                  />
+                  <button
+                    onClick={handleCloseLiveSnack}
+                    className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                  >
+                    <XMarkIcon className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+            )}
+            {liveSnackImagePreview.map((image, index) => (
+              <div key={index} className="relative">
+                <img
+                  src={image}
+                  alt={`Hand Wash ${index + 1}`}
+                  className="h-24 w-24 border rounded-md object-cover cursor-pointer"
+                  onClick={() => handleLiveSnackClick(image)}
+                />
+                <button
+                  onClick={() => removeLiveSnackImage(index)}
+                  className="absolute top-0 right-0 text-red-500 hover:text-red-700"
+                >
+                  <XMarkIcon className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+            <div
+              onClick={triggerLiveSnackFileInput}
+              className="h-12 w-12 border rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-200"
+            >
+              <PlusIcon className="w-8 h-8 text-gray-600" />
             </div>
-           
-            <div className="mt-auto w-full">
-              <button
-                type="submit"
-                className="w-full py-3 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition duration-200"
-              >
-                Submit Audit
-              </button>
-            </div>
-    
- 
-           
+            <input
+              type="file"
+              accept="image/*"
+              ref={liveSnackFileInputRef}
+              onChange={handleLiveSnackPhotoCapture}
+              className="hidden"
+              multiple
+            />
+          </div>
+
+          <div className="mt-auto w-full">
+            <button
+              type="submit"
+              className="w-full py-3 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition duration-200"
+            >
+              Submit Audit
+            </button>
           </div>
         </div>
       )}
