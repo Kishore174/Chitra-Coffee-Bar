@@ -24,7 +24,7 @@ const SideMenu = () => {
       name: 'Routes',
       icon: FaRoute,
       subRoutes: [
-        { name: 'Create Routes', path: 'rotes' },
+        { name: 'Create Routes', path: '/rotes' },
         { name: 'Set Routes', path: '/SetRoutes' },
       ]
     }
@@ -58,8 +58,9 @@ const SideMenu = () => {
       >
         <div className="h-full overflow-y-auto">
           <Link to="/dashboard">
-            <div className="flex justify-center mx-auto p-5">
-              <img src={logo} alt="Logo" className="h-16 w-16" />
+         <div className=" flex items-center mx-auto justify-center h-16 w-16 rounded-full bg-red-500  hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">
+
+              <img src={logo} alt="Logo" className="h-17 w-17" />
             </div>
           </Link>
           <ul className="space-y-6 p-4">
@@ -71,7 +72,7 @@ const SideMenu = () => {
                 <li key={item.name}>
                   <div className="flex flex-col">
                     <button
-                      className={`flex items-center justify-between space-x-4 p-2 font-semibold rounded w-full ${isActive ? 'bg-red-500 text-white' : 'text-black'}`}
+                      className={`flex items-center justify-between space-x-4 p-2 poppins-semibold rounded w-full ${isActive ? 'bg-red-500 text-white' : 'text-black'}`}
                       onClick={() => {
                         if (item.subRoutes) {
                           handleDropdownToggle(item.name);
@@ -97,7 +98,7 @@ const SideMenu = () => {
                           <li key={sub.name}>
                             <Link to={sub.path}>
                               <button
-                                className={`flex items-center space-x-4 p-2 font-medium rounded w-full ${location.pathname === sub.path ? 'bg-gray-300 text-black' : 'text-gray-600'}`}
+                                className={`flex items-center space-x-4 p-2 text-md poppins-medium rounded w-full ${location.pathname === sub.path ? 'bg-gray-300 text-black' : 'text-gray-600'}`}
                                 onClick={() => setIsSidebarOpen(false)}
                               >
                                 <span>{sub.name}</span>

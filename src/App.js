@@ -35,6 +35,7 @@ import AuditReport from './components/Report/AuditReport';
 import BakerProducts from './components/Aduit/Pages/Setting/BakerProducts';
 import Dressing from './components/Aduit/Pages/Dressing/Dressing';
 import BrandName from './components/Aduit/Pages/Setting/BrandName';
+import { Toaster } from 'react-hot-toast';
  
  
 
@@ -117,6 +118,19 @@ function App() {
           {/* </main>
         </div>
       </div> */}
+       <Toaster
+          position="top-right"
+          containerStyle={{
+            top: 10,
+          }}
+          toastOptions={{
+            className: "",
+            style: {
+              background: "#575555",
+              color: "white",
+            },
+          }}
+        />
     </BrowserRouter>
   );
 }

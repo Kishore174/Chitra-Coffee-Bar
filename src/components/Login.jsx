@@ -1,8 +1,12 @@
-import React from 'react';
+import React,{useState} from 'react';
 import logo from "../../src/Assets/logo01.png";
 import { Link } from 'react-router-dom';
 
 const Login = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
   return (
     <div className="flex justify-center items-center min-h-screen poppins-regular  ">
       <div className="flex flex-col lg:flex-row w-[90%] md:w-[80%] lg:w-[900px] lg:h-[500px] bg-white rounded-lg shadow-lg overflow-hidden">
@@ -25,6 +29,8 @@ const Login = () => {
               <input
                 type="email"
                 placeholder="Enter your mail"
+              value={formData.email}
+
                 className="w-full p-2 border border-gray-300 rounded"
               />
             </div>
@@ -32,6 +38,8 @@ const Login = () => {
               <label className="block text-sm font-medium mb-1">Password</label>
               <input
                 type="password"
+              value={formData.password}
+
                 placeholder="Enter your password"
                 className="w-full p-2 border border-gray-300 rounded"
               />
@@ -60,13 +68,13 @@ const Login = () => {
               </a>
             </div>
             {/* Sign Up Button */}
-            <button
+            {/* <button
               type="button"
               className="w-full bg-gray-100 text-gray-700 py-2 rounded mt-4 hover:bg-gray-200"
               onClick={() => window.location.href = '/signup'} // Example of redirecting to the Sign Up page
             >
               Sign Up
-            </button>
+            </button> */}
           </form>
         </div>
       </div>

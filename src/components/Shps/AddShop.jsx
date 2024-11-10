@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { createRoute } from '../../API/createRoute';
+import toast from 'react-hot-toast';
 
 const AddShop = () => {
   const [formData, setFormData] = useState({
     shopName: '',
     shopPhoto: '',
     ownerName: '',
+    propertyType:'',
     franchiseType: '',
     phone: '',
     email: '',
@@ -19,6 +22,8 @@ const AddShop = () => {
     gstCertificate: null,
   });
   const [propertyType, setPropertyType] = useState('');
+  const [franchiseType, setFranchiseType] = useState('');
+
 
   const [dialogVisible, setDialogVisible] = useState(false);
   const navigate = useNavigate();
@@ -31,34 +36,45 @@ const AddShop = () => {
     setFormData({ ...formData, [e.target.id]: e.target.files[0] });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit =async (e) => {
     e.preventDefault();
-    setDialogVisible(true);
-    setFormData({
-      shopName: '',
-      shopPhoto: '',
-      ownerName: '',
-      franchiseType: '',
+    try {
+      const res = await createRoute(formData);
+      console.log(res);
+      setDialogVisible(true);
+      setFormData({
+        shopName: '',
+        shopPhoto: '',
+        ownerName: '',
+        franchiseType: '',
+    propertyType:'',
       phone: '',
-      email: '',
-      address: '',
-      location: '',
-      onboardingDate: '',
-      renewalDate: '',
-      fssiCertificateNumber: '',
-      commercialAgreement: null,
-      gstCertificate: null,
-    });
-
-    setTimeout(() => {
-      setDialogVisible(false);
-      navigate("/myshop");
-    }, 3000);
+        email: '',
+        address: '',
+        location: '',
+        onboardingDate: '',
+        renewalDate: '',
+        fssiCertificateNumber: '',
+        commercialAgreement: null,
+        gstCertificate: null,
+      });
+      toast.success(res.message);
+  
+      setTimeout(() => {
+        setDialogVisible(false);
+        navigate("/myshop");
+      }, 3000);
+    } catch (error) {
+      console.log(error)
+    }
+   
   };
   const handlePropertyTypeChange = (e) => {
     setPropertyType(e.target.value);
   };
-
+  const handleFranchiseType = (e) => {
+    setFranchiseType(e.target.value);
+  };
 
   return (
     <div className="p-8 max-w-5xl mx-auto bg-white rounded-lg shadow-md">
@@ -97,7 +113,7 @@ const AddShop = () => {
         ) : propertyType === 'own' ? (
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700" htmlFor="ecard">
-              E-Card
+              Eb Card
             </label>
             <input
               id="ecard"
@@ -154,14 +170,16 @@ const AddShop = () => {
           <label className="block text-sm font-medium text-gray-700" htmlFor="franchiseType">
             Franchise Type
           </label>
-          <input
-            id="franchiseType"
-            type="text"
-            value={formData.franchiseType}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-            placeholder="Enter franchise type"
-          />
+  <select
+     
+    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+  >  
+  value={franchiseType}
+  onChange={handleFranchiseType}
+    <option value="" disabled>Select  Franchise type</option>
+    <option value="rent">Partner Ship</option>
+    <option value="own">Own</option>
+  </select>
         </div>
 
         {/* Phone */}
