@@ -1,47 +1,59 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GrEdit } from 'react-icons/gr';
 import { MdDelete } from 'react-icons/md';
+import { deleteShop, getAllShops } from '../../API/shop';
+import toast from 'react-hot-toast';
+
 
 const MyShop = () => {
-  const shops = [
-    {
-      id: 1,
-      name: 'R K Tea',
-      location: '¾, Main road, Katpadi',
-      contact: '9876543210',
-      email: 'dilip@azerotech.com',
-      franchise: 'Kumar',
-      partnership: 'Partnership',
-      mapLink: 'https://maps.google.com?q=Katpadi',
-    },
-    {
-      id: 2,
-      name: 'Raj Coffee Bar',
-      location: '1, 3rd avenue, Vellore',
-      contact: '9677659728',
-      email: 'dilipvinoth@gmail.com',
-      franchise: 'Kishore',
-      partnership: 'Partnership',
-      mapLink: 'https://maps.google.com?q=Vellore',
-    },
-  ];
+  const [shops, setShops] = useState([]);
+  const [shopToDelete, setShopToDelete] = useState(null);
+  const [isConfirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleEdit = (shop) => {
+    navigate('/addshop', { state: { shop, isEdit: true } });
+  };
+
+  const handleView = (shop) => {
+    navigate('/addshop', { state: { shop, isView: true } });
+  };
+
+  const handleDeleteClick = (shop) => {
+    setShopToDelete(shop);
+    setConfirmDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (shopToDelete) {
+      deleteShop(shopToDelete._id)
+        .then(() => {
+          toast.success(`${shopToDelete.shopName} has been deleted.`);
+          setShops(shops.filter((s) => s._id !== shopToDelete._id));
+          setShopToDelete(null); // Clear the selected shop
+        })
+        .catch((err) => toast.error(`Error: ${err.message}`));
+      setConfirmDialogOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    getAllShops().then((res) => setShops(res.data));
+  }, []);
 
   return (
     <div className="p-4 md:p-6 min-h-screen">
- 
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-6">
         <h1 className="text-2xl md:text-3xl font-semibold mb-4 md:mb-0">My Shop</h1>
         <Link to="/addshop">
           <button className="bg-red-600 text-white rounded-lg poppins-semibold py-1 px-3 flex items-center">
-            {/* <FaPlus className="mr-2" /> */}
-            Add Shop
+            <FaPlus className="mr-2" /> Add Shop
           </button>
         </Link>
       </div>
 
- 
       <div className="overflow-x-auto rounded-lg">
         <table className="w-full bg-white border hidden lg:table">
           <thead className="bg-red-600 text-white">
@@ -55,9 +67,9 @@ const MyShop = () => {
           </thead>
           <tbody>
             {shops.map((shop, index) => (
-              <tr key={shop.id} className="hover:bg-gray-100">
+              <tr key={shop._id} className="hover:bg-gray-100">
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{index + 1}</td>
-                <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.name}</td>
+                <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.shopName}</td>
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">
                   {shop.location} <br />
                   <a href={shop.mapLink} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">
@@ -65,49 +77,39 @@ const MyShop = () => {
                   </a>
                 </td>
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">
-                  {shop.contact} <br />
+                  {shop.phone} <br />
                   <a href={`mailto:${shop.email}`} className="text-blue-500 hover:underline">
                     {shop.email}
                   </a>
                 </td>
-                <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.franchise}</td>
+                <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.franchiseType}</td>
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.partnership}</td>
                 <td className="px-2 py-4 border-b border-gray-200 space-x-2 text-xs md:text-sm">
-                  <button className="text-blue-500 hover:underline">View</button>
-                  <button className="text-green-500 hover:underline"><GrEdit /></button>
-                  <button className="text-red-500 hover:underline"><MdDelete size={20} /></button>
+                  <button className="text-blue-500 hover:underline" onClick={() => handleView(shop)}>View</button>
+                  <button className="text-green-500 hover:underline" onClick={() => handleEdit(shop)}><GrEdit /></button>
+                  <button className="text-red-500 hover:underline" onClick={() => handleDeleteClick(shop)}><MdDelete size={20} /></button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        {/* Mobile View Section */}
-        <div className="lg:hidden">
-          {shops.map((shop, index) => (
-            <div key={shop.id} className="bg-white mb-4 p-4 rounded-lg shadow">
-              <div className="flex justify-between items-center mb-2">
-                <h2 className="text-lg font-medium">{shop.name}</h2>
-                <span className="text-sm text-gray-500">#{index + 1}</span>
-              </div>
-              <div className="text-sm text-gray-700">
-                <p><strong>Location:</strong> {shop.location}</p>
-                <p><strong>Contact:</strong> {shop.contact}</p>
-                <p><strong>Email:</strong> <a href={`mailto:${shop.email}`} className="text-blue-500 hover:underline">{shop.email}</a></p>
-                <p><strong>Franchise Name:</strong> {shop.franchise}</p>
-                <p><strong>Partnership:</strong> {shop.partnership}</p>
-                <a href={shop.mapLink} className="text-blue-500 hover:underline mt-2 block" target="_blank" rel="noopener noreferrer">
-                  View on Map
-                </a>
-              </div>
-              <div className="flex justify-end space-x-2 mt-2">
-                <button className="text-blue-500 hover:underline">View</button>
-                <button className="text-green-500 hover:underline"><GrEdit /></button>
-                <button className="text-red-500 hover:underline"><MdDelete size={20} /></button>
+        {/* Confirmation Dialog */}
+        {isConfirmDialogOpen && (
+          <div className="fixed inset-0 z-20 flex items-center justify-center bg-gray-800 bg-opacity-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-lg font-semibold mb-4">Are you sure you want to delete this shop?</h2>
+              <div className="flex justify-end space-x-4">
+                <button className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onClick={() => setConfirmDialogOpen(false)}>
+                  Cancel
+                </button>
+                <button className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700" onClick={confirmDelete}>
+                  Delete
+                </button>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

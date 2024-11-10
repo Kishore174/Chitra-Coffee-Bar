@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { createRoute } from '../../API/createRoute';
 import toast from 'react-hot-toast';
-import { createShop } from '../../API/shop';
+import { createShop, upDateShop } from '../../API/shop';
 
 const AddShop = () => {
-  const [formData, setFormData] = useState({
+  const location = useLocation ();
+
+  const { shop, isEdit,isView } = location.state || {};
+  const [formData, setFormData] = useState(shop|| {
     shopName: '',
     shopPhoto: '',
     ownerName: '',
@@ -28,7 +31,6 @@ const AddShop = () => {
 
  
   const navigate = useNavigate();
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -38,12 +40,20 @@ const AddShop = () => {
     setFormData({ ...formData, [id]: files[0] });
   };
   
-
+ console.log(shop)
   const handleSubmit =async (e) => {
     e.preventDefault();
     console.log(formData)
     try {
-      const res = await createShop(formData );
+      let res;
+
+      if (isEdit) {
+        res = await upDateShop(shop._id,formData);
+      } else {
+        res = await createShop(formData );
+
+      }
+    
       console.log(res);
       setFormData({
         shopName: '',
@@ -62,23 +72,18 @@ const AddShop = () => {
         gstCertificate: null,
       });
       toast.success(res.message);
-  
+  navigate('/myshop')
      
     } catch (error) {
       console.log(error)
     }
    
   };
-  const handlePropertyTypeChange = (e) => {
-    setPropertyType(e.target.value);
-  };
-  const handleFranchiseType = (e) => {
-    setFranchiseType(e.target.value);
-  };
+   
 
   return (
     <div className="p-8 max-w-5xl mx-auto bg-white rounded-lg shadow-md">
-      <h2 className="text-3xl font-semibold text-gray-800 mb-8">Add Shop</h2>
+     <h2 className="text-2xl font-semibold mb-4">{!shop ? "Add Shop" : isEdit ? "Edit Shop" : "View Shop"}</h2>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
        {/* Property Type */}
 <div className="mb-4">
@@ -318,7 +323,7 @@ const AddShop = () => {
             type="submit"
             className="w-full py-2 px-4 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200"
           >
-            Submit
+         {isEdit ? 'Update Shop' : 'Submit'}
           </button>
         </div>
       </form>
