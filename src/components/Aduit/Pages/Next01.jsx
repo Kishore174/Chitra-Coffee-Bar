@@ -3,11 +3,11 @@ import { CameraIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
-import DiningSection from './insideall/DiningSection';
-import HandWashSection from './insideall/HandWashSection';
-import JuiceBarSection from './insideall/JuiceBarSection';
-import SnackCounterSection from './insideall/SnackCounterSection';
-import DustbinSection from './insideall/DustbinSection';
+import DiningSection from './insideShop/DiningSection';
+import HandWashSection from './insideShop/HandWashSection';
+import JuiceBarSection from './insideShop/JuiceBarSection';
+import SnackCounterSection from './insideShop/SnackCounterSection';
+import DustbinSection from './insideShop/DustbinSection';
 
 const Next01 = () => {
  

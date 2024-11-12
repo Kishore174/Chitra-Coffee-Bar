@@ -18,7 +18,7 @@ import Coffee from './components/Aduit/Pages/audit/Coffee';
 import LiveSnacks from './components/Aduit/Pages/audit/LiveSnacks';
 import Bunzo from './components/Aduit/Pages/audit/Bunzo';
 import Bakshanam from './components/Aduit/Form/Bakshanam';
-import Next01 from './components/Aduit/Pages/Next01';
+// import Next01 from './components/Aduit/Pages/Next01';
 import InsideKitichen from './components/Aduit/Pages/InsideKitichen';
 import OutSideShop from './components/Aduit/Pages/OutSideShop';
 import Branding from './components/Aduit/Pages/Branding';
@@ -37,6 +37,9 @@ import Dressing from './components/Aduit/Pages/Dressing/Dressing';
 import BrandName from './components/Aduit/Pages/Setting/BrandName';
 import { Toaster } from 'react-hot-toast';
 import InsideKitchens from './components/Aduit/Pages/Kitchen/InsideKitchens';
+import LiveSnacksName from './components/Aduit/Pages/Setting/LiveSnacksName';
+import InsideShop from './components/Aduit/Pages/insideall/InsideShop';
+ 
  
  
 
@@ -61,11 +64,13 @@ function App() {
               <Route path="Add-audit/:id" element={<AddAduit />} />
               <Route path="Profile" element={<Profile />} />
               <Route path="Tea/:auditId" element={<TeaAduit />} />
-              <Route path="coffee" element={<Coffee/>} />
+              <Route path="coffee/:auditId" element={<Coffee/>} />
               <Route path="livesnacks" element={<LiveSnacks/>} />
               <Route path="Bunzo" element={<Bunzo/>} />
               <Route path="bakshanm" element={<Bakshanam/>} />
-              <Route path="nextProcess" element={<Next01/>} />
+              <Route path="insideShop" element={<InsideShop/>} />
+
+              {/* <Route path="nextProcess" element={<Next01/>} /> */}
               <Route path="Kitchenarea" element={<InsideKitichen/>} />
               <Route path="Outsideshop" element={<OutSideShop/>} />
               <Route path="Branding" element={<Branding/>} />
@@ -82,6 +87,8 @@ function App() {
               <Route path="backeryproducts" element={<BakerProducts/>} />
               <Route path="Dressing" element={<Dressing/>} />
               <Route path="BrandName" element={<BrandName/>} />
+              <Route path="LiveSnackName" element={<LiveSnacksName/>} />
+
               <Route path="kitchen" element={<InsideKitchens/>} />
 
 

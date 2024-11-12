@@ -26,11 +26,11 @@ const AddAudit = () => {
   }; 
   const audits = [
     { id: 1, image: tea, alt: "tea", label: "Tea", link: `/tea/${id}` },
-    { id: 2, image: coffee, alt: "coffee", label: "Coffee", link: "/coffee" },
+    { id: 2, image: coffee, alt: "coffee", label: "Coffee", link: `/coffee/${id}` },
     { id: 3, image: livesnacks, alt: "snacks", label: "Live Snacks", link: "/livesnacks" },
     { id: 4, image: bakery, alt: "bunzo", label: "Snacks", link: "/bunzo" },
-    { id: 5, image: insideshop, alt: "insideshop", label: "Inside Shop", link: "/nextProcess" },
-    { id: 6, image: insideshop, alt: "insidektchen", label: "Inside Kitchen", link: "/Kitchenarea" },
+    { id: 5, image: insideshop, alt: "insideshop", label: "Inside Shop", link: "/insideShop" },
+    { id: 6, image: insideshop, alt: "insidektchen", label: "Inside Kitchen", link: "/kitchen" },
     { id: 7, image: outsideshop, alt: "outsidektchen", label: "Outside Kitchen", link: "/Outsideshop" },
     { id: 8, image: WallBranding, alt: "wallBranding", label: "Wall Branding", link: "/Branding" },
     { id: 9, image: emp, alt: "employee", label: "Employee", link: "/employee" },

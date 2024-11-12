@@ -5,8 +5,6 @@ import { MdKeyboardDoubleArrowLeft } from 'react-icons/md';
 
 const InsideKitchens = () => {
   const navigate = useNavigate();
-
-  // State to hold data from all kitchen items
   const [kitchenData, setKitchenData] = useState({
     snacks: {},
     milk: {},
@@ -42,6 +40,7 @@ const InsideKitchens = () => {
         <KitchenItem title="Sink" itemType="sink" onUpdate={handleItemUpdate} />
         <KitchenItem title="Work Table" itemType="workTable" onUpdate={handleItemUpdate} />
         <KitchenItem title="Kitchen Floor" itemType="kitchenFloor" onUpdate={handleItemUpdate} />
+        <KitchenItem title="Kitchen Light" itemType="Kitchen Light" onUpdate={handleItemUpdate} />
         <KitchenItem title="Exhaust Fan" itemType="exhaustFan" onUpdate={handleItemUpdate} />
       </div>
       <button

@@ -9,6 +9,8 @@ const Setting = () => {
   const settings = [
     { name: 'Snacks', icon: <MdOutlineBakeryDining className="h-8 w-8 text-red-500" />, path: '/backeryproducts ' },
     { name: 'Brand Name', icon: <BrandingWatermarkSharp className="h-8 w-8 text-red-500" />, path: '/BrandName ' },
+    { name: 'LiveSnacks', icon: <BrandingWatermarkSharp className="h-8 w-8 text-red-500" />, path: '/LiveSnackName ' },
+
  
   ];
 

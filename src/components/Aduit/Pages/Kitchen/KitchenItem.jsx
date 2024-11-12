@@ -11,31 +11,53 @@ const KitchenItem = ({ title, itemType, onUpdate }) => {
 
   const handlePhotoCapture = async (e) => {
     const files = Array.from(e.target.files);
-    const watermarkedImages = await Promise.all(files.map(async (file) => {
-      const reader = new FileReader();
-      return new Promise((resolve) => {
-        reader.onloadend = () => {
-          const img = new Image();
-          img.src = reader.result;
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-            ctx.font = '16px Arial';
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-            ctx.fillRect(10, img.height - 20, img.width - 20, 20);
-            ctx.fillStyle = 'black';
-            ctx.fillText('Watermark', 15, img.height - 5);
-            resolve(canvas.toDataURL());
+    
+    // Get geolocation and current date-time
+    navigator.geolocation.getCurrentPosition((position) => {
+      const { latitude, longitude } = position.coords;
+      const currentDate = new Date();
+      const formattedDate = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`;
+      
+      // Iterate over each selected image file
+      const watermarkedImages = files.map(async (file) => {
+        const reader = new FileReader();
+        return new Promise((resolve) => {
+          reader.onloadend = () => {
+            const img = new Image();
+            img.src = reader.result;
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const ctx = canvas.getContext('2d');
+              canvas.width = img.width;
+              canvas.height = img.height;
+              ctx.drawImage(img, 0, 0);
+              
+              // Set font for the text
+              ctx.font = '16px Arial';
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+              ctx.fillRect(10, img.height - 40, img.width - 20, 40); // Background for text
+              
+              // Set the color for text
+              ctx.fillStyle = 'black';
+              
+              // Add geolocation and date-time information as watermark
+              ctx.fillText(`Location: ${latitude.toFixed(2)}, ${longitude.toFixed(2)}`, 15, img.height - 25);
+              ctx.fillText(`Date/Time: ${formattedDate}`, 15, img.height - 5);
+              
+              resolve(canvas.toDataURL()); // Resolve with the watermarked image as Data URL
+            };
           };
-        };
-        reader.readAsDataURL(file);
+          reader.readAsDataURL(file);
+        });
       });
-    }));
-    setImagePreview((prev) => [...prev, ...watermarkedImages]);
+  
+      // Wait for all images to be processed and then set the state
+      Promise.all(watermarkedImages).then((result) => {
+        setImagePreview((prev) => [...prev, ...result]); // Add watermarked images to state
+      });
+    });
   };
+  
 
   const removeImage = (index) => {
     setImagePreview((prev) => prev.filter((_, i) => i !== index));
