@@ -1,21 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { createAuditor, upDateAuditor } from '../../../../API/auditor';
+import toast from 'react-hot-toast';
+import { dropDownRoutes, getRoute } from '../../../../API/createRoute';
 
 const AddAuditer = () => {
   const navigate = useNavigate();
-  const [dialogVisible, setDialogVisible] = useState(false);
+  const location = useLocation ();
+  
+  const { auditor, isEdit,isView } = location.state || {};
 
   // State to store form values
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(auditor||{
     name: '',
     email: '',
-    mobile: '',
+     phone: '',
     address: '',
-    documentType: 'aadhar', // default document type
-    documentFile: null, // file upload
+    documentType: 'aadhar', //  
+    documentFile: null,  
   });
-
+ 
+  const [selectRoute, setSelectRoute] = useState([]);
+ 
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,19 +35,42 @@ const AddAuditer = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit =async (e) => {
     e.preventDefault();
     console.log('Form Data:', formData);
-    setDialogVisible(true); // Show success dialog
+    try {
+      let res;
 
-    setTimeout(() => {
-      setDialogVisible(false);
-      navigate("/Auditers"); // Navigate after delay
-    }, 3000);
+      if (isEdit) {
+        res = await upDateAuditor(auditor._id,formData);
+      } else {
+       res = await createAuditor(formData );
+
+      }
+      setFormData({
+        name: '',
+        email: '',
+         phone: '',
+        address: '',
+        documentType: 'aadhar', //  
+        route:"",
+        documentFile: null,  
+      }
+    );
+    toast.success(res.message);
+    navigate('/Auditers')
+  } catch (error) {
+    console.log(error)
+  }
   };
-
+  useEffect(() => {
+    dropDownRoutes().then((data) => {
+      setSelectRoute(data.data);
+    });
+  }, []);
   return (
     <div className="max-w-4xl mx-auto my-8 p-6 bg-white shadow-lg rounded-lg">
+           <h2 className="text-2xl font-semibold mb-4">{!auditor? "Add Auditor" : isEdit ? "Edit Auditor" : "View Auditor"}</h2>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700">Name</label>
@@ -72,9 +102,9 @@ const AddAuditer = () => {
           <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
           <input
             type="tel"
-            name="mobile"
+            name="phone"
             placeholder="Enter mobile number"
-            value={formData.mobile}
+            value={formData. phone}
             onChange={handleChange}
             required
             className="mt-1 p-2 border border-gray-300 rounded-md w-full"
@@ -116,26 +146,36 @@ const AddAuditer = () => {
             required
           />
         </div>
-
+        <div className="col-span-1">
+          <label className="block text-sm font-medium text-gray-700">
+            Route<span className="text-red-500">*</span>
+          </label>
+          <select
+            name="route"
+            value={formData.route}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-black focus:border-black"
+            required
+          >
+            <option value="select Route" >
+              Select Route
+            </option>
+            {selectRoute.map((e) => (
+              <option key={e._id} value={e._id}>{e.name}</option>
+            ))}
+          </select>
+        </div>
         <div className="col-span-full">
           <button
             type="submit"
             className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition duration-200"
           >
-            Submit
+            {isEdit ? 'Update Auditor' : 'Submit'}
           </button>
         </div>
       </form>
 
-      {/* Success Dialog */}
-      {dialogVisible && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white w-full max-w-sm rounded-lg p-6 shadow-lg text-center">
-            <FaCheckCircle className="text-green-500 text-5xl mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-800">Auditor added successfully!</h3>
-          </div>
-        </div>
-      )}
+    
     </div>
   );
 };

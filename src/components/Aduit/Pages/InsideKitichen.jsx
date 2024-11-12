@@ -1355,8 +1355,8 @@ const removeSinkImage = (index) => {
 
               <button className='bg-red-500 text-white  w-5/6 py-2  mx-auto flex items-center text-center  mt-12  rounded-md hover:bg-red-600'>
                   <span className='text-center  mx-auto'> Go Outside Shop</span>
-              </button>
-          </Link> */}
+              </butto                                                      n>
+          </Link> */}                                           
              <Link to="/add-audit">
        
        <button className='bg-red-500 text-white  w-5/6 py-2  mx-auto flex items-center text-center  mt-12  rounded-md hover:bg-red-600'>

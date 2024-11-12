@@ -1,68 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import { Link, useNavigate } from 'react-router-dom';
-
 import { BsArrowRight } from "react-icons/bs";
-import { auditdata } from '../../Assets/data';
-const daysOfWeek = [ 'Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+import { getAllAudits } from '../../API/audits';
+
+const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const Table = () => {
-  const [selectedDate, setSelectedDate] = useState(dayjs().startOf('week'));
-  const navigate = useNavigate(); 
-  const audits = [
-    {
-      id: 1,
-      shopName: 'R K Tea',
-      ownerName: 'Kumar',
-      address: '¾, Main road, Katpadi',
-      auditStatus: 'Pending',
-      contactNumber: '9876543210',
-      email: 'dilip@azerotech.com',
-      mapLink: 'https://maps.google.com?q=Katpadi',
-     
-    },
-    {
-      id: 2,
-      shopName: 'Raj Coffee Bar',
-      ownerName: 'Kumar',
-      address: '1, 3rd avenue, Vellore',
-      auditStatus: 'Completed',
-      contactNumber: '9876543210',
-      email: 'dilipvinoth@gmail.com',
-      mapLink: 'https://maps.google.com?q=Katpadi',
-    
-    },
-    {
-      id: 3,
-      shopName: 'Coffee Corner',
-      ownerName: 'Ravi',
-      address: '5th street, Vellore',
-      auditStatus: 'Pending',
-      contactNumber: '9876541234',
-      email: 'ravi@coffee.com',
-      mapLink: 'https://maps.google.com?q=Vellore',
-      date: dayjs().add(1, 'day').format('YYYY-MM-DD'),  
-    },
-  ];
+  const [selectedDate, setSelectedDate] = useState(dayjs().startOf('week').add(1, 'day'));
+  const [audits, setAudits] = useState([]);
+  const navigate = useNavigate();
 
-  const currentWeekDates = Array(7).fill().map((_, index) => {
-    return dayjs().startOf('week').add(index, 'day');
+  const currentWeekDates = Array(6).fill().map((_, index) => {
+    return dayjs().startOf('week').add(index + 1, 'day');
   });
 
-  
   const filteredAudits = audits.filter(audit => {
-    return dayjs(audit.date).isSame(selectedDate, 'day');
+    return dayjs(audit.auditDate).isSame(selectedDate, 'day');
   });
 
   const handleDateClick = (date) => {
     setSelectedDate(date);
-    console.log("Selected Date: ", date.format('YYYY-MM-DD'));
   };
+
+  useEffect(() => {
+    getAllAudits().then((res) => setAudits(res.data));
+  }, []);
 
   return (
     <div className="p-4 md:p-6 min-h-screen">
-  
-      <div className="flex justify-center w-6/6 items-center space-x-2 mb-4">
+      <div className="flex justify-center w-full items-center space-x-2 mb-4">
         {currentWeekDates.map((date, index) => (
           <button
             key={index}
@@ -75,12 +42,14 @@ const Table = () => {
         ))}
       </div>
 
-      {/* Audit Table */}
-      <h2 className="text-2xl poppins-semibold mb-4">MY AUDIT</h2>
-      <div className="table-container">
-        
+      <div className='flex justify-between'>
+        <h2 className="text-2xl poppins-semibold">MY AUDIT</h2>
+        <button className="bg-red-600 text-white rounded-lg poppins-semibold py-1 px-3 flex items-center">
+          Schedule
+        </button>
+      </div>
 
-        {/* Your table content */}
+      <div className="table-container">
         <div className="hidden md:block overflow-x-auto rounded-lg">
           <table className="min-w-full bg-white border border-gray-200">
             <thead className="bg-red-600 text-white poppins-semibold">
@@ -93,48 +62,48 @@ const Table = () => {
               </tr>
             </thead>
             <tbody>
-            {filteredAudits.length > 0 ? (
-              filteredAudits.map((audit, index) => (
-                <tr key={audit.id}>
-                  <td className="px-4 py-4 border-b border-gray-200 text-sm text-gray-700">{index + 1}</td>
-                  <td className="px-4 py-4 border-b border-gray-200 text-sm text-gray-700">
-                    <div className="poppins-regular">
-                      <div>{audit.shopName}</div>
-                      <div>{audit.ownerName}</div>
-                      <div>{audit.address}</div>
-                      <a href={audit.mapLink} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">
-                        Map Link
+              {filteredAudits.length > 0 ? (
+                filteredAudits.map((audit, index) => (
+                  <tr key={audit.id}>
+                    <td className="px-4 py-4 border-b border-gray-200 text-sm text-gray-700">{index + 1}</td>
+                    <td className="px-4 py-4 border-b border-gray-200 text-sm text-gray-700">
+                      <div className="poppins-regular">
+                        <div>{audit.shop?.shopName}</div>
+                        <div>{audit.shop?.ownerName}</div>
+                        <div>{audit.shop?.address}</div>
+                        <a href={audit.location} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">
+                          Map Link
+                        </a>
+                      </div>
+                    </td>
+                    <td className={`px-4 py-4 border-b poppins-regular border-gray-200 text-sm ${audit.status === 'Completed' ? 'text-green-600' : 'text-red-600'}`}>
+                      {audit.status}
+                    </td>
+                    <td className="px-4 py-4 border-b poppins-regular border-gray-200 text-sm text-gray-700">
+                      <div>{audit.shop.phone}</div>
+                      <a href={`mailto:${audit.shop?.email}`} className="text-blue-500 hover:underline">
+                        {audit.shop?.email}
                       </a>
-                    </div>
-                  </td>
-                  <td className={`px-4 py-4 border-b poppins-regular border-gray-200 text-sm ${audit.auditStatus === 'Completed' ? 'text-green-600' : 'text-red-600'}`}>
-                    {audit.auditStatus}
-                  </td>
-                  <td className="px-4 py-4 border-b poppins-regular border-gray-200 text-sm text-gray-700">
-                    <div>{audit.contactNumber}</div>
-                    <a href={`mailto:${audit.email}`} className="text-blue-500 hover:underline">
-                      {audit.email}
-                    </a>
-                  </td>
-                  <td className="px-4 py-4 border-b poppins-regular border-gray-200 text-sm">
-                    {audit.auditStatus === 'Pending' ? (
-                      <Link to="/add-audit">
-                        <BsArrowRight className="text-red-600 text-2xl" />
-                      </Link>
-                    ) : (
-                      <Link to= "/Report" >
-                      <button  className="text-blue-500 poppins-regular">View </button>
-                      </Link>
-                    )}
-                  </td>
+                    </td>
+                    <td className="px-4 py-4 border-b poppins-regular border-gray-200 text-sm">
+                      {audit.status === 'pending' ? (
+                        <Link to={`/add-audit/${audit._id}`}>
+                          <BsArrowRight className="text-red-600 text-2xl" />
+                        </Link>
+                      ) : (
+                        <Link to="/Report">
+                          <button className="text-blue-500 poppins-regular">View</button>
+                        </Link>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="px-4 py-4 text-center text-sm text-gray-700">No audits available for this date</td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" className="px-4 py-4 text-center text-sm text-gray-700">No audits available for this date</td>
-              </tr>
-            )}
-          </tbody>
+              )}
+            </tbody>
           </table>
         </div>
       </div>

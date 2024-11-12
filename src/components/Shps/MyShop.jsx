@@ -6,12 +6,17 @@ import { MdDelete } from 'react-icons/md';
 import { deleteShop, getAllShops } from '../../API/shop';
 import toast from 'react-hot-toast';
 
-
 const MyShop = () => {
   const [shops, setShops] = useState([]);
   const [shopToDelete, setShopToDelete] = useState(null);
   const [isConfirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Set items per page
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getAllShops().then((res) => setShops(res.data));
+  }, []);
 
   const handleEdit = (shop) => {
     navigate('/addshop', { state: { shop, isEdit: true } });
@@ -32,16 +37,20 @@ const MyShop = () => {
         .then(() => {
           toast.success(`${shopToDelete.shopName} has been deleted.`);
           setShops(shops.filter((s) => s._id !== shopToDelete._id));
-          setShopToDelete(null); // Clear the selected shop
+          setShopToDelete(null);
         })
         .catch((err) => toast.error(`Error: ${err.message}`));
       setConfirmDialogOpen(false);
     }
   };
 
-  useEffect(() => {
-    getAllShops().then((res) => setShops(res.data));
-  }, []);
+  // Pagination controls
+  const totalPages = Math.ceil(shops.length / itemsPerPage);
+  const paginatedShops = shops.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="p-4 md:p-6 min-h-screen">
@@ -66,9 +75,9 @@ const MyShop = () => {
             </tr>
           </thead>
           <tbody>
-            {shops.map((shop, index) => (
+            {paginatedShops.map((shop, index) => (
               <tr key={shop._id} className="hover:bg-gray-100">
-                <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{index + 1}</td>
+                <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.shopName}</td>
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">
                   {shop.location} <br />
@@ -93,6 +102,19 @@ const MyShop = () => {
             ))}
           </tbody>
         </table>
+
+        {/* Pagination */}
+        <div className="flex justify-center mt-4">
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index}
+              className={`px-4 py-2 mx-1 rounded ${currentPage === index + 1 ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
 
         {/* Confirmation Dialog */}
         {isConfirmDialogOpen && (

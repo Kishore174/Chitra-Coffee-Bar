@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link, useNavigate, useParams } from "react-router-dom"; // Import useNavigate
 import tea from "../../../Assets/tea.jpg";
 import coffee from "../../../Assets/coffee.jpg";
 import livesnacks from "../../../Assets/livesnacks.jpg";
@@ -16,28 +16,29 @@ import wallPanting from '../../../Assets/wall panting.jpg';
 import dress from '../../../Assets/dress.jpg';
 
 
-const audits = [
-  { id: 1, image: tea, alt: "tea", label: "Tea", link: "/tea" },
-  { id: 2, image: coffee, alt: "coffee", label: "Coffee", link: "/coffee" },
-  { id: 3, image: livesnacks, alt: "snacks", label: "Live Snacks", link: "/livesnacks" },
-  { id: 4, image: bakery, alt: "bunzo", label: "Snacks", link: "/bunzo" },
-  { id: 5, image: insideshop, alt: "insideshop", label: "Inside Shop", link: "/nextProcess" },
-  { id: 6, image: insideshop, alt: "insidektchen", label: "Inside Kitchen", link: "/Kitchenarea" },
-  { id: 7, image: outsideshop, alt: "outsidektchen", label: "Outside Kitchen", link: "/Outsideshop" },
-  { id: 8, image: WallBranding, alt: "wallBranding", label: "Wall Branding", link: "/Branding" },
-  { id: 9, image: emp, alt: "employee", label: "Employee", link: "/employee" },
-  { id: 10, image: stock, alt: "stock", label: "Stock & Store", link: "/Stock" },
-  { id: 11, image: wallPanting, alt: "panting", label: "Wall Panting", link: "/Wallpanting" },
-  { id: 12, image: dress, alt: "dress", label: "Dressing", link: "/Dressing" },
-
-];
-
 const AddAudit = () => {
   const navigate = useNavigate(); // Initialize navigate
-
+  const {id} = useParams()
   const handleNextProcess = () => {
-    navigate('/Recording'); // Navigate to the next process
+    // navigate('/Recording');
+    navigate('/Report');  
+     
   }; 
+  const audits = [
+    { id: 1, image: tea, alt: "tea", label: "Tea", link: `/tea/${id}` },
+    { id: 2, image: coffee, alt: "coffee", label: "Coffee", link: "/coffee" },
+    { id: 3, image: livesnacks, alt: "snacks", label: "Live Snacks", link: "/livesnacks" },
+    { id: 4, image: bakery, alt: "bunzo", label: "Snacks", link: "/bunzo" },
+    { id: 5, image: insideshop, alt: "insideshop", label: "Inside Shop", link: "/nextProcess" },
+    { id: 6, image: insideshop, alt: "insidektchen", label: "Inside Kitchen", link: "/Kitchenarea" },
+    { id: 7, image: outsideshop, alt: "outsidektchen", label: "Outside Kitchen", link: "/Outsideshop" },
+    { id: 8, image: WallBranding, alt: "wallBranding", label: "Wall Branding", link: "/Branding" },
+    { id: 9, image: emp, alt: "employee", label: "Employee", link: "/employee" },
+    { id: 10, image: stock, alt: "stock", label: "Stock & Store", link: "/Stock" },
+    { id: 11, image: wallPanting, alt: "panting", label: "Wall Panting", link: "/Wallpanting" },
+    { id: 12, image: dress, alt: "dress", label: "Dressing", link: "/Dressing" },
+  
+  ];
 
   return (
 

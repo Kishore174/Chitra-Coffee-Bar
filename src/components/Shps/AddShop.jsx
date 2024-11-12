@@ -44,7 +44,7 @@ const AddShop = () => {
   const handleSubmit =async (e) => {
     e.preventDefault();
     console.log(formData)
-    try {
+   try {
       let res;
 
       if (isEdit) {
@@ -53,7 +53,7 @@ const AddShop = () => {
         res = await createShop(formData );
 
       }
-    
+     
       console.log(res);
       setFormData({
         shopName: '',

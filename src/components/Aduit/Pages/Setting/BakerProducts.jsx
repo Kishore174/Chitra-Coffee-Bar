@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import { PlusIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
-import Select from 'react-select'; // Import react-select
+import Select from 'react-select';
+import { createProduct } from '../../../../API/settings';
+import toast from 'react-hot-toast';
 
 const BakerProducts = () => {
   const [brandName, setBrandName] = useState('');
   const [productNames, setProductNames] = useState(['']);
-  const [submittedData, setSubmittedData] = useState(null);
+  const [submissions, setSubmissions] = useState([]);
 
-  // Sample data for select options
   const brandOptions = [
     { value: 'brand1', label: 'Brand 1' },
     { value: 'brand2', label: 'Brand 2' },
     { value: 'brand3', label: 'Brand 3' },
     { value: 'brand4', label: 'Brand 4' },
-    // Add more brands as needed
   ];
 
   const handleBrandNameChange = (selectedOption) => {
-    setBrandName(selectedOption); // Update brandName with the selected value
+    setBrandName(selectedOption);
   };
 
   const handleProductNameChange = (index, e) => {
@@ -27,7 +27,7 @@ const BakerProducts = () => {
   };
 
   const addProductField = () => {
-    setProductNames([...productNames, '']); // Add a new empty product input field
+    setProductNames([...productNames, '']);
   };
 
   const removeProductField = (index) => {
@@ -35,98 +35,114 @@ const BakerProducts = () => {
     setProductNames(newProductNames);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    setSubmittedData({ brandName: brandName.label, productNames });
+    if (brandName && productNames.some(name => name)) {
+      const newSubmission = {
+        brandName: brandName.name,
+        productNames,
+      };
+      setSubmissions([...submissions, newSubmission]);
+      setBrandName('');
+      setProductNames(['']);
+     const res = await createProduct({name:brandName.name})
+    toast.success(res.message)
+    }
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-8 flex space-x-8">
-      {/* Form Section */}
-      <div className="w-2/3 bg-gray-100 rounded-lg shadow-lg p-6">
-        <div className="flex-1 bg-white rounded-lg shadow-lg p-8">
-          <h2 className="text-3xl poppins-semibold text-center text-gray-800 mb-6">Enter Bakery Products</h2>
+    <><div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Bakery Product Entry</h2>
 
-       
-          <div className="mb-6">
-            <label htmlFor="brand-name" className="block text-sm poppins-semibold text-gray-700">Brand Name</label>
-            <Select
-              id="brand-name"
-              value={brandName}
-              onChange={handleBrandNameChange}
-              options={brandOptions}
-              isSearchable
-              placeholder="Search and select a brand"
-              className="mt-2"
-            />
-          </div>
-
-          {/* Product Names */}
-          <div className="mb-6">
-            <label className="block text-sm poppins-semibold text-gray-700">Product Names</label>
-            {productNames.map((productName, index) => (
-              <div key={index} className="flex items-center space-x-4 mb-4">
-                <input
-                  type="text"
-                  value={productName}
-                  onChange={(e) => handleProductNameChange(index, e)}
-                  placeholder={`Enter Product Name ${index + 1}`}
-                  className="w-full p-3 border poppins-light border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeProductField(index)}
-                  className="text-red-600 hover:text-red-800 transition duration-200"
-                >
-                  <TrashIcon className="h-5 w-5" />
-                </button>
-              </div>
-            ))}
-
-            {/* Add Product Button */}
-            <button
-              type="button"
-              onClick={addProductField}
-              className="py-2 px-6 bg-red-600 poppins-regular text-white rounded-md hover:bg-red-700 transition duration-200 flex items-center"
-            >
-              <PlusIcon className="h-5 w-5 mr-2" />
-              Add Another Product
-            </button>
-          </div>
-
-          {/* Submit Button */}
-          <div className="mt-4">
-            <button
-              type="submit"
-              onClick={handleSubmit}
-              className="w-full py-3 bg-red-600 poppins-regular text-white font-semibold rounded-lg hover:bg-red-700 transition duration-200 flex items-center justify-center"
-            >
-              <CheckCircleIcon className="h-5 w-5 mr-2" />
-              Submit
-            </button>
-          </div>
-        </div>
+      {/* Brand Selection */}
+      <div className="mb-6">
+        <label className="block text-lg font-medium text-gray-700 mb-2">Brand Name</label>
+        <Select
+          value={brandName}
+          onChange={handleBrandNameChange}
+          options={brandOptions}
+          isSearchable
+          placeholder="Select a brand"
+          className="border border-gray-300 rounded-lg" />
       </div>
 
-      {/* Display Submitted Data */}
-      {submittedData && (
-        <div className="w-1/3 bg-gray-100 rounded-lg shadow-lg p-6">
-          <h3 className="text-xl poppins-semibold text-gray-800 mb-4">Submitted Data</h3>
-          <div className="mb-4">
-            <strong className="text-sm text-gray-700">Brand Name:</strong>
-            <p className="text-gray-800">{submittedData.brandName}</p>
-          </div>
-          <div>
-            <strong className="text-sm text-gray-700">Product Names:</strong>
-            <ul className="list-disc pl-6 text-gray-800">
-              {submittedData.productNames.map((productName, index) => (
-                <li key={index}>{productName}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
+      {/* Product Names */}
+      <div className="mb-6">
+  <label className="block text-lg font-medium text-gray-700 mb-4">Product Names</label>
+  {productNames.map((productName, index) => (
+    <div key={index} className="flex items-center space-x-3 mb-3">
+      <input
+        type="text"
+        value={productName}
+        onChange={(e) => handleProductNameChange(index, e)}
+        placeholder={`Product Name ${index + 1}`}
+        className="flex-grow py-2 px-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 ease-in-out"
+      />
+      <button
+        type="button"
+        onClick={() => removeProductField(index)}
+        className="text-red-600 hover:text-red-800 transition duration-150 ease-in-out"
+      >
+        <TrashIcon className="h-5 w-5" />
+      </button>
     </div>
+  ))}
+
+  {/* Add Product Button (Visible after the last product input) */}
+  <div className="flex justify-end mt-4">
+    <button
+      type="button"
+      onClick={addProductField}
+      className="bg-red-500 py-2 px-4 rounded-full text-white font-semibold hover:bg-red-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200 ease-in-out flex items-center justify-center shadow-md"
+    >
+      <PlusIcon className="h-5 w-5 text-white" />
+      <span className="ml-2">Add Product</span>
+    </button>
+  </div>
+</div>
+
+
+      {/* Submit Button */}
+      <button
+        type="button"
+        onClick={handleSubmit}
+        className="w-full py-3 mt-4 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition flex items-center justify-center"
+      >
+        <CheckCircleIcon className="h-5 w-5 mr-2" />
+        Submit
+      </button>
+
+      {/* Display Submitted Data */}
+
+    </div><div className='max-w-4xl mx-auto'>
+        {submissions.length > 0 && (
+          <div className="mt-8  ">
+           
+            <table className="w-full border text-left">
+              <thead>
+                <tr className="bg-red-500 text-white">
+                  <th className="py-3 px-4 font-medium">Brand Name</th>
+                  <th className="py-3 px-4 font-medium">Product Names</th>
+                </tr>
+              </thead>
+              <tbody>
+                {submissions.map((submission, index) => (
+                  <tr key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
+                    <td className="py-4 px-4 text-gray-800">{submission.brandName}</td>
+                    <td className="py-4 px-4 text-gray-800">
+                      <ul className="list-disc pl-5 space-y-1">
+                        {submission.productNames.map((name, idx) => (
+                          <li key={idx}>{name}</li>
+                        ))}
+                      </ul>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div></>
   );
 };
 

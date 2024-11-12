@@ -36,6 +36,7 @@ import BakerProducts from './components/Aduit/Pages/Setting/BakerProducts';
 import Dressing from './components/Aduit/Pages/Dressing/Dressing';
 import BrandName from './components/Aduit/Pages/Setting/BrandName';
 import { Toaster } from 'react-hot-toast';
+import InsideKitchens from './components/Aduit/Pages/Kitchen/InsideKitchens';
  
  
 
@@ -57,9 +58,9 @@ function App() {
               <Route path="myshop" element={<MyShop />} />
               <Route path="AddShop" element={<AddShop />} />
               <Route path="aduit" element={<Table />} />
-              <Route path="Add-audit" element={<AddAduit />} />
+              <Route path="Add-audit/:id" element={<AddAduit />} />
               <Route path="Profile" element={<Profile />} />
-              <Route path="Tea" element={<TeaAduit />} />
+              <Route path="Tea/:auditId" element={<TeaAduit />} />
               <Route path="coffee" element={<Coffee/>} />
               <Route path="livesnacks" element={<LiveSnacks/>} />
               <Route path="Bunzo" element={<Bunzo/>} />
@@ -81,6 +82,8 @@ function App() {
               <Route path="backeryproducts" element={<BakerProducts/>} />
               <Route path="Dressing" element={<Dressing/>} />
               <Route path="BrandName" element={<BrandName/>} />
+              <Route path="kitchen" element={<InsideKitchens/>} />
+
 
 
 

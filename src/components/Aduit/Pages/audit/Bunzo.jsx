@@ -1,49 +1,33 @@
 import React, { useState, useRef, useEffect } from 'react';
 import OtherBrand from '../../Form/OtherBrands';
 import { Link } from 'react-router-dom';
-import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline'; // Import icons
+import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline';
+
 const Bunzo = () => {
-  const [activeTab, setActiveTab] = useState('Bunzo'); // Set default to Bunzo
+  const [activeTab, setActiveTab] = useState('Bunzo');
   const [details, setDetails] = useState({ productName: '', quantity: 0, expirationDate: '' });
+  const [submittedProducts, setSubmittedProducts] = useState([]);
   const [liveSnackImagePreview, setLiveSnackImagePreview] = useState([]);
   const [previewLiveSnackImage, setPreviewLiveSnackImage] = useState(null);
   const liveSnackFileInputRef = useRef(null);
 
-  // Example product details for each brand
   const productDetails = {
-    Bunzo: {
-      productName: '',
-      quantity: "",
-      expirationDate: '',
-    },
-    bakshanm: {
-      productName: '',
-      quantity: '',
-      expirationDate: '',
-    },
-    OtherBrands: {
-      productName: '',
-      quantity: '',
-      expirationDate: '',
-    },
+    Bunzo: { productName: '', quantity: '', expirationDate: '' },
+    bakshanm: { productName: '', quantity: '', expirationDate: '' },
+    OtherBrands: { productName: '', quantity: '', expirationDate: '' },
   };
 
   const tabs = Object.keys(productDetails);
 
   useEffect(() => {
-    // Set default details for Bunzo on initial render
     setDetails(productDetails['Bunzo']);
   }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setDetails((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
-    }));
+    setDetails((prevDetails) => ({ ...prevDetails, [name]: value }));
   };
 
-  // Handle the image capture and preview
   const handleLiveSnackPhotoCapture = (e) => {
     const files = e.target.files;
     const newImages = Array.from(files).map((file) => URL.createObjectURL(file));
@@ -56,37 +40,34 @@ const Bunzo = () => {
     }
   };
 
-  // Handle the image preview on click
   const handleLiveSnackClick = (image) => {
     setPreviewLiveSnackImage(image);
   };
 
-  // Handle closing the image preview
   const handleCloseLiveSnack = () => {
     setPreviewLiveSnackImage(null);
   };
 
-  // Remove image from preview list
   const removeLiveSnackImage = (index) => {
-    setLiveSnackImagePreview((prevImages) =>
-      prevImages.filter((_, i) => i !== index)
-    );
+    setLiveSnackImagePreview((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
+  const handleSubmit = () => {
+    setSubmittedProducts((prev) => [...prev, { ...details, tab: activeTab }]);
+    setDetails(productDetails[activeTab]); 
+  };
 
   return (
-    <div className="p-4 border max-w-screen-md mx-auto rounded shadow-md bg-white">
+    <><div className="p-4 border  max-w-4xl mx-auto rounded shadow-md bg-white">
       <div className="flex space-x-2 mb-4">
         {tabs.map((tab) => (
           <button
             key={tab}
-            className={`flex-1 py-2 px-2 text-center text-sm sm:text-base ${
-              activeTab === tab ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600'
-            } rounded`}
+            className={`flex-1 py-2 px-2 text-center text-sm sm:text-base ${activeTab === tab ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600'} rounded`}
             onClick={() => {
               setActiveTab(tab);
               setDetails(productDetails[tab]);
-            }}
+            } }
           >
             {tab}
           </button>
@@ -97,7 +78,6 @@ const Bunzo = () => {
         <div className="border-t pt-4">
           <h2 className="text-xl font-bold mb-4">{activeTab} Product Details</h2>
           <div className="flex items-center space-x-4">
-            {/* Product Name as a Select field for Bunzo and Bakshan */}
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700" htmlFor="product-name">
                 Product Name
@@ -111,7 +91,6 @@ const Bunzo = () => {
                   className="mt-1 p-2 border rounded w-full"
                 >
                   <option value="">Select Product</option>
-                  {/* Add options for each product */}
                   <option value="Product1">Product 1</option>
                   <option value="Product2">Product 2</option>
                   <option value="Product3">Product 3</option>
@@ -124,8 +103,7 @@ const Bunzo = () => {
                   value={details.productName}
                   onChange={handleChange}
                   placeholder="Enter product name"
-                  className="mt-1 p-2 border rounded w-full"
-                />
+                  className="mt-1 p-2 border rounded w-full" />
               )}
             </div>
 
@@ -140,23 +118,23 @@ const Bunzo = () => {
                 value={details.quantity}
                 onChange={handleChange}
                 placeholder="0"
-                className="mt-1 p-2 border rounded w-24"
-              />
+                className="mt-1 p-2 border rounded w-24" />
             </div>
-           { activeTab !== 'OtherBrands'&& 
-            <div>
-              <label className="block text-sm font-medium text-gray-700" htmlFor="expiration-date">
-                Expiry Date
-              </label>
-              <input
-                id="expiration-date"
-                name="expirationDate"
-                type="date"
-                value={details.expirationDate}
-                onChange={handleChange}
-                className="mt-1 p-2 border rounded"
-              />
-            </div>}
+
+            {activeTab !== 'OtherBrands' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700" htmlFor="expiration-date">
+                  Expiry Date
+                </label>
+                <input
+                  id="expiration-date"
+                  name="expirationDate"
+                  type="date"
+                  value={details.expirationDate}
+                  onChange={handleChange}
+                  className="mt-1 p-2 border rounded" />
+              </div>
+            )}
           </div>
 
           <div className="flex flex-wrap gap-2 mb-4">
@@ -166,8 +144,7 @@ const Bunzo = () => {
                   <img
                     src={previewLiveSnackImage}
                     alt="Preview"
-                    className="max-h-96 max-w-full rounded"
-                  />
+                    className="max-h-96 max-w-full rounded" />
                   <button
                     onClick={handleCloseLiveSnack}
                     className="absolute top-2 right-2 text-red-500 hover:text-red-700"
@@ -183,8 +160,7 @@ const Bunzo = () => {
                   src={image}
                   alt={`Hand Wash ${index + 1}`}
                   className="h-24 w-24 border rounded-md object-cover cursor-pointer"
-                  onClick={() => handleLiveSnackClick(image)}
-                />
+                  onClick={() => handleLiveSnackClick(image)} />
                 <button
                   onClick={() => removeLiveSnackImage(index)}
                   className="absolute top-0 right-0 text-red-500 hover:text-red-700"
@@ -205,13 +181,13 @@ const Bunzo = () => {
               ref={liveSnackFileInputRef}
               onChange={handleLiveSnackPhotoCapture}
               className="hidden"
-              multiple
-            />
+              multiple />
           </div>
 
           <div className="mt-auto w-full">
             <button
-              type="submit"
+              type="button"
+              onClick={handleSubmit}
               className="w-full py-3 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition duration-200"
             >
               Submit Audit
@@ -219,7 +195,32 @@ const Bunzo = () => {
           </div>
         </div>
       )}
-    </div>
+
+
+    </div><div className="mt-4  max-w-4xl p-2 flex mx-auto justify-center ">
+         
+        <table className="w-full text-left border border-gray-200">
+          <thead>
+            <tr className="bg-red-500 text-white poppins-semibold">
+              <th className="p-2 border">Brand Name</th>
+              <th className="p-2 border">Product Name</th>
+              <th className="p-2 border">Quantity</th>
+              <th className="p-2 border">Expiration Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {submittedProducts.map((product, index) => (
+              <tr key={index} className="hover:bg-gray-50">
+                <td className="p-2 border">{product.tab}</td>
+                <td className="p-2 border">{product.productName}</td>
+                <td className="p-2 border">{product.quantity}</td>
+                <td className="p-2 border">{product.expirationDate || 'N/A'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      </>
   );
 };
 

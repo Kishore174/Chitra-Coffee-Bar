@@ -1,10 +1,10 @@
 import axios from "axios";
 //  export const axiosintance =axios.create({
-//     baseURL:"http://localhost:8080/api/v1" ,
+//     baseURL:"http://192.168.1.9:5454/api/v1" ,
 //     // headers: {
 //     //   Authorization: `Bearer ${Cookie.get('token')}`
 //     // },
-//     withCredentials : true
+//     // withCredentials : true
 // })
 export const axiosintance = axios.create({
     baseURL: "https://ccb-backend.vercel.app/api/v1",
