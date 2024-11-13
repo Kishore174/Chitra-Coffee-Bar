@@ -3,11 +3,14 @@ import { PlusIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outlin
 import Select from 'react-select';
 import { createProduct } from '../../../../API/settings';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import { MdArrowBack } from 'react-icons/md';
 
 const BakerProducts = () => {
   const [brandName, setBrandName] = useState('');
   const [productNames, setProductNames] = useState(['']);
   const [submissions, setSubmissions] = useState([]);
+  const navigate = useNavigate();
 
   const brandOptions = [
     { value: 'brand1', label: 'Brand 1' },
@@ -51,7 +54,12 @@ const BakerProducts = () => {
   };
 
   return (
-    <><div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <>
+    <button onClick={() => navigate(-1)} className="text-gray-700 p-6 flex space-x-1 hover:text-red-600 transition duration-200">
+      <MdArrowBack className="w-6 h-6 mt-1" />
+      <h1 className="text-xl md:text-xl font-semibold  ">Back</h1>
+    </button>
+    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Bakery Product Entry</h2>
 
       {/* Brand Selection */}

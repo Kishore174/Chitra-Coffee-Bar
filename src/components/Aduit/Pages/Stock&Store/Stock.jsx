@@ -1,10 +1,15 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate, useParams } from 'react-router-dom'; // Import useNavigate
+import { createStock, getStock } from '../../../../API/audits';
+import toast from 'react-hot-toast';
 
 const Stock = () => {
   const [bakshanamImagePreview, setBakshanamImagePreview] = useState([]);
   const [previewBakshanamImage, setPreviewBakshanamImage] = useState(null);
+  const [captureImages, setCaptureImages] = useState([]);
+  const { auditId } = useParams();
+
   const [remark, setRemark] = useState('');
   const bakshanamFileInputRef = useRef(null);
   const navigate = useNavigate(); // Initialize useNavigate
@@ -15,6 +20,7 @@ const Stock = () => {
 
   const handleBakshanamPhotoCapture = (event) => {
     const files = Array.from(event.target.files);
+    files.map(file=>setCaptureImages(prev=>[...prev,file]))
     if (files.length + bakshanamImagePreview.length > 4) {
       alert('You can only upload up to 4 images.');
       return;
@@ -37,11 +43,18 @@ const Stock = () => {
   };
 
   const handleSubmit = () => {
-    // You can add logic here to handle the form submission if needed
-    console.log('Submitted with remarks:', remark);
+   createStock(auditId,{remark,captureImages,location:"unknown",date:"unknown"}).then(res=>{toast.success(res.message)
     navigate(-1); // Navigate back to the previous page
-  };
 
+   })
+    console.log('Submitted with remarks:', {remark,captureImages});
+  };
+useEffect(()=>{
+getStock(auditId).then(res=>{
+  setRemark(res.data?.remark)
+  setBakshanamImagePreview(res.data?.captureImages?.map(i=>i.imageUrl))
+})
+}, [])
   return (
     <div className="p-6 flex justify-center">
       <div className="bg-white border border-gray-300 rounded-lg p-4 shadow-lg w-80 space-y-4">

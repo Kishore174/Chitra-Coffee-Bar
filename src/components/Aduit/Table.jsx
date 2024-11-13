@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { Link, useNavigate } from 'react-router-dom';
 import { BsArrowRight } from "react-icons/bs";
 import { getAllAudits } from '../../API/audits';
+import { ScaleLoader } from "react-spinners";
 
 const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -10,6 +11,7 @@ const Table = () => {
   const [selectedDate, setSelectedDate] = useState(dayjs().startOf('week').add(1, 'day'));
   const [audits, setAudits] = useState([]);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true); // Loading state
 
   const currentWeekDates = Array(6).fill().map((_, index) => {
     return dayjs().startOf('week').add(index + 1, 'day');
@@ -24,7 +26,9 @@ const Table = () => {
   };
 
   useEffect(() => {
-    getAllAudits().then((res) => setAudits(res.data));
+    getAllAudits().then((res) => setAudits(res.data)) .finally(() => {
+      setLoading(false);  
+    });
   }, []);
 
   return (
@@ -48,7 +52,14 @@ const Table = () => {
           Schedule
         </button>
       </div>
-
+      {loading ? (
+        <div className="flex justify-center items-center min-h-[60vh]">
+        <ScaleLoader  height="15"
+            width="7"
+            color="#FF0000"/> {/* Using the hex code for red-600 */}
+      </div>
+      ) : (
+<>
       {/* Responsive Card View for Mobile */}
       <div className="block md:hidden mt-4">
         {filteredAudits.length > 0 ? (
@@ -146,6 +157,9 @@ const Table = () => {
           </table>
         </div>
       </div>
+      </>
+      )}
+
     </div>
   );
 };

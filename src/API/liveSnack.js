@@ -4,10 +4,19 @@ export const createLiveSnacks = async (id, data) => {
 
   // Append other fields in data to formData
   for (const key in data) {
-    if (key === 'captureImages' && Array.isArray(data.captureImages)) {
+    if (Array.isArray(data[key])) {
       // Append each image in captureImages array
-      data.captureImages.forEach((image, index) => {
-        formData.append(`captureImages`, image);
+      data[key].forEach((item, index) => {
+        if (item instanceof File) {
+          formData.append(key, item); // Append if it's a file (image)
+        }else if (typeof item === 'object') {
+          // Instead of stringifying, you can append each property of the object
+          for (const subKey in item) {
+            formData.append(`${key}[${subKey}]`,JSON.stringify( item[subKey]));
+          }
+        } else {
+          formData.append(key, item); // Append regular data
+        }
       });
     } else {
       formData.append(key, data[key]);

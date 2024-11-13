@@ -40,6 +40,7 @@ const Dressing = () => {
   };
 
   return (
+    
     <div className="p-4 bg-white rounded-md shadow-md mb-4 max-w-3xl mx-auto">
     <h2 className="text-xl font-semibold text-center mb-4">Dressing Section</h2>
   

@@ -8,7 +8,7 @@ import BakshanamSection from './Branding/BakshanamSection';
 import { MdKeyboardDoubleArrowLeft } from 'react-icons/md';
 import PillarBrandSection from './Branding/PillarBrandSection';
 
-const Branding = () => {
+const Brandings = () => {
   const navigate = useNavigate()
   return (
     <div className="poppins-regular md:ml-28">
@@ -37,4 +37,4 @@ const Branding = () => {
   );
 };
 
-export default Branding;
+export default Brandings;

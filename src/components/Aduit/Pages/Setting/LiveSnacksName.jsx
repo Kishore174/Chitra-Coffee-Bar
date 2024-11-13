@@ -3,10 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { HiPlus, HiTrash, HiPencil } from 'react-icons/hi'; // Plus, delete, and edit icons
 import { createBrand, createSnackBrand, deleteLiveSnacks, getBrand, getSnackBrand, updateLiveSnack } from '../../../../API/settings';
 import toast from 'react-hot-toast';
+import { MdArrowBack } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 const LiveSnacksName = () => {
   const [inputFields, setInputFields] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentField, setCurrentField] = useState({ _id: null,  name: '' });
+  const navigate = useNavigate();
+
 const[liveSnackToDelete,setLiveSnackToDelete]=useState(null)
   const handleOpenDialog = (field = { id: null,  name: '' }) => {
     setCurrentField(field);
@@ -68,6 +72,10 @@ useEffect(() => {
   };
   return (
     <div className="relative max-w-4xl mx-auto p-6 ">
+      <button onClick={() => navigate(-1)} className="text-gray-700 p-6 flex space-x-1 hover:text-red-600 transition duration-200">
+      <MdArrowBack className="w-6 h-6 mt-1" />
+      <h1 className="text-xl md:text-xl font-semibold  ">Back</h1>
+    </button>
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
  {inputFields.map((field) => (
    <div

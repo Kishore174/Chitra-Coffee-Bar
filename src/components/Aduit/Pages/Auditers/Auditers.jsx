@@ -5,10 +5,14 @@ import { GrEdit } from 'react-icons/gr';
 import { MdDelete } from 'react-icons/md';
 import { deleteAuditor, getAllAuditors } from '../../../../API/auditor';
 import toast from 'react-hot-toast';
+import { ScaleLoader } from "react-spinners";
+
 
 const ITEMS_PER_PAGE = 5; // Set the number of items per page
 
 const Auditers = () => {
+const [loading, setLoading] = useState(true); // Loading state
+
   const [auditors, setAuditors] = useState([]);
   const [auditorToDelete, setAuditorToDelete] = useState(null);
   const [isConfirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -42,7 +46,9 @@ const Auditers = () => {
   };
 
   useEffect(() => {
-    getAllAuditors().then((res) => setAuditors(res.data));
+    getAllAuditors().then((res) => setAuditors(res.data)).finally(() => {
+      setLoading(false);  
+    });;
   }, []);
 
   // Calculate the total number of pages
@@ -62,7 +68,14 @@ const Auditers = () => {
           </button>
         </Link>
       </div>
-
+      {loading ? (
+        <div className="flex justify-center items-center min-h-[60vh]">
+        <ScaleLoader  height="15"
+            width="7"
+            color="#FF0000"/> {/* Using the hex code for red-600 */}
+      </div>
+      ) : (
+<>
       <div className="overflow-x-auto rounded-lg">
         {/* Desktop View Table */}
         <table className="w-full bg-white border hidden lg:table">
@@ -77,7 +90,7 @@ const Auditers = () => {
           </thead>
           <tbody>
             {currentAuditors.map((auditor, index) => (
-              <tr key={auditor.id} className="hover:bg-gray-100">
+              <tr key={auditor.id} className="hover:bg-gray-100 poppins-regular capitalize">
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{auditor.name}</td>
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">
@@ -93,7 +106,7 @@ const Auditers = () => {
                   </a>
                 </td>
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{auditor.documentType}</td>
-                <td className="px-2 py-4 border-b border-gray-200 space-x-2 text-xs md:text-sm">
+                <td className="px-2 py-4 border-b border-gray-200 space-x-2 text-xs  md:text-sm">
                   <button className="text-blue-500 hover:underline" onClick={() => handleView(auditor)}>View</button>
                   <button className="text-green-500 hover:underline" onClick={() => handleEdit(auditor)}><GrEdit /></button>
                   <button className="text-red-500 hover:underline" onClick={() => handleDeleteClick(auditor)}><MdDelete size={20} /></button>
@@ -159,6 +172,8 @@ const Auditers = () => {
           </div>
         )}
       </div>
+      </>
+      )}
     </div>
   );
 };

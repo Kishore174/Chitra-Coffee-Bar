@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import OtherBrand from '../../Form/OtherBrands';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { MdArrowBack } from 'react-icons/md';
 
 const Bunzo = () => {
   const [activeTab, setActiveTab] = useState('Bunzo');
@@ -10,6 +11,8 @@ const Bunzo = () => {
   const [liveSnackImagePreview, setLiveSnackImagePreview] = useState([]);
   const [previewLiveSnackImage, setPreviewLiveSnackImage] = useState(null);
   const liveSnackFileInputRef = useRef(null);
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const navigate = useNavigate();
 
   const productDetails = {
     Bunzo: { productName: '', quantity: '', expirationDate: '' },
@@ -56,9 +59,44 @@ const Bunzo = () => {
     setSubmittedProducts((prev) => [...prev, { ...details, tab: activeTab }]);
     setDetails(productDetails[activeTab]); 
   };
-
+  const togglePopup = () => {
+    setIsPopupVisible(!isPopupVisible);
+  };
+ 
   return (
-    <><div className="p-4 border  max-w-4xl mx-auto rounded shadow-md bg-white">
+    <>
+      <div className="flex items-center justify-between mx-auto p-4  max-w-4xl">
+       <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">
+         <MdArrowBack className="w-6 h-6 mt-1" />
+       <h1 className="text-xl md:text-xl font-semibold  ">Back</h1>
+
+       </button>
+       <div className="relative">
+    
+      <button
+        onClick={togglePopup}
+        className="px-3 py-1 rounded bg-red-500 text-white shadow-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
+      >
+        Previous Audit
+      </button>
+
+      
+      {isPopupVisible && (
+  <div className="absolute left-0 mt-2 w-56 p-4 bg-white rounded-lg shadow-lg border border-gray-300 transition-transform transform duration-200 ease-in-out">
+    <ul className="space-y-2">
+      {/* <li className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150">{date}</li>
+      <li className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150">{date}</li>
+      <li className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150">{date}</li>
+      <li className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150">{date}</li> */}
+
+      {/* Add more items here */}
+    </ul>
+  </div>
+)}
+    </div>
+       </div>
+    
+    <div className="p-4 border  max-w-4xl mx-auto rounded shadow-md bg-white">
       <div className="flex space-x-2 mb-4">
         {tabs.map((tab) => (
           <button

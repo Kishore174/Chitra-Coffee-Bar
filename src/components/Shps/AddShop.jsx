@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { createRoute } from '../../API/createRoute';
 import toast from 'react-hot-toast';
 import { createShop, upDateShop } from '../../API/shop';
+import { MdArrowBack } from 'react-icons/md';
 
 const AddShop = () => {
   const location = useLocation ();
@@ -83,7 +84,11 @@ const AddShop = () => {
 
   return (
     <div className="p-8 max-w-5xl mx-auto bg-white rounded-lg shadow-md">
+        <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">
+         <MdArrowBack className="w-6 h-6 mt-1" />
+        
      <h2 className="text-2xl font-semibold mb-4">{!shop ? "Add Shop" : isEdit ? "Edit Shop" : "View Shop"}</h2>
+     </button>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
        {/* Property Type */}
 <div className="mb-4">

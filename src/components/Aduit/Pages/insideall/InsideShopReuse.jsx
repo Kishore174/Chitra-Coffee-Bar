@@ -39,7 +39,7 @@ const InsideShopReuse = ({ title, itemType, onUpdate, data }) => {
             };
           };
           reader.readAsDataURL(file);
-          setCaptureImages(prev => [...prev, file]);
+          setCaptureImages((prev) => [...prev, file]);
         });
       });
       Promise.all(watermarkedImages).then((result) => {
@@ -58,7 +58,7 @@ const InsideShopReuse = ({ title, itemType, onUpdate, data }) => {
       available,
       remark,
       rating,
-      captureImages
+      captureImages,
     };
     onUpdate(itemType, data);
   };
@@ -78,15 +78,15 @@ const InsideShopReuse = ({ title, itemType, onUpdate, data }) => {
   useEffect(() => {
     if (data) {
       setHygiene(data.hygiene);
-      setImagePreview(data.captureImages.map(u => u.imageUrl));
+      setImagePreview(data.captureImages.map((u) => u.imageUrl));
       setRating(data.rating);
       setRemark(data.remark);
-      setAvailable(data.available)
+      setAvailable(data.available);
     }
   }, [data]);
 
   return (
-    <div className="border rounded-lg shadow-md p-4 w-full sm:w-2/5 md:w-1/4 flex flex-col">
+    <div className="border rounded-lg shadow-md p-4 w-full sm:w-2/5 md:w-[250px] justify-between flex flex-col">
       <h2 className="text-xl font-semibold mb-2">{title}</h2>
       {itemType === "juiceBar" && (
         <div className='mb-4'>
@@ -113,7 +113,7 @@ const InsideShopReuse = ({ title, itemType, onUpdate, data }) => {
           {['good', 'bad'].map((remark) => (
             <div
               key={remark}
- onClick={() => setHygiene(remark)}
+              onClick={() => setHygiene(remark)}
               className={`cursor-pointer capitalize px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
                 hover:bg-red-600 hover:text-white ${hygiene === remark ? 'bg-red-600 text-white' : 'bg-white text-gray-700 border-gray-300'}`}
             >

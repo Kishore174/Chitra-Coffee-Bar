@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { createAuditor, upDateAuditor } from '../../../../API/auditor';
 import toast from 'react-hot-toast';
 import { dropDownRoutes, getRoute } from '../../../../API/createRoute';
+import { MdArrowBack } from 'react-icons/md';
 
 const AddAuditer = () => {
   const navigate = useNavigate();
@@ -70,7 +71,10 @@ const AddAuditer = () => {
   }, []);
   return (
     <div className="max-w-4xl mx-auto my-8 p-6 bg-white shadow-lg rounded-lg">
+        <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">
+         <MdArrowBack className="w-6 h-6 mt-1" />
            <h2 className="text-2xl font-semibold mb-4">{!auditor? "Add Auditor" : isEdit ? "Edit Auditor" : "View Auditor"}</h2>
+           </button>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700">Name</label>

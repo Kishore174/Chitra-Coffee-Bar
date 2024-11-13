@@ -1,13 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
-const KitchenItem = ({ title, itemType, onUpdate }) => {
-  const [selectedRemark, setSelectedRemark] = useState('');
-  const [userRemark, setUserRemark] = useState('');
+const KitchenItem = ({ title, itemType, onUpdate, data }) => {
+  const [ hygiene, setHygiene] = useState('');
+  const [remark, setRemark] = useState('');
+  const [brandName, setBrandName] = useState(''); // State for the brand name
   const [imagePreview, setImagePreview] = useState([]);
   const [rating, setRating] = useState(0);
-  const [previewImage, setPreviewImage] = useState(null); // State for the image preview
+  const [previewImage, setPreviewImage] = useState(null);
   const fileInputRef = useRef(null);
+  const [captureImages, setCaptureImages] = useState([]);
 
   const handlePhotoCapture = async (e) => {
     const files = Array.from(e.target.files);
@@ -54,10 +56,10 @@ const KitchenItem = ({ title, itemType, onUpdate }) => {
       // Wait for all images to be processed and then set the state
       Promise.all(watermarkedImages).then((result) => {
         setImagePreview((prev) => [...prev, ...result]); // Add watermarked images to state
+        setCaptureImages((prev) => [...prev, ...files]); // Store original files if needed
       });
     });
   };
-  
 
   const removeImage = (index) => {
     setImagePreview((prev) => prev.filter((_, i) => i !== index));
@@ -66,17 +68,19 @@ const KitchenItem = ({ title, itemType, onUpdate }) => {
   const handleUpdate = () => {
     const data = {
       title,
-      selectedRemark,
-      userRemark,
-      imagePreview,
+      hygiene,
+      remark,
+      brandName, // Include brand name in the data
+   
       rating,
+      captureImages,
     };
     onUpdate(itemType, data); // Call the onUpdate function with the itemType and collected data
   };
 
   useEffect(() => {
     handleUpdate(); // Update the parent component whenever the local state changes
-  }, [selectedRemark, userRemark, imagePreview, rating]);
+  }, [ hygiene, remark, brandName, imagePreview, rating]); // Include brandName in the dependency array
 
   const handleImageClick = (image) => {
     setPreviewImage(image); // Set the clicked image for preview
@@ -86,30 +90,43 @@ const KitchenItem = ({ title, itemType, onUpdate }) => {
     setPreviewImage(null); // Close the preview modal
   };
 
+  useEffect(() => {
+    if (data) {
+      setHygiene(data.hygiene);
+      setRemark(data.remark);
+      setBrandName(data.brandName ); // Set brand name from data
+      setImagePreview(data.captureImages.map((u) => u.imageUrl));
+      setRating(data.rating );
+    }
+  }, [data]);
+
   return (
-    <div className="border rounded-lg shadow-md p-4 w-1/4 flex flex-col">
+    <div className="border rounded-lg shadow-md p-4 w-full sm:w-2/5 md:w-[250px] justify-between flex flex-col">
+
       <h2 className="text-xl font-semibold mb-2">{title}</h2>
       <div>
         <label className="text-sm font-medium text-gray-500 mb-2 block">Hygiene</label>
         <div className="flex space-x-4 mb-4">
-          {['Good', 'Bad'].map((remark) => (
+          {['good', 'bad'].map((remark) => (
             <div
               key={remark}
-              onClick={() => setSelectedRemark(remark)}
-              className={`cursor-pointer px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
-                hover:bg-red-600 hover:text-white ${selectedRemark === remark ? 'bg-red-600 text-white' : 'bg-white text-gray-700 border-gray-300'}`}
+              onClick={() => setHygiene(remark)}
+              className={`cursor-pointer capitalize px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
+                hover:bg-red-600 hover:text-white ${ hygiene === remark ? 'bg-red-600 text-white' : 'bg-white text-gray-700 border-gray-300'}`}
             >
               {remark}
             </div>
           ))}
         </div>
       </div>
-      {itemType === "milk" && (
+      {itemType === "milkFreezer" && (
         <div> 
           <label className="text-sm font-medium text-gray-500 mb-2 block">Brand Name</label>
           <input
             type="text"
             placeholder="Brand Name"
+            value={brandName} // Bind the input value to brandName state
+            onChange={(e) => setBrandName(e.target.value)} // Update brandName state on change
             className="border rounded-md p-2 w-full mb-2" 
           />
         </div>
@@ -117,7 +134,7 @@ const KitchenItem = ({ title, itemType, onUpdate }) => {
       <div>
         <label className="text-sm font-medium text-gray-500 mb-2 block">Rating</label>
         <div className="flex space-x-1 mb-4">
-          {[1, 2 , 3, 4, 5].map((star) => (
+          {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
               onClick={() => setRating(star)}
@@ -132,8 +149,8 @@ const KitchenItem = ({ title, itemType, onUpdate }) => {
         <label className="text-sm font-medium text-gray-500 mb-2 block">Remark</label>
         <textarea
           placeholder="Enter your remark..."
-          value={userRemark}
-          onChange={(e) => setUserRemark(e.target.value)}
+          value={remark}
+          onChange={(e) => setRemark(e.target.value)}
           className="border rounded-md p-2 w-full mb-4"
         />
       </div>
@@ -144,7 +161,7 @@ const KitchenItem = ({ title, itemType, onUpdate }) => {
               src={image}
               alt={`Preview ${index + 1}`}
               className="h-12 w-12 border rounded-md object-cover cursor-pointer"
-              onClick={() => handleImageClick(image)} // Click to preview
+              onClick={() => handleImageClick(image)}
             />
             <button
               onClick={() => removeImage(index)}
