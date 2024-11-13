@@ -19,3 +19,15 @@ export  const createBrand =async(data)=>{
             const response =await axiosintance.post(`/setting/product/add`,data)   
             return response.data
             }
+            export  const deleteLiveSnacks =async(id,data)=>{
+                const response =await axiosintance.delete(`/setting/snack/${id}`,data)   
+                return response.data
+                }
+                export  const updateLiveSnack =async(id,data)=>{
+                    const response =await axiosintance.put(`/setting/snack/${id}`,data)   
+                    return response.data
+                    }
+                export  const deleteBrand =async(id,data)=>{
+                    const response =await axiosintance.delete(`/setting/brand/${id}`,data)   
+                    return response.data
+                    }

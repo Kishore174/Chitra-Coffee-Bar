@@ -205,15 +205,25 @@ const Bunzo = () => {
               <th className="p-2 border">Brand Name</th>
               <th className="p-2 border">Product Name</th>
               <th className="p-2 border">Quantity</th>
+              <th className="p-2 border">Product</th>
               <th className="p-2 border">Expiration Date</th>
             </tr>
           </thead>
           <tbody>
             {submittedProducts.map((product, index) => (
-              <tr key={index} className="hover:bg-gray-50">
+              <tr key={index} className="hover:bg-gray-50 poppins-regular">
                 <td className="p-2 border">{product.tab}</td>
                 <td className="p-2 border">{product.productName}</td>
                 <td className="p-2 border">{product.quantity}</td>
+                {product.productPhoto ? (
+                        <img
+                          src={product.productPhoto}
+                          alt="product"
+                          className="h-8 w-8 sm:h-12 sm:w-12 object-cover rounded-md border border-gray-300"
+                        />
+                      ) : (
+                        <div className="h-8 w-8 bg-gray-200 mx-auto p-1 mt-1 rounded"></div>
+                      )}
                 <td className="p-2 border">{product.expirationDate || 'N/A'}</td>
               </tr>
             ))}

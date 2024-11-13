@@ -1,129 +1,121 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
-const InsideShopReuse = ({ title, itemType, onUpdate }) => {
-    const [selectedRemark, setSelectedRemark] = useState('');
-    const [selectedJuice, setSelectedJuice] = useState('');
+const InsideShopReuse = ({ title, itemType, onUpdate, data }) => {
+  const [hygiene, setHygiene] = useState('');
+  const [available, setAvailable] = useState('');
+  const [remark, setRemark] = useState('');
+  const [imagePreview, setImagePreview] = useState([]);
+  const [rating, setRating] = useState(0);
+  const [previewImage, setPreviewImage] = useState(null);
+  const fileInputRef = useRef(null);
+  const [captureImages, setCaptureImages] = useState([]);
 
-    const [userRemark, setUserRemark] = useState('');
-    const [imagePreview, setImagePreview] = useState([]);
-    const [rating, setRating] = useState(0);
-    const [previewImage, setPreviewImage] = useState(null); // State for the image preview
-    const fileInputRef = useRef(null);
-  
-    const handlePhotoCapture = async (e) => {
-      const files = Array.from(e.target.files);
-      
-      // Get geolocation and current date-time
-      navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude } = position.coords;
-        const currentDate = new Date();
-        const formattedDate = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`;
-        
-        // Iterate over each selected image file
-        const watermarkedImages = files.map(async (file) => {
-          const reader = new FileReader();
-          return new Promise((resolve) => {
-            reader.onloadend = () => {
-              const img = new Image();
-              img.src = reader.result;
-              img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                ctx.drawImage(img, 0, 0);
-                
-                // Set font for the text
-                ctx.font = '16px Arial';
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-                ctx.fillRect(10, img.height - 40, img.width - 20, 40); // Background for text
-                
-                // Set the color for text
-                ctx.fillStyle = 'black';
-                
-                // Add geolocation and date-time information as watermark
-                ctx.fillText(`Location: ${latitude.toFixed(2)}, ${longitude.toFixed(2)}`, 15, img.height - 25);
-                ctx.fillText(`Date/Time: ${formattedDate}`, 15, img.height - 5);
-                
-                resolve(canvas.toDataURL()); // Resolve with the watermarked image as Data URL
-              };
+  const handlePhotoCapture = async (e) => {
+    const files = Array.from(e.target.files);
+    navigator.geolocation.getCurrentPosition((position) => {
+      const { latitude, longitude } = position.coords;
+      const currentDate = new Date();
+      const formattedDate = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`;
+      const watermarkedImages = files.map(async (file) => {
+        const reader = new FileReader();
+        return new Promise((resolve) => {
+          reader.onloadend = () => {
+            const img = new Image();
+            img.src = reader.result;
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const ctx = canvas.getContext('2d');
+              canvas.width = img.width;
+              canvas.height = img.height;
+              ctx.drawImage(img, 0, 0);
+              ctx.font = '16px Arial';
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+              ctx.fillRect(10, img.height - 40, img.width - 20, 40);
+              ctx.fillStyle = 'black';
+              ctx.fillText(`Location: ${latitude.toFixed(2)}, ${longitude.toFixed(2)}`, 15, img.height - 25);
+              ctx.fillText(`Date/Time: ${formattedDate}`, 15, img.height - 5);
+              resolve(canvas.toDataURL());
             };
-            reader.readAsDataURL(file);
-          });
-        });
-    
-        // Wait for all images to be processed and then set the state
-        Promise.all(watermarkedImages).then((result) => {
-          setImagePreview((prev) => [...prev, ...result]); // Add watermarked images to state
+          };
+          reader.readAsDataURL(file);
+          setCaptureImages(prev => [...prev, file]);
         });
       });
+      Promise.all(watermarkedImages).then((result) => {
+        setImagePreview((prev) => [...prev, ...result]);
+      });
+    });
+  };
+
+  const removeImage = (index) => {
+    setImagePreview((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpdate = () => {
+    const data = {
+      hygiene,
+      available,
+      remark,
+      rating,
+      captureImages
     };
-    
-  
-    const removeImage = (index) => {
-      setImagePreview((prev) => prev.filter((_, i) => i !== index));
-    };
-  
-    const handleUpdate = () => {
-      const data = {
-        title,
-        selectedRemark,
-        selectedJuice,
-        userRemark,
-        imagePreview,
-        rating,
-      };
-      onUpdate(itemType, data); // Call the onUpdate function with the itemType and collected data
-    };
-  
-    useEffect(() => {
-      handleUpdate(); // Update the parent component whenever the local state changes
-    }, [selectedRemark, userRemark, imagePreview, rating]);
-  
-    const handleImageClick = (image) => {
-      setPreviewImage(image); // Set the clicked image for preview
-    };
-  
-    const handleClosePreview = () => {
-      setPreviewImage(null); // Close the preview modal
-    };
+    onUpdate(itemType, data);
+  };
+
+  useEffect(() => {
+    handleUpdate();
+  }, [hygiene, remark, imagePreview, rating]);
+
+  const handleImageClick = (image) => {
+    setPreviewImage(image);
+  };
+
+  const handleClosePreview = () => {
+    setPreviewImage(null);
+  };
+
+  useEffect(() => {
+    if (data) {
+      setHygiene(data.hygiene);
+      setImagePreview(data.captureImages.map(u => u.imageUrl));
+      setRating(data.rating);
+      setRemark(data.remark);
+      setAvailable(data.available)
+    }
+  }, [data]);
+
   return (
-    <div className="border rounded-lg shadow-md p-4 w-1/4 flex flex-col">
+    <div className="border rounded-lg shadow-md p-4 w-full sm:w-2/5 md:w-1/4 flex flex-col">
       <h2 className="text-xl font-semibold mb-2">{title}</h2>
-      {itemType === "JuiceBar" && (
+      {itemType === "juiceBar" && (
         <div className='mb-4'>
-      <label className="text-sm font-medium text-gray-500 mb-2 block">avaliable</label>
- 
-      <div className="flex space-x-3 mb-2">
-
-
-        {['Yes', 'No'].map((option) => (
-          <div
-            key={option}
-            onClick={() => setSelectedJuice(option)}
-
-            className={`cursor-pointer px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
-              ${selectedJuice === option 
-                ? 'bg-green-600 text-white' 
-                : '  text-gray-700 hover:bg-green-600 hover:text-white'}`}
-          >
-            {option}
+          <label className="text-sm font-medium text-gray-500 mb-2 block">Available</label>
+          <div className="flex space-x-3 mb-2">
+            {['yes', 'no'].map((option) => (
+              <div
+                key={option}
+                onClick={() => setAvailable(option)}
+                className={`cursor-pointer capitalize px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
+                  ${available === option 
+                    ? 'bg-green-600 text-white' 
+                    : 'text-gray-700 hover:bg-green-600 hover:text-white'}`}
+              >
+                {option}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      </div>
-
+        </div>
       )}
       <div>
         <label className="text-sm font-medium text-gray-500 mb-2 block">Hygiene</label>
         <div className="flex space-x-4 mb-4">
-          {['Good', 'Bad'].map((remark) => (
+          {['good', 'bad'].map((remark) => (
             <div
               key={remark}
-              onClick={() => setSelectedRemark(remark)}
-              className={`cursor-pointer px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
-                hover:bg-red-600 hover:text-white ${selectedRemark === remark ? 'bg-red-600 text-white' : 'bg-white text-gray-700 border-gray-300'}`}
+ onClick={() => setHygiene(remark)}
+              className={`cursor-pointer capitalize px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
+                hover:bg-red-600 hover:text-white ${hygiene === remark ? 'bg-red-600 text-white' : 'bg-white text-gray-700 border-gray-300'}`}
             >
               {remark}
             </div>
@@ -143,7 +135,7 @@ const InsideShopReuse = ({ title, itemType, onUpdate }) => {
       <div>
         <label className="text-sm font-medium text-gray-500 mb-2 block">Rating</label>
         <div className="flex space-x-1 mb-4">
-          {[1, 2 , 3, 4, 5].map((star) => (
+          {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
               onClick={() => setRating(star)}
@@ -158,8 +150,8 @@ const InsideShopReuse = ({ title, itemType, onUpdate }) => {
         <label className="text-sm font-medium text-gray-500 mb-2 block">Remark</label>
         <textarea
           placeholder="Enter your remark..."
-          value={userRemark}
-          onChange={(e) => setUserRemark(e.target.value)}
+          value={remark}
+          onChange={(e) => setRemark(e.target.value)}
           className="border rounded-md p-2 w-full mb-4"
         />
       </div>
@@ -170,7 +162,7 @@ const InsideShopReuse = ({ title, itemType, onUpdate }) => {
               src={image}
               alt={`Preview ${index + 1}`}
               className="h-12 w-12 border rounded-md object-cover cursor-pointer"
-              onClick={() => handleImageClick(image)} // Click to preview
+              onClick={() => handleImageClick(image)}
             />
             <button
               onClick={() => removeImage(index)}
@@ -208,7 +200,7 @@ const InsideShopReuse = ({ title, itemType, onUpdate }) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default InsideShopReuse
+export default InsideShopReuse;

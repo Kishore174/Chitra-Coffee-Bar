@@ -65,10 +65,10 @@ function App() {
               <Route path="Profile" element={<Profile />} />
               <Route path="Tea/:auditId" element={<TeaAduit />} />
               <Route path="coffee/:auditId" element={<Coffee/>} />
-              <Route path="livesnacks" element={<LiveSnacks/>} />
+              <Route path="livesnacks/:auditId" element={<LiveSnacks/>} />
               <Route path="Bunzo" element={<Bunzo/>} />
               <Route path="bakshanm" element={<Bakshanam/>} />
-              <Route path="insideShop" element={<InsideShop/>} />
+              <Route path="insideShop/:auditId" element={<InsideShop/>} />
 
               {/* <Route path="nextProcess" element={<Next01/>} /> */}
               <Route path="Kitchenarea" element={<InsideKitichen/>} />

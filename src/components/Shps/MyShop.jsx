@@ -5,7 +5,8 @@ import { GrEdit } from 'react-icons/gr';
 import { MdDelete } from 'react-icons/md';
 import { deleteShop, getAllShops } from '../../API/shop';
 import toast from 'react-hot-toast';
-import { LineWave } from 'react-loader-spinner'; // Import the loader
+// import { LineWave } from 'react-loader-spinner';/ // Import the loader/
+import { ScaleLoader } from "react-spinners";
 
 const MyShop = () => {
   const [shops, setShops] = useState([]);
@@ -17,7 +18,7 @@ const MyShop = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setLoading(true); // Set loading to true before fetching data
+    setLoading(true);  
     getAllShops()
       .then((res) => {
         setShops(res.data);
@@ -26,7 +27,7 @@ const MyShop = () => {
         toast.error(`Error: ${err.message}`);
       })
       .finally(() => {
-        setLoading(false); // Set loading to false after fetching data
+        setLoading(false);  
       });
   }, []);
 
@@ -67,7 +68,7 @@ const MyShop = () => {
   return (
     <div className="p-4 md:p-6 min-h-screen">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-6">
-        <h1 className="text-2xl md:text-3xl font-semibold mb-4 md:mb-0">My Shop</h1>
+        <h1 className="text-2xl md:text-3xl poppins-semibold mb-4 md:mb-0">My Shop</h1>
         <Link to="/addshop">
           <button className="bg-red-600 text-white rounded-lg poppins-semibold py-1 px-3 flex items-center">
             <FaPlus className="mr-2" /> Add Shop
@@ -78,19 +79,10 @@ const MyShop = () => {
       {/* Loader while data is being fetched */}
       {loading ? (
         <div className="flex justify-center items-center min-h-[60vh]">
-          <LineWave
-            height="100"
-            width="100"
-            color="#FF0000"
-            ariaLabel="line-wave"
-            wrapperStyle={{}}
-            wrapperClass=""
-            visible={true}
-            firstLineColor="#FF0000"
-            middleLineColor="#FF0000"
-            lastLineColor="#FF0000"
-          />
-        </div>
+        <ScaleLoader  height="15"
+            width="7"
+            color="#FF0000"/> {/* Using the hex code for red-600 */}
+      </div>
       ) : (
         <>
           {/* Responsive Table for Desktop */}
@@ -99,7 +91,7 @@ const MyShop = () => {
               <thead className="bg-red-600 text-white">
                 <tr>
                   {['S.No', 'Shop Name', 'Location', 'Contact Details', 'Franchise Name', 'Partnership', 'Action'].map((header, idx) => (
-                    <th key={idx} className="px-2 py-3 border-b-2 border-gray-300 text-left text-xs md:text-sm font-semibold uppercase tracking-wider">
+                    <th key={idx} className="px-2 py-3 border-b-2 border-gray-300 text-left text-xs md:text-sm poppins-semibold uppercase tracking-wider">
                       {header}
                     </th>
                   ))}
@@ -107,7 +99,7 @@ const MyShop = () => {
               </thead>
               <tbody>
                 {paginatedShops.map((shop, index) => (
-                  <tr key={shop._id} className="hover:bg-gray-100">
+                  <tr key={shop._id} className="hover:bg-gray-100 poppins-regular capitalize">
                     <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.shopName}</td>
                     <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm ">{shop.location} <br />

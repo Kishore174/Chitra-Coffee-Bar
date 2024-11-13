@@ -6,10 +6,13 @@ import { MdDelete } from 'react-icons/md';
 import { deleteAuditor, getAllAuditors } from '../../../../API/auditor';
 import toast from 'react-hot-toast';
 
+const ITEMS_PER_PAGE = 5; // Set the number of items per page
+
 const Auditers = () => {
   const [auditors, setAuditors] = useState([]);
   const [auditorToDelete, setAuditorToDelete] = useState(null);
   const [isConfirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1); // Current page state
   const navigate = useNavigate();
 
   const handleEdit = (auditor) => {
@@ -42,12 +45,20 @@ const Auditers = () => {
     getAllAuditors().then((res) => setAuditors(res.data));
   }, []);
 
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(auditors.length / ITEMS_PER_PAGE);
+
+  // Get the auditors for the current page
+  const currentAuditors = auditors.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+ const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
   return (
     <div className="p-4 md:p-6 min-h-screen">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-end mb-4 md:mb-6">
         <Link to="/add-Auditers">
           <button className="bg-red-600 text-white rounded-lg poppins-semibold py-1 px-3 flex items-center">
-            Add Auditer
+            <FaPlus className="mr-2" /> Add Auditer
           </button>
         </Link>
       </div>
@@ -65,13 +76,13 @@ const Auditers = () => {
             </tr>
           </thead>
           <tbody>
-            {auditors.map((auditor, index) => (
+            {currentAuditors.map((auditor, index) => (
               <tr key={auditor.id} className="hover:bg-gray-100">
-                <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{index + 1}</td>
+                <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{auditor.name}</td>
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">
                   {auditor.address} <br />
-                  <a href={auditor.mapLink} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">
+                  <a href={auditor.mapLink} className="text-blue- 500 hover:underline" target="_blank" rel="noopener noreferrer">
                     Map Link
                   </a>
                 </td>
@@ -83,7 +94,7 @@ const Auditers = () => {
                 </td>
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{auditor.documentType}</td>
                 <td className="px-2 py-4 border-b border-gray-200 space-x-2 text-xs md:text-sm">
-                  <button className="text-blue-500 hover:underline" on Click={() => handleView(auditor)}>View</button>
+                  <button className="text-blue-500 hover:underline" onClick={() => handleView(auditor)}>View</button>
                   <button className="text-green-500 hover:underline" onClick={() => handleEdit(auditor)}><GrEdit /></button>
                   <button className="text-red-500 hover:underline" onClick={() => handleDeleteClick(auditor)}><MdDelete size={20} /></button>
                 </td>
@@ -94,11 +105,11 @@ const Auditers = () => {
 
         {/* Mobile View Section */}
         <div className="lg:hidden">
-          {auditors.map((auditor, index) => (
+          {currentAuditors.map((auditor, index) => (
             <div key={auditor.id} className="bg-white mb-4 p-4 rounded-lg shadow">
               <div className="flex justify-between items-center mb-2">
                 <h2 className="text-lg font-medium">{auditor.name}</h2>
-                <span className="text-sm text-gray-500">#{index + 1}</span>
+                <span className="text-sm text-gray-500">#{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</span>
               </div>
               <div className="text-sm text-gray-700">
                 <p><strong>Location:</strong> {auditor.address}</p>
@@ -118,6 +129,19 @@ const Auditers = () => {
           ))}
         </div>
 
+        {/* Pagination Controls */}
+        <div className="flex justify-center mt-4">
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index}
+                className={`px-4 py-2 mx-1 rounded ${currentPage === index + 1 ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                onClick={() => handlePageChange(index + 1)}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+
         {/* Confirmation Dialog */}
         {isConfirmDialogOpen && (
           <div className="fixed inset-0 z-20 flex items-center justify-center bg-gray-800 bg-opacity-50">
@@ -127,7 +151,7 @@ const Auditers = () => {
                 <button className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onClick={() => setConfirmDialogOpen(false)}>
                   Cancel
                 </button>
-                <button className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700" onClick={confirmDelete}>
+                <button class Name="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700" onClick={confirmDelete}>
                   Delete
                 </button>
               </div>

@@ -49,8 +49,47 @@ const Table = () => {
         </button>
       </div>
 
-      <div className="table-container">
-        <div className="hidden md:block overflow-x-auto rounded-lg">
+      {/* Responsive Card View for Mobile */}
+      <div className="block md:hidden mt-4">
+        {filteredAudits.length > 0 ? (
+          filteredAudits.map((audit, index) => (
+            <div key={audit.id} className="border rounded-lg p-4 mb-4 shadow-md">
+              <div className="poppins-regular">
+                <div className="font-semibold">{audit.shop?.shopName}</div>
+                <div>{audit.shop?.ownerName}</div>
+                <div>{audit.shop?.address}</div>
+                <a href={audit.location} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">
+                  Map Link
+                </a>
+                <div className={`mt-2 ${audit.status === 'Completed' ? 'text-green-600' : 'text-red-600'}`}>
+                  {audit.status}
+                </div>
+                <div>{audit.shop.phone}</div>
+                <a href={`mailto:${audit.shop?.email}`} className="text-blue-500 hover:underline">
+                  {audit.shop?.email}
+                </a>
+                <div className="mt-2">
+                  {audit.status === 'pending' ? (
+                    <Link to={`/add-audit/${audit._id}`}>
+                      <BsArrowRight className="text-red-600 text-2xl" />
+                    </Link>
+                  ) : (
+                    <Link to="/Report">
+                      <button className="text-blue-500 poppins-regular">View</button>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center text-sm text-gray-700">No audits available for this date</div>
+ )}
+      </div>
+
+      {/* Table View for Larger Screens */}
+      <div className="hidden md:block mt-4">
+        <div className="overflow-x-auto rounded-lg">
           <table className="min-w-full bg-white border border-gray-200">
             <thead className="bg-red-600 text-white poppins-semibold">
               <tr>
@@ -110,5 +149,4 @@ const Table = () => {
     </div>
   );
 };
-
-export default Table;
+export default Table

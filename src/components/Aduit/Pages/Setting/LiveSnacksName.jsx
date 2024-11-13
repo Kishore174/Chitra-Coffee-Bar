@@ -1,13 +1,13 @@
  
 import React, { useEffect, useState } from 'react';
 import { HiPlus, HiTrash, HiPencil } from 'react-icons/hi'; // Plus, delete, and edit icons
-import { createBrand, createSnackBrand, getBrand, getSnackBrand } from '../../../../API/settings';
+import { createBrand, createSnackBrand, deleteLiveSnacks, getBrand, getSnackBrand, updateLiveSnack } from '../../../../API/settings';
 import toast from 'react-hot-toast';
 const LiveSnacksName = () => {
   const [inputFields, setInputFields] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentField, setCurrentField] = useState({ _id: null,  name: '' });
-
+const[liveSnackToDelete,setLiveSnackToDelete]=useState(null)
   const handleOpenDialog = (field = { id: null,  name: '' }) => {
     setCurrentField(field);
     setIsDialogOpen(true);
@@ -20,6 +20,13 @@ const LiveSnacksName = () => {
 
   const handleSubmit = async() => {
     if (currentField._id) {
+      updateLiveSnack(currentField._id,currentField. name)
+      .then((res) => {
+        toast.success(res.message);
+      })             
+      .catch (error=> {
+        console.error('updatetest', error);
+      })
       setInputFields(inputFields.map(field => 
         field._id === currentField._id ? { ...field, name: currentField. name } : field
       ));
@@ -44,7 +51,16 @@ useEffect(() => {
     fetchBrands();
   }, []);
   const handleRemoveField = (id) => {
-    setInputFields(inputFields.filter(field => field._id !== id));
+  
+   
+      deleteLiveSnacks(id)
+        .then((res) => {
+          toast.success(res.message);
+          setInputFields(inputFields.filter((s) => s._id !== id));
+          setLiveSnackToDelete(null);
+        })
+        .catch((err) => toast.error(`Error: ${err.message}`));
+   
   };
 
   const handleInputChange = (event) => {
@@ -68,7 +84,7 @@ useEffect(() => {
          <HiPencil size={20} />
        </button>
        <button
-         onClick={() => handleRemoveField(field.id)}
+         onClick={() => handleRemoveField(field._id)}
          className="text-red-500 hover:text-red-700 p-1 rounded-full bg-red-100 hover:bg-red-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-300"
          title="Delete Brand"
        >

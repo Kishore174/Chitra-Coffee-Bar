@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from "react-router-dom"; // Import useNavigate
 import tea from "../../../Assets/tea.jpg";
 import coffee from "../../../Assets/coffee.jpg";
@@ -14,22 +14,30 @@ import emp from '../../../Assets/employee.jpg';
 import stock from '../../../Assets/stock_store.jpg';
 import wallPanting from '../../../Assets/wall panting.jpg';
 import dress from '../../../Assets/dress.jpg';
+import { getAudit } from '../../../API/audits';
 
 
 const AddAudit = () => {
-  const navigate = useNavigate(); // Initialize navigate
-  const {id} = useParams()
+  const navigate = useNavigate();
+  const [shopDetail, setShopDetail]=useState(null)
+   const {id} = useParams()
   const handleNextProcess = () => {
     // navigate('/Recording');
     navigate('/Report');  
      
   }; 
+  useEffect(() => {
+    getAudit(id).then((res) => {setShopDetail(res.data?.shop)
+    });
+    
+  }, []);
+  console.log(shopDetail)
   const audits = [
     { id: 1, image: tea, alt: "tea", label: "Tea", link: `/tea/${id}` },
     { id: 2, image: coffee, alt: "coffee", label: "Coffee", link: `/coffee/${id}` },
-    { id: 3, image: livesnacks, alt: "snacks", label: "Live Snacks", link: "/livesnacks" },
+    { id: 3, image: livesnacks, alt: "snacks", label: "Live Snacks", link: `/livesnacks/${id}` },
     { id: 4, image: bakery, alt: "bunzo", label: "Snacks", link: "/bunzo" },
-    { id: 5, image: insideshop, alt: "insideshop", label: "Inside Shop", link: "/insideShop" },
+    { id: 5, image: insideshop, alt: "insideshop", label: "Inside Shop", link: `/insideShop/${id}` },
     { id: 6, image: insideshop, alt: "insidektchen", label: "Inside Kitchen", link: "/kitchen" },
     { id: 7, image: outsideshop, alt: "outsidektchen", label: "Outside Kitchen", link: "/Outsideshop" },
     { id: 8, image: WallBranding, alt: "wallBranding", label: "Wall Branding", link: "/Branding" },
@@ -50,16 +58,17 @@ const AddAudit = () => {
     className="h-32 w-32 rounded-full border-4 border-red-500 object-cover transition-transform duration-300 transform hover:scale-110 mr-6"
   />
   <div className="flex flex-col">
-    <h2 className="text-2xl poppins-bold text-gray-800 mb-1 hover:text-red-600 cursor-pointer transition-colors duration-300">Kumar</h2>
+    <h2 className="text-2xl poppins-bold text-gray-800 mb-1 hover:text-red-600 cursor-pointer transition-colors duration-300">{shopDetail?.ownerName}</h2>
     <div className="text-sm text-gray-700">
       <p className="mb-1">
-        <span className="font-semibold">Email:</span> <span className="text-gray-600">example@example.com</span>
+        <span className="font-semibold">Email:</span> <span className="text-gray-600">{shopDetail?.email}</span>
       </p>
       <p className="mb-1">
-        <span className="font-semibold">Location:</span> <span className="text-gray-600">Vellore</span>
+        <span className="font-semibold">Location:</span> <span className="text-gray-600">{shopDetail?.address}</span>
       </p>
       <p>
-        <span className="font-semibold">Occupation:</span> <span className="text-gray-600">Manager</span>
+        <span className="font-semibold">
+          phone:</span> <span className="text-gray-600">{shopDetail?.phone}</span>
       </p>
     </div>
   </div>
