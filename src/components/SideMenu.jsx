@@ -54,7 +54,7 @@ const SideMenu = () => {
     <div>
       <div
         className={`fixed z-20 h-screen bg-white shadow-lg w-64 transition-transform duration-300 ease-in-out 
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 lg:translate-x-0`}
       >
         <div className="h-full overflow-y-auto">
           <Link to="/dashboard">
@@ -70,68 +70,67 @@ const SideMenu = () => {
 
               return (
                 <li key={item.name}>
-                  <div className="flex flex-col">
-                    <button
-                      className={`flex items-center justify-between space-x-4 p-2 poppins-semibold rounded w-full ${isActive ? 'bg-red-500 text-white' : 'text-black'}`}
-                      onClick={() => {
-                        if (item.subRoutes) {
-                          handleDropdownToggle(item.name);
-                        } else {
-                          setActiveButton(item.name);
-                          localStorage.setItem('activeButton', item.name);
-                          setIsSidebarOpen(false);
-                          navigate(item.path);
-                        }
-                      }}
-                    >
-                      <div className="flex items-center space-x-4">
-                        <Icon className="h-6 w-6" />
-                        <span>{item.name}</span>
-                      </div>
-                      {item.subRoutes && <FaAngleDown className={`transition-transform ${openDropdown === item.name ? 'rotate-180' : ''}`} />}
-                    </button>
-
-                    {/* Sub-routes dropdown */}
-                    {item.subRoutes && openDropdown === item.name && (
-                      <ul className="ml-8 mt-2 space-y-2">
-                        {item.subRoutes.map((sub) => (
-                          <li key={sub.name}>
-                            <Link to={sub.path}>
-                              <button
-                                className={`flex items-center space-x-4 p-2 text-md poppins-medium rounded w-full ${location.pathname === sub.path ? 'bg-gray-300 text-black' : 'text-gray-600'}`}
-                                onClick={() => setIsSidebarOpen(false)}
-                              >
-                                <span>{sub.name}</span>
-                              </button>
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </li>
-              );
-            })}
-            <li>
-              <button
-                onClick={handleLogout}
-                className="flex items-center space-x-4 p-2 font-semibold rounded w-full text-black hover:bg-gray-200"
-              >
-                <FaSignOutAlt className="h-6 w-6" />
-                <span>Logout</span>
-              </button>
-            </li>
-          </ul>
-        </div>
+                <div className="flex flex-col">
+                  <button
+                    className={`flex items-center justify-between space-x-4 p-2 poppins-semibold rounded w-full ${isActive ? 'bg-red-500 text-white' : 'text-black'}`}
+                    onClick={() => {
+                      if (item.subRoutes) {
+                        handleDropdownToggle(item.name);
+                      } else {
+                        setActiveButton(item.name);
+                        localStorage.setItem('activeButton', item.name);
+                        setIsSidebarOpen(false);
+                        navigate(item.path);
+                      }
+                    }}
+                  >
+                    <div className="flex items-center space-x-4">
+                      <Icon className="h-6 w-6" />
+                      <span>{item.name}</span>
+                    </div>
+                    {item.subRoutes && <FaAngleDown className={`transition-transform ${openDropdown === item.name ? 'rotate-180' : ''}`} />}
+                  </button>
+  
+                  {item.subRoutes && openDropdown === item.name && (
+                    <ul className="ml-8 mt-2 space-y-2">
+                      {item.subRoutes.map((sub) => (
+                        <li key={sub.name}>
+                          <Link to={sub.path}>
+                            <button
+                              className={`flex items-center space-x-4 p-2 text-md poppins-medium rounded w-full ${location.pathname === sub.path ? 'bg-gray-300 text-black' : 'text-gray-600'}`}
+                              onClick={() => setIsSidebarOpen(false)}
+                            >
+                              <span>{sub.name}</span>
+                            </button>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+          <li>
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-4 p-2 font-semibold rounded w-full text-black hover:bg-gray-200"
+            >
+              <FaSignOutAlt className="h-6 w-6" />
+              <span>Logout</span>
+            </button>
+          </li>
+        </ul>
       </div>
-
-      {isSidebarOpen && (
-        <div
-          onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 z-10 bg-black bg-opacity-50 lg:hidden"
-        ></div>
-      )}
     </div>
+  
+    {isSidebarOpen && (
+      <div
+        onClick={() => setIsSidebarOpen(false)}
+        className="fixed inset-0 z-10 bg-black bg-opacity-50 lg:hidden"
+      ></div>
+    )}
+  </div>
   );
 };
 

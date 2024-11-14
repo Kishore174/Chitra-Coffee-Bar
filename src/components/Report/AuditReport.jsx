@@ -42,6 +42,11 @@ const AuditReport = () => {
 
       {/* General Information Sections */}
       <div className="flex flex-col space-y-4">
+      <AuditSection
+          title="Shop Information"
+          data={auditData?.shop}
+          fields={['shopName', 'ownerName', 'phone', 'email', 'address', 'location']}
+        />
         <AuditSection
           title="Tea Audit"
           data={auditData?.teaAudit}
@@ -52,11 +57,7 @@ const AuditReport = () => {
           data={auditData?.coffeeAudit}
           fields={['quality', 'color', 'sugarLevel', 'temperature', 'aroma', 'taste', 'remark', 'rating']}
         />
-        <AuditSection
-          title="Shop Information"
-          data={auditData?.shop}
-          fields={['shopName', 'ownerName', 'phone', 'email', 'address', 'location']}
-        />
+        
         <AuditSection
           title="Inside Shop"
           data={auditData?.insideShop}
@@ -77,20 +78,20 @@ const AuditReport = () => {
           data={auditData?.wallBranding}
           fields={['map', 'menuBrand', 'bunzoSection', 'bakshanamSection', 'pillarBranding']}
         />
+         
+        
         <AuditSection
-          title="Bakery Section"
-          data={auditData?.bakerySection}
-          fields={['bakeryDisplay', 'bakeryItems', 'displayCleanliness', 'itemFreshness', 'bakeryRemark']}
-        />
-        <AuditSection
-          title="Live Snacks"
-          data={auditData?.liveSnacks}
-          fields={['snackDisplay', 'snackVarieties', 'snackFreshness', 'snackRemark']}
+          title="Painting"
+          data={auditData?.painting}
+          fields={['fan', 'light', 'celling',  'wallPainting',
+            "floorTail",
+            "remark",
+            "rating",]}
         />
         <AuditSection
           title="Uniform Section"
           data={auditData?.uniformSection}
-          fields={['staffUniform', 'uniformCleanliness', 'staffAppearance', 'uniformRemark']}
+          fields={['cap', 'cort', 'gloves', 'apron']}
         />
       </div>
 
@@ -209,48 +210,52 @@ const RecordingControls = () => {
 
 const AuditSection = ({ title, data, fields }) => {
   return (
-    <section className="mb-4 border border-red-200 rounded-lg overflow-hidden">
-      <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">{title}</h2>
-      <div className="p-2 flex gap-4">
+    <section className="mb-6 border border-red-200 rounded-lg overflow-hidden shadow-lg">
+      {/* Section Title */}
+      <h2 className="bg-red-100 text-red-600 text-lg font-semibold p-4">{title}</h2>
+
+      {/* Content Wrapper */}
+      <div className="p-4 flex flex-wrap gap-6">
         {fields.map((field, index) => {
           const value = data?.[field];
 
           // If the value is an object and not null
           if (typeof value === 'object' && value !== null) {
-            // Check if it's a nested object (object of objects)
+            // Handle arrays
             if (Array.isArray(value)) {
-              // Handle arrays
               return (
-                <div key={index} className="w-full sm:w-1/2">
-                  <p className="text-sm font-semibold text-gray-600">{capitalizeFirstLetter(field)}</p>
+                <div key={index} className="flex-shrink-0  w-auto">
+                  <p className="text-sm font-semibold text-gray-600 mb-2">{capitalizeFirstLetter(field)}</p>
                   <ul className="list-disc pl-5 text-gray-800">
                     {value.map((item, idx) => (
-                      <li key={idx}>{JSON.stringify(item, null, 2)}</li> // Render each array item
+                      <li key={idx} className="mb-2">
+                        <pre className="bg-gray-50 p-2 rounded-lg overflow-x-auto text-sm">{JSON.stringify(item, null, 2)}</pre>
+                      </li>
                     ))}
                   </ul>
                 </div>
               );
             } else {
-              // If it's a nested object (an object of objects), render each property
+              // Handle nested objects
               return (
-                <div key={index} className="w-full sm:w-1/2">
-                  <p className="text-sm font-semibold text-gray-600">{capitalizeFirstLetter(field)}</p>
-                  <div className="pl-4 flex text-gray-800">
-                    {Object.keys(value).map((nestedField, nestedIndex) => {
+                <div key={index} className="flex-shrink-0  w-auto">
+                  <p className="text-sm font-semibold text-gray-600 mb-2">{capitalizeFirstLetter(field)}</p>
+                  <div className="pl-4 flex gap-10 text-gray-800">
+                    {Object.keys(value).filter(i=>i!=="_id").map((nestedField, nestedIndex) => {
                       const nestedValue = value[nestedField];
 
                       // Check if the nested value has images
                       if (nestedField === 'captureImages' && Array.isArray(nestedValue)) {
                         return (
-                          <div key={nestedIndex}>
-                            <p className="text-sm font-semibold text-gray-600">Images:</p>
-                            <div className="flex flex-wrap gap-2">
+                          <div key={nestedIndex} className="flex-shrink-0 w-auto">
+                            <p className="text-sm font-semibold text-gray-600 mb-2">Images:</p>
+                            <div className="flex gap-4">
                               {nestedValue.map((image, imgIndex) => (
                                 <img
                                   key={imgIndex}
                                   src={image.imageUrl}
                                   alt={`Image ${imgIndex + 1}`}
-                                  className="w-32 h-32 object-cover border border-gray-300"
+                                  className="w-12 h-12 object-cover border border-gray-300 rounded-md shadow-sm"
                                 />
                               ))}
                             </div>
@@ -260,9 +265,9 @@ const AuditSection = ({ title, data, fields }) => {
 
                       // Render other nested fields
                       return (
-                        <div key={nestedIndex}>
-                          <p className="text-sm font-semibold text-gray-600">{capitalizeFirstLetter(nestedField)}</p>
-                          <pre>{JSON.stringify(nestedValue, null, 2)}</pre>
+                        <div key={nestedIndex} className="flex-shrink-0 w-auto">
+                          <p className="text-sm font-semibold text-gray-600 mb-1">{capitalizeFirstLetter(nestedField)}</p>
+                          <pre className="bg-gray-50 p-2 rounded-lg overflow-x-auto text-sm">{nestedValue}</pre>
                         </div>
                       );
                     })}
@@ -274,13 +279,20 @@ const AuditSection = ({ title, data, fields }) => {
 
           // Handle regular non-object values
           return (
-            <InfoRow key={index} label={capitalizeFirstLetter(field)} value={value || 'No data available'} />
+            <div key={index} className="flex-shrink-0 w-auto">
+              <InfoRow
+                label={capitalizeFirstLetter(field)}
+                value={value || 'No data available'}
+              />
+            </div>
           );
         })}
       </div>
     </section>
   );
 };
+
+
 
 const InfoRow = ({ label, value }) => {
   return (

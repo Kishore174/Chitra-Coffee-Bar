@@ -6,6 +6,8 @@ import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { createTea, getTea } from "../../../../API/tea";
 import toast from "react-hot-toast";
 import { getPrevious } from "../../../../API/audits";
+import { motion, AnimatePresence } from 'framer-motion';
+// import { XMarkIcon } from '@heroicons/react/24/solid';
 const TeaAudit = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [selectedTea, setSelectedTea] = useState(null);
@@ -17,6 +19,8 @@ const TeaAudit = () => {
   const [remark, setRemark] = useState("");
   const [location, setLocation] = useState("");
   const [date, setDate] = useState("");
+  const [lastAudit, setLastAudit] = useState(null);
+
   const [rating, setRating] = useState(0);
   const [capturedPhoto, setCapturedPhoto] = useState([]);
   const [teaImagePreview, setTeaImagePreview] = useState([]);
@@ -24,7 +28,9 @@ const TeaAudit = () => {
   const [previewTeaImage, setPreviewHandWashImage] = useState(null);
   const { auditId } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [lastAudits,setLastAudit] = useState([])
+  const [lastAudits,setLastAudits] = useState([])
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
   const handleTeaClick = (option) => setSelectedTea(option);
   const handleSugarClick = (level) => setSelectedSugar(level);
   const handleTemperatureClick = (temperature) =>
@@ -172,10 +178,20 @@ const TeaAudit = () => {
   const togglePopup = () => {
     setIsPopupVisible(!isPopupVisible);
     getPrevious(auditId).then(res=>{
-      setLastAudit(res.data)
+      setLastAudits(res.data)
     })
   };
+  const handleOpenDialog = (data) => {
+    setSelectedDate(date.auditDate);
+    setDialogOpen(true);
+    getTea(data._id).then(res=>{console.log(res.data)
+    setLastAudit(res.data)})
+  };
 
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setSelectedDate(null);
+  };
    
    
   return (
@@ -195,17 +211,76 @@ const TeaAudit = () => {
         Previous Audit
       </button>
 
-      
+      <AnimatePresence>
+     {isDialogOpen && (
+       <motion.div
+         className="fixed inset-0 flex  z-20 mr-2 justify-end h-screen bg-black bg-opacity-50"
+         initial={{ opacity: 0 }}
+         animate={{ opacity: 1 }}
+         exit={{ opacity: 0 }}
+         onClick={handleCloseDialog}
+       > 
+       <motion.div
+       className="relative bg-white rounded-lg p-6 w-96"
+       initial={{ y: 50, opacity: 0 }}
+       animate={{ y: 0, opacity: 1 }}
+       exit={{ y: 50, opacity: 0 }}
+       onClick={(e) => e.stopPropagation()}
+     >
+       <button
+         className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+         onClick={handleCloseDialog}
+       >
+         <XMarkIcon className="h-5 w-5" />
+       </button>
+
+       <h2 className="text-xl font-bold mb-4">Audit Date</h2>
+       <p>{selectedDate}</p>
+       
+       <div className="mt-4">
+        <p className="text-sm font-medium">Aroma: <span className="font-normal">{lastAudit?.aroma}</span></p>
+        <p className="text-sm font-medium">Color: <span className="font-normal">{lastAudit?.color}</span></p>
+        <p className="text-sm font-medium">Quality: <span className="font-normal">{lastAudit?.quality}</span></p>
+        <p className="text-sm font-medium">Rating: <span className="font-normal">{lastAudit?.rating}</span></p>
+        <p className="text-sm font-medium">Remark: <span className="font-normal">{lastAudit?.remark}</span></p>
+        <p className="text-sm font-medium">Sugar Level: <span className="font-normal">{lastAudit?.sugarLevel}</span></p>
+        <p className="text-sm font-medium">Taste: <span className="font-normal">{lastAudit?.taste}</span></p>
+        <p className="text-sm font-medium">Temperature: <span className="font-normal">{lastAudit?.temperature}</span></p>
+      </div>
+      {lastAudit?.captureImages && lastAudit?.captureImages.length > 0 && (
+        <div className="mt-4">
+          <h3 className="text-sm font-medium mb-2">Captured Images</h3>
+          <div className="flex flex-wrap gap-2">
+            {lastAudit?.captureImages.map((image, index) => (
+              <img
+                key={index}
+                src={image.imageUrl}  // Assuming image object has a 'url' property for the image source
+                alt={`Captured Image ${index + 1}`}
+                className="w-24 h-24 object-cover rounded-lg"
+              />
+            ))}
+          </div>
+        </div>
+      )}
+     </motion.div>
+   </motion.div>
+     
+     )}
+   </AnimatePresence>
       {isPopupVisible && (
-  <div className="absolute left-0 mt-2 w-56 p-4 bg-white rounded-lg shadow-lg border border-gray-300 transition-transform transform duration-200 ease-in-out">
-    <ul className="space-y-2">
-      {lastAudits && lastAudits.map((date)=>(
-        <li key={date._id} className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150">{date.auditDate.slice(0,10)}</li>
-      ))}
-      
-      {/* Add more items here */}
-    </ul>
-  </div>
+    <div className="absolute left-0 mt-2 w-44 p-4 bg-white rounded-lg shadow-lg border border-gray-300 transition-transform transform duration-200 ease-in-out">
+   <ul>
+     {lastAudits.map((date) => (
+        <li key={date._id} className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150"
+         onClick={() => handleOpenDialog(date)}
+       >
+         {date.auditDate.slice(0, 10)}
+       </li>
+     ))}
+   </ul>
+
+   
+ </div>
 )}
     </div>
        </div>

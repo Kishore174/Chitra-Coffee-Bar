@@ -20,6 +20,7 @@
     "dayjs": "^1.11.13",
     "exif-js": "^2.3.0",
     "exiftool": "^0.0.3",
+    "framer-motion": "^11.11.17",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",
     "react-chartjs-2": "^5.2.0",
