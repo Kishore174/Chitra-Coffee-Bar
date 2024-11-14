@@ -17,6 +17,7 @@ export const WallPainting = () => {
   const [location, setLocation] = useState("");
   const [date, setDate] = useState("");
   const { auditId } = useParams();
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
 
   const handleFanClick = (option) => setFan(option);
   const handleLightClick = ( Light ) => setLight( Light);
@@ -150,7 +151,7 @@ export const WallPainting = () => {
     getPainting(auditId)
       .then((res) => {
         if (res.data) {
-          setTeaImagePreview(res.data?.captureImages .map(i=>i.imageUrl))
+          setTeaImagePreview(res.data?.captureImages.map(i=>i.imageUrl))
           setFan(res.data?.fan)
           setDate(res.data?.captureImages .map(i=>i.date)[0])
           setFloorTail(res.data?.floorTail)
@@ -164,14 +165,42 @@ export const WallPainting = () => {
       })
       .catch((err) => console.log(err.message));
   }, []);
+  const togglePopup = () => {
+    setIsPopupVisible(!isPopupVisible);
+  };
   return (
-    <><div className="flex items-center mb-6">
-      <button onClick={() => navigate(-1)} className="text-gray-700 hover:text-red-600 transition duration-200">
-        <MdArrowBack className="w-6 h-6" />
+    <>
+       <div className="flex items-center justify-between mx-auto   max-w-4xl">
+      <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">
+        <MdArrowBack className="w-6 h-6 mt-1" />
+        <h1 className="text-xl md:text-xl font-semibold  ">Back</h1>
+
       </button>
-      <h1 className="text-2xl poppins-semibold ml-4">Panting</h1>
+      <div className="relative">
+
+        <button
+          onClick={togglePopup}
+          className="px-3 py-1 rounded bg-red-500 text-white shadow-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
+        >
+          Previous Audit
+        </button>
+
+
+        {isPopupVisible && (
+          <div className="absolute left-0 mt-2 w-56 p-4 bg-white rounded-lg shadow-lg border border-gray-300 transition-transform transform duration-200 ease-in-out">
+            <ul className="space-y-2">
+              {/* <li className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150">{date}</li>
+              <li className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150">{date}</li>
+              <li className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150">{date}</li>
+              <li className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150">{date}</li> */}
+
+              {/* Add more items here */}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
-    <form onSubmit={handleSubmit} className="w-full space-x-1 mx-auto p-8">
+    <form onSubmit={handleSubmit} className="  max-w-4xl w-full space-x-1 mx-auto p-8">
         <div className="flex flex-col w-full bg-white p-6 rounded-lg shadow-md flex-grow">
 
 

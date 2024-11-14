@@ -162,7 +162,7 @@ export const createStock = async (id, data) => {
     }
   }
 
-  const response = await axiosintance.post(`/audit/${id}/stackAudit`, formData, {
+  const response = await axiosintance.post(`/audit/${id}/stockAudit`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -170,13 +170,21 @@ export const createStock = async (id, data) => {
   return response.data;
 };
 export const getStock = async (id) => {
-  const response = await axiosintance.get(`/audit/${id}/stackAudit`);
+  const response = await axiosintance.get(`/audit/${id}/stockAudit`);
   return response.data;
 };
 export  const createEmployees =async(id ,data)=>{
   const response =await axiosintance.post(`/audit/${id}/employeeAudit`,data)   
   return response.data
   }
+  export  const createDress =async(id ,data)=>{
+    const response =await axiosintance.post(`/audit/${id}/uniformAudit`,data)   
+    return response.data
+    }
+    export  const getDress =async(id ,data)=>{
+      const response =await axiosintance.get(`/audit/${id}/uniformAudit`,data)   
+      return response.data
+      }
   export  const getEmployees =async(id)=>{
     const response =await axiosintance.get(`/audit/${id}/employeeAudit`)   
     return response.data
@@ -185,6 +193,10 @@ export  const createEmployees =async(id ,data)=>{
       const response =await axiosintance.get(`/audit/${id}/paintingAudit`)   
       return response.data
       }
+      export  const getPrevious =async(id)=>{
+        const response =await axiosintance.post(`/audit/${id}/lastAudits`)   
+        return response.data
+        }
     export const createPainting = async (id, data) => {
       const formData = new FormData();
     

@@ -85,7 +85,7 @@ function App() {
               <Route path="Stock/:auditId" element={<Stock/>} />
               <Route path="Wallpanting/:auditId" element={<WallPainting/>} />
               <Route path="Recording" element={<Recording/>} />
-              <Route path="Report" element={<AuditReport/>} />
+              <Route path="Report/:auditId" element={<AuditReport/>} />
               <Route path="backeryproducts" element={<BakerProducts/>} />
               <Route path="Dressing/:auditId" element={<Dressing/>} />
               <Route path="BrandName" element={<BrandName/>} />

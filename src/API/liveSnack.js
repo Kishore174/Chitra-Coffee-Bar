@@ -1,18 +1,26 @@
 import { axiosintance } from "./Api";
+
 export const createLiveSnacks = async (id, data) => {
   const formData = new FormData();
 
   // Append other fields in data to formData
   for (const key in data) {
     if (Array.isArray(data[key])) {
-      // Append each image in captureImages array
+      // Append each item in the array
       data[key].forEach((item, index) => {
-        if (item instanceof File) {
+        if (Array.isArray(item)) {
+          // If item is an array, handle it accordingly
+          item.forEach((subItem, subIndex) => {
+            for (const subKey in subItem) {
+              formData.append(`${key}[${index}][${subIndex}][${subKey}]`, subItem[subKey]);
+            }
+          });
+        } else if (item instanceof File) {
           formData.append(key, item); // Append if it's a file (image)
-        }else if (typeof item === 'object') {
-          // Instead of stringifying, you can append each property of the object
+        } else if (typeof item === 'object') {
+          // Append each property of the object
           for (const subKey in item) {
-            formData.append(`${key}[${subKey}]`,JSON.stringify( item[subKey]));
+            formData.append(`${key}[${index}][${subKey}]`, item[subKey]);
           }
         } else {
           formData.append(key, item); // Append regular data

@@ -23,7 +23,7 @@ const AddAudit = () => {
    const {id} = useParams()
   const handleNextProcess = () => {
     // navigate('/Recording');
-    navigate('/Report');  
+    navigate(`/Report/${id}`);  
      
   }; 
   useEffect(() => {

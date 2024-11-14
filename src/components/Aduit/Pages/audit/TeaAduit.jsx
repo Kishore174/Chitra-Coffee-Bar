@@ -5,6 +5,7 @@ import { MdArrowBack } from "react-icons/md";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { createTea, getTea } from "../../../../API/tea";
 import toast from "react-hot-toast";
+import { getPrevious } from "../../../../API/audits";
 const TeaAudit = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [selectedTea, setSelectedTea] = useState(null);
@@ -23,6 +24,7 @@ const TeaAudit = () => {
   const [previewTeaImage, setPreviewHandWashImage] = useState(null);
   const { auditId } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [lastAudits,setLastAudit] = useState([])
   const handleTeaClick = (option) => setSelectedTea(option);
   const handleSugarClick = (level) => setSelectedSugar(level);
   const handleTemperatureClick = (temperature) =>
@@ -169,6 +171,9 @@ const TeaAudit = () => {
   }, []);
   const togglePopup = () => {
     setIsPopupVisible(!isPopupVisible);
+    getPrevious(auditId).then(res=>{
+      setLastAudit(res.data)
+    })
   };
 
    
@@ -194,11 +199,10 @@ const TeaAudit = () => {
       {isPopupVisible && (
   <div className="absolute left-0 mt-2 w-56 p-4 bg-white rounded-lg shadow-lg border border-gray-300 transition-transform transform duration-200 ease-in-out">
     <ul className="space-y-2">
-      <li className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150">{date}</li>
-      <li className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150">{date}</li>
-      <li className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150">{date}</li>
-      <li className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150">{date}</li>
-
+      {lastAudits && lastAudits.map((date)=>(
+        <li key={date._id} className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150">{date.auditDate.slice(0,10)}</li>
+      ))}
+      
       {/* Add more items here */}
     </ul>
   </div>

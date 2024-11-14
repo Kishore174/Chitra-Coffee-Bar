@@ -45,15 +45,30 @@ const LiveSnacks = () => {
     fetchSnacks();
   }, []);
 
-  useEffect(()=>{
-    getLiveSnack(auditId)
-    .then(res=>{
-      // if(res.data){
-        console.log(res.data)
-      // }
-    })
-    .catch(err=>console.log(err))
-  },[auditId])
+  useEffect(() => {
+    const fetchLiveSnack = async () => {
+      try {
+        const res = await getLiveSnack(auditId);
+        if (res.data) {
+          const { snacks, remark, rating, captureImages } = res.data;
+          setRemark(remark);
+          setRating(rating);
+          setLiveSnackImagePreview(captureImages.map(i=>i.imageUrl));
+
+          // Set snack availability based on the fetched data
+          const availability = {};
+          snacks.forEach(snack => {
+            availability[snack.snack.name] = snack.status; // Assuming snack object has a name property
+          });
+          setSnackAvailability(availability);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchLiveSnack();
+  }, [auditId]);
+
 
   const handleRatingClick = (rate) => setRating(rate);
 

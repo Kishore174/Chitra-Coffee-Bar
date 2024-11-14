@@ -41,7 +41,7 @@ const Navbar = () => {
               <button
                 onClick={() => setIsMenuOpen(true)}
                 className="text-gray-700"
-              >``
+              >
                 <FaBars className="h-6 w-6" />
               </button>
             )}

@@ -1,4 +1,3 @@
- 
 import React, { useEffect, useState } from 'react';
 import { HiPlus, HiTrash, HiPencil } from 'react-icons/hi'; // Plus, delete, and edit icons
 import { createBrand, createSnackBrand, deleteLiveSnacks, getBrand, getSnackBrand, updateLiveSnack } from '../../../../API/settings';
@@ -24,7 +23,7 @@ const[liveSnackToDelete,setLiveSnackToDelete]=useState(null)
 
   const handleSubmit = async() => {
     if (currentField._id) {
-      updateLiveSnack(currentField._id,currentField. name)
+      updateLiveSnack(currentField._id,{name:currentField.name})
       .then((res) => {
         toast.success(res.message);
       })             
@@ -115,10 +114,10 @@ useEffect(() => {
      {isDialogOpen && (
        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-           <h2 className="text-2xl mb-4">{currentField.id ? 'Edit Brand' : 'Add Brand'}</h2>
+           <h2 className="text-2xl mb-4">{currentField._id ? 'Edit Brand' : 'Add Brand'}</h2>
            <input
              type="text"
-             value={currentField. name}
+             value={currentField.name}
              onChange={handleInputChange}
              className="w-full border border-gray-300 rounded-lg p-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
              placeholder="Enter Brand Name"
@@ -134,7 +133,7 @@ useEffect(() => {
                onClick={handleSubmit}
                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none"
              >
-               {currentField.id ? 'Update' : 'Add'}
+               {currentField._id ? 'Update' : 'Add'}
              </button>
            </div>
          </div>

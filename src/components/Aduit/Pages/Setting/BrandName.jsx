@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { HiPlus, HiTrash, HiPencil } from 'react-icons/hi'; // Plus, delete, and edit icons
-import { createBrand, getBrand } from '../../../../API/settings';
+import { createBrand, deleteBrand, getBrand, updateBrand } from '../../../../API/settings';
 import toast from 'react-hot-toast';
 import { MdArrowBack } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +23,13 @@ const BrandName = () => {
 
   const handleSubmit = async() => {
     if (currentField._id) {
+      updateBrand(currentField._id,{name:currentField.name})
+      .then((res) => {
+        toast.success(res.message);
+      })             
+      .catch (error=> {
+        console.error('updatetest', error);
+      })
       setInputFields(inputFields.map(field => 
         field._id === currentField._id ? { ...field, name: currentField. name } : field
       ));
@@ -47,9 +54,17 @@ useEffect(() => {
     fetchBrands();
   }, []);
   const handleRemoveField = (id) => {
-    setInputFields(inputFields.filter(field => field._id !== id));
-  };
-
+  
+   
+    deleteBrand(id)
+      .then((res) => {
+        toast.success(res.message);
+        setInputFields(inputFields.filter((s) => s._id !== id));
+        // setLiveSnackToDelete(null);
+      })
+      .catch((err) => toast.error(`Error: ${err.message}`));
+ 
+};
   const handleInputChange = (event) => {
     setCurrentField({ ...currentField,  name: event.target.value });
   };
@@ -76,7 +91,7 @@ useEffect(() => {
           <HiPencil size={20} />
         </button>
         <button
-          onClick={() => handleRemoveField(field.id)}
+          onClick={() => handleRemoveField(field._id)}
           className="text-red-500 hover:text-red-700 p-1 rounded-full bg-red-100 hover:bg-red-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-300"
           title="Delete Brand"
         >

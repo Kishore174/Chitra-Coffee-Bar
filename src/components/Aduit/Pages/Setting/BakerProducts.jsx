@@ -1,136 +1,143 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PlusIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import Select from 'react-select';
-import { createProduct } from '../../../../API/settings';
+import { createProduct, getBrand, getProducts } from '../../../../API/settings';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { MdArrowBack } from 'react-icons/md';
 
 const BakerProducts = () => {
   const [brandName, setBrandName] = useState('');
-  const [productNames, setProductNames] = useState(['']);
-  const [submissions, setSubmissions] = useState([]);
+  const [productName, setProductName] = useState('');
+  const [submissions, setSubmissions] = useState([]);  // State to store submitted products
+  const [brands, setBrands] = useState([]);
   const navigate = useNavigate();
 
-  const brandOptions = [
-    { value: 'brand1', label: 'Brand 1' },
-    { value: 'brand2', label: 'Brand 2' },
-    { value: 'brand3', label: 'Brand 3' },
-    { value: 'brand4', label: 'Brand 4' },
-  ];
-
   const handleBrandNameChange = (selectedOption) => {
-    setBrandName(selectedOption);
+    setBrandName(selectedOption);  // Store the full object (value + label)
   };
 
-  const handleProductNameChange = (index, e) => {
-    const newProductNames = [...productNames];
-    newProductNames[index] = e.target.value;
-    setProductNames(newProductNames);
+  const handleProductNameChange = (e) => {
+    setProductName(e.target.value);  // Update product name
   };
 
-  const addProductField = () => {
-    setProductNames([...productNames, '']);
-  };
-
-  const removeProductField = (index) => {
-    const newProductNames = productNames.filter((_, i) => i !== index);
-    setProductNames(newProductNames);
-  };
-
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (brandName && productNames.some(name => name)) {
+    if (brandName && productName) {
       const newSubmission = {
-        brandName: brandName.name,
-        productNames,
+        brandName: brandName.label,  // Use the label for display
+        productNames: [productName],  // Add single product name
       };
-      setSubmissions([...submissions, newSubmission]);
+      setSubmissions([...submissions, newSubmission]);  // Add new submission to the list
       setBrandName('');
-      setProductNames(['']);
-     const res = await createProduct({name:brandName.name})
-    toast.success(res.message)
+      setProductName('');
+      const res = await createProduct({ brand: brandName.value, name: productName });
+      toast.success(res.message);
+    } else {
+      toast.error("Please select a brand and enter a product name");
     }
   };
 
+  // Fetch brands on mount
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const res = await getBrand();  // Assuming getBrand() returns brand data
+        if (res.success) {
+          const dynamicBrandOptions = res.data.map(brand => ({
+            value: brand._id,  // Use _id or another unique identifier as the value
+            label: brand.name  // Use the name for the label that will be shown
+          }));
+          setBrands(dynamicBrandOptions);  // Update the state with the formatted brand options
+        } else {
+          toast.error('Failed to fetch brands');
+        }
+      } catch (error) {
+        toast.error('Error fetching brands');
+      }
+    };
+
+    fetchBrands();
+  }, []);
+
+  // Fetch products on mount and update submissions
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await getProducts();  // Assuming getProducts() returns product data
+        if (res.success) {
+          const productsData = res.data.map(product => ({
+            brandName: product.brand.name,  // Extract brand name
+            productNames: [product.name],   // Add product name to the array
+          }));
+          setSubmissions(productsData);  // Update the submissions state with fetched products
+        } else {
+          toast.error('Failed to fetch products');
+        }
+      } catch (error) {
+        toast.error('Error fetching products');
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   return (
     <>
-    <button onClick={() => navigate(-1)} className="text-gray-700 p-6 flex space-x-1 hover:text-red-600 transition duration-200">
-      <MdArrowBack className="w-6 h-6 mt-1" />
-      <h1 className="text-xl md:text-xl font-semibold  ">Back</h1>
-    </button>
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Bakery Product Entry</h2>
+      <button onClick={() => navigate(-1)} className="text-gray-700 p-6 flex space-x-1 hover:text-red-600 transition duration-200">
+        <MdArrowBack className="w-6 h-6 mt-1" />
+        <h1 className="text-xl md:text-xl font-semibold">Back</h1>
+      </button>
+      <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Bakery Product Entry</h2>
 
-      {/* Brand Selection */}
-      <div className="mb-6">
-        <label className="block text-lg font-medium text-gray-700 mb-2">Brand Name</label>
-        <Select
-          value={brandName}
-          onChange={handleBrandNameChange}
-          options={brandOptions}
-          isSearchable
-          placeholder="Select a brand"
-          className="border border-gray-300 rounded-lg" />
+        {/* Brand Selection */}
+        <div className="mb-6">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Brand Name</label>
+          <Select
+            value={brandName}
+            onChange={handleBrandNameChange}
+            options={brands}  // Use the dynamically fetched brands
+            isSearchable
+            placeholder="Select a brand"
+            className="border border-gray-300 rounded-lg"
+          />
+        </div>
+
+        {/* Product Name */}
+        <div className="mb-6">
+          <label className="block text-lg font-medium text-gray-700 mb-4">Product Name</label>
+          <input
+            type="text"
+            value={productName}
+            onChange={handleProductNameChange}
+            placeholder="Enter product name"
+            className="w-full py-2 px-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 ease-in-out"
+          />
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="button"
+          onClick={handleSubmit}
+          className="w-full py-3 mt-4 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition flex items-center justify-center"
+        >
+          <CheckCircleIcon className="h-5 w-5 mr-2" />
+          Submit
+        </button>
+
       </div>
 
-      {/* Product Names */}
-      <div className="mb-6">
-  <label className="block text-lg font-medium text-gray-700 mb-4">Product Names</label>
-  {productNames.map((productName, index) => (
-    <div key={index} className="flex items-center space-x-3 mb-3">
-      <input
-        type="text"
-        value={productName}
-        onChange={(e) => handleProductNameChange(index, e)}
-        placeholder={`Product Name ${index + 1}`}
-        className="flex-grow py-2 px-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 ease-in-out"
-      />
-      <button
-        type="button"
-        onClick={() => removeProductField(index)}
-        className="text-red-600 hover:text-red-800 transition duration-150 ease-in-out"
-      >
-        <TrashIcon className="h-5 w-5" />
-      </button>
-    </div>
-  ))}
-
-  {/* Add Product Button (Visible after the last product input) */}
-  <div className="flex justify-end mt-4">
-    <button
-      type="button"
-      onClick={addProductField}
-      className="bg-red-500 py-2 px-4 rounded-full text-white font-semibold hover:bg-red-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200 ease-in-out flex items-center justify-center shadow-md"
-    >
-      <PlusIcon className="h-5 w-5 text-white" />
-      <span className="ml-2">Add Product</span>
-    </button>
-  </div>
-</div>
-
-
-      {/* Submit Button */}
-      <button
-        type="button"
-        onClick={handleSubmit}
-        className="w-full py-3 mt-4 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition flex items-center justify-center"
-      >
-        <CheckCircleIcon className="h-5 w-5 mr-2" />
-        Submit
-      </button>
-
-      {/* Display Submitted Data */}
-
-    </div><div className='max-w-4xl mx-auto'>
+      {/* Product List Table */}
+      <div className='max-w-4xl mx-auto'>
         {submissions.length > 0 && (
-          <div className="mt-8  ">
-           
+          <div className="mt-8">
+            <h3 className="text-2xl font-semibold mb-4">Submitted Products</h3>
             <table className="w-full border text-left">
               <thead>
                 <tr className="bg-red-500 text-white">
                   <th className="py-3 px-4 font-medium">Brand Name</th>
-                  <th className="py-3 px-4 font-medium">Product Names</th>
+                  <th className="py-3 px-4 font-medium">Product Name</th>
                 </tr>
               </thead>
               <tbody>
@@ -150,7 +157,8 @@ const BakerProducts = () => {
             </table>
           </div>
         )}
-      </div></>
+      </div>
+    </>
   );
 };
 
