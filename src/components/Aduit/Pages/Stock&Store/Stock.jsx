@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { useNavigate, useParams } from 'react-router-dom'; // Import useNavigate
+import { useNavigate, useParams } from 'react-router-dom'; 
 import { createStock, getStock } from '../../../../API/audits';
 import toast from 'react-hot-toast';
 
@@ -9,10 +9,9 @@ const Stock = () => {
   const [previewBakshanamImage, setPreviewBakshanamImage] = useState(null);
   const [captureImages, setCaptureImages] = useState([]);
   const { auditId } = useParams();
-
   const [remark, setRemark] = useState('');
   const bakshanamFileInputRef = useRef(null);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const triggerBakshanamFileInput = () => {
     bakshanamFileInputRef.current.click();
@@ -20,7 +19,6 @@ const Stock = () => {
 
   const handleBakshanamPhotoCapture = (event) => {
     const files = Array.from(event.target.files);
-    files.map(file=>setCaptureImages(prev=>[...prev,file]))
     if (files.length + bakshanamImagePreview.length > 4) {
       alert('You can only upload up to 4 images.');
       return;
@@ -28,6 +26,7 @@ const Stock = () => {
 
     const newImages = files.map((file) => URL.createObjectURL(file));
     setBakshanamImagePreview((prev) => [...prev, ...newImages]);
+    setCaptureImages((prev) => [...prev, ...files]);
   };
 
   const handleCloseBakshanam = () => {
@@ -40,25 +39,28 @@ const Stock = () => {
 
   const removeBakshanamImage = (index) => {
     setBakshanamImagePreview((prev) => prev.filter((_, i) => i !== index));
+    setCaptureImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = () => {
-   createStock(auditId,{remark,captureImages,location:"unknown",date:"unknown"}).then(res=>{toast.success(res.message)
-    navigate(-1); // Navigate back to the previous page
-
-   })
-    console.log('Submitted with remarks:', {remark,captureImages});
+    createStock(auditId, { remark, captureImages, location: "unknown", date: "unknown" })
+      .then(res => {
+        toast.success(res.message);
+        navigate(-1);
+      });
   };
-useEffect(()=>{
-getStock(auditId).then(res=>{
-  setRemark(res.data?.remark)
-  setBakshanamImagePreview(res.data?.captureImages?.map(i=>i.imageUrl))
-})
-}, [])
+
+  useEffect(() => {
+    getStock(auditId).then(res => {
+      setRemark(res.data?.remark);
+      setBakshanamImagePreview(res.data?.captureImages?.map(i => i.imageUrl));
+    });
+  }, [auditId]);
+
   return (
     <div className="p-6 flex justify-center">
-      <div className="bg-white border border-gray-300 rounded-lg p-4 shadow-lg w-80 space-y-4">
-        <h3 className="text-lg font-semibold text-center text-gray-800">Stock/Store</h3>
+      <div className="bg-white border border-gray-300 rounded-lg p-6 shadow-lg w-full max-w-md space-y-6">
+        <h3 className="text-xl font-semibold text-center text-gray-800">Stock/Store</h3>
 
         {/* Upload Button */}
         <div
@@ -79,18 +81,19 @@ getStock(auditId).then(res=>{
         />
 
         {/* Uploaded Image Previews with Remove Button */}
-        <div className="grid grid-cols-2 gap-2 mt-2">
+        <div className="flex flex-wrap gap-2 mb-4">
+
           {bakshanamImagePreview.map((image, index) => (
             <div key={index} className="relative">
               <img
                 src={image}
                 alt={`Bakshanam ${index + 1}`}
-                className="h-24 w-24 border rounded-md object-cover shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
+                className="h-24 w-24 border rounded-md object-cover shadow-sm hover:shadow-md transition-shadow duration -200 cursor-pointer"
                 onClick={() => handleBakshanamClick(image)}
               />
               <button
                 onClick={() => removeBakshanamImage(index)}
-                className="absolute top-0 right-0 p-1 bg-white border border-gray-300 rounded-full shadow-md hover:bg-red-500 hover:text-white transition-colors duration-200"
+                className="absolute top-0 right-0 p-1 bg-red-500 border text-white border-gray-300 rounded-full shadow-md hover:bg-white hover:text-white transition-colors duration-200"
               >
                 <XMarkIcon className="w-4 h-4" />
               </button>
@@ -99,7 +102,6 @@ getStock(auditId).then(res=>{
         </div>
 
         <h3 className="font-semibold">Remark</h3>
-   
         <textarea
           placeholder="Add a remark..."
           value={remark}

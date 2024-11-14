@@ -288,7 +288,8 @@ const Bunzo = () => {
                     />
                     <button
                       onClick={handleCloseLiveSnack}
-                      className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                      className="absolute top-0 right-0 p-1 bg-red-500 border text-white border-gray-300 rounded-full shadow-md hover:bg-white  hover:text-black transition-colors duration-200"
+
                     >
                       <XMarkIcon className="w-6 h-6" />
                     </button>
@@ -305,7 +306,8 @@ const Bunzo = () => {
                   />
                   <button
                     onClick={() => removeLiveSnackImage(index)}
-                    className="absolute top-0 right-0 text-red-500 hover:text-red-700"
+                    className="absolute top-0 right-0 p-1 bg-red-500 border text-white border-gray-300 rounded-full shadow-md hover:bg-white  hover:text-black transition-colors duration-200"
+
                   >
                     <XMarkIcon className="w-4 h-4" />
                   </button>

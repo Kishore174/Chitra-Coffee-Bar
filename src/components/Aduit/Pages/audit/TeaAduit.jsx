@@ -7,7 +7,7 @@ import { createTea, getTea } from "../../../../API/tea";
 import toast from "react-hot-toast";
 import { getPrevious } from "../../../../API/audits";
 import { motion, AnimatePresence } from 'framer-motion';
-// import { XMarkIcon } from '@heroicons/react/24/solid';
+
 const TeaAudit = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [selectedTea, setSelectedTea] = useState(null);
@@ -17,10 +17,9 @@ const TeaAudit = () => {
   const [selectedAroma, setSelectedAroma] = useState(null);
   const [selectedTaste, setSelectedTaste] = useState(null);
   const [remark, setRemark] = useState("");
-  const [location, setLocation] = useState("");
+  const [location, setLocation]=useState('')
   const [date, setDate] = useState("");
   const [lastAudit, setLastAudit] = useState(null);
-
   const [rating, setRating] = useState(0);
   const [capturedPhoto, setCapturedPhoto] = useState([]);
   const [teaImagePreview, setTeaImagePreview] = useState([]);
@@ -28,13 +27,14 @@ const TeaAudit = () => {
   const [previewTeaImage, setPreviewHandWashImage] = useState(null);
   const { auditId } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [lastAudits,setLastAudits] = useState([])
+  const [lastAudits, setLastAudits] = useState([]);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [loading, setLoading] = useState(false); // Loading state
+
   const handleTeaClick = (option) => setSelectedTea(option);
   const handleSugarClick = (level) => setSelectedSugar(level);
-  const handleTemperatureClick = (temperature) =>
-    setSelectedTemperature(temperature);
+  const handleTemperatureClick = (temperature) => setSelectedTemperature(temperature);
   const handleColorClick = (color) => setSelectedColor(color);
   const handleAromaClick = (aroma) => setSelectedAroma(aroma);
   const handleTasteClick = (taste) => setSelectedTaste(taste);
@@ -43,6 +43,8 @@ const TeaAudit = () => {
 
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    setLoading(true); // Set loading to true when submission starts
 
     try {
       const auditData = {
@@ -60,14 +62,15 @@ const TeaAudit = () => {
       };
       const res = await createTea(auditId, auditData);
       toast.success(res.message);
-      navigate(-1)
-      handleTeaSubmit()
+      navigate(-1);
+      handleTeaSubmit();
       console.log("Submitted Data:", auditData);
     } catch (err) {
       console.log(err);
+      toast.error("Submission failed. Please try again."); // Show error message
+    } finally {
+      setLoading(false); // Reset loading state after submission
     }
-
-    // Here, you can also send the data to a server or perform further actions.
   };
 
   const fileInputRef = useRef(null);
@@ -76,6 +79,7 @@ const TeaAudit = () => {
   const triggerTeaFileInput = () => {
     handWashFileInputRef.current.click();
   };
+
   const getCurrentDateTime = () => {
     const now = new Date();
     return `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
@@ -125,7 +129,7 @@ const TeaAudit = () => {
 
           // Convert canvas to data URL and store it in the state
           const watermarkedImage = canvas.toDataURL("image/png");
-          setTeaImagePreview((prev) => [...prev, watermarkedImage]);
+          setTeaImagePreview((prev) => [... prev, watermarkedImage]);
           setCapturedPhoto((prev) => [...prev, file]);
         };
       };
@@ -151,8 +155,9 @@ const TeaAudit = () => {
 
   const handleTeaSubmit = () => {
     setIsTeaSubmitted(true);
-    setIsModalOpen(false)
+    setIsModalOpen(false);
   };
+
   useEffect(() => {
     getTea(auditId)
       .then((res) => {
@@ -168,135 +173,143 @@ const TeaAudit = () => {
           setTeaImagePreview(
             res?.data?.captureImages?.map((img) => img.imageUrl)
           );
-          setLocation(res?.data?.captureImages[0]?.location)
-          setDate(res?.data?.captureImages[0]?.date)
-          setIsTeaSubmitted(true)
+          setLocation(res?.data?.captureImages[0]?.location);
+          setDate(res?.data?.captureImages[0]?.date);
+          setIsTeaSubmitted(true);
         }
       })
       .catch((err) => console.log(err.message));
   }, []);
+
   const togglePopup = () => {
     setIsPopupVisible(!isPopupVisible);
-    getPrevious(auditId).then(res=>{
-      setLastAudits(res.data)
-    })
+    getPrevious(auditId).then(res => {
+      setLastAudits(res.data);
+    });
   };
+
   const handleOpenDialog = (data) => {
-    setSelectedDate(date.auditDate);
+    setSelectedDate(data.auditDate);
     setDialogOpen(true);
-    getTea(data._id).then(res=>{console.log(res.data)
-    setLastAudit(res.data)})
+    getTea(data._id).then(res => {
+      setLastAudit(res.data);
+    });
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setSelectedDate(null);
   };
-   
-   
+
   return (
     <>
-      <div className="flex items-center justify-between mx-auto p-4  max-w-4xl">
-       <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">
-         <MdArrowBack className="w-6 h-6 mt-1" />
-       <h1 className="text-xl md:text-xl font-semibold  ">Back</h1>
+      <div className="flex items-center justify-between mx-auto p-4 max-w-4xl">
+        <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">
+          <MdArrowBack className="w-6 h-6 mt-1" />
+          <h1 className="text-xl md:text-xl font-semibold">Back</h1>
+        </button>
+        <div className="relative">
+          <button
+            onClick={togglePopup}
+            className="px-3 py-1 rounded bg-red-500 text-white shadow-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
+          >
+            Previous Audit
+          </button>
 
-       </button>
-       <div className="relative">
-    
-      <button
-        onClick={togglePopup}
-        className="px-3 py-1 rounded bg-red-500 text-white shadow-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
-      >
-        Previous Audit
-      </button>
+          <AnimatePresence>
+            {isDialogOpen && (
+              <motion.div
+                className="fixed inset-0 flex z-20 mr-2 justify-end h-screen bg-black bg-opacity-50"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={handleCloseDialog}
+              >
+                <motion.div
+                  className="relative bg-white rounded-lg p-8 w-2/5 shadow-2xl transition-all duration-300 transform hover:scale-105"
+                  initial={{ y: 50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 50, opacity: 0 }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    className="absolute top-4 right-4 text-red-600 hover:text-red-800 transition duration-200 p-3 rounded-full bg-gray-100 hover:bg-red-100"
+                    onClick={handleCloseDialog}
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
 
-      <AnimatePresence>
-     {isDialogOpen && (
-       <motion.div
-         className="fixed inset-0 flex  z-20 mr-2 justify-end h-screen bg-black bg-opacity-50"
-         initial={{ opacity: 0 }}
-         animate={{ opacity: 1 }}
-         exit={{ opacity: 0 }}
-         onClick={handleCloseDialog}
-       > 
-       <motion.div
-       className="relative bg-white rounded-lg p-6 w-96"
-       initial={{ y: 50, opacity: 0 }}
-       animate={{ y: 0, opacity: 1 }}
-       exit={{ y: 50, opacity: 0 }}
-       onClick={(e) => e.stopPropagation()}
-     >
-       <button
-         className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-         onClick={handleCloseDialog}
-       >
-         <XMarkIcon className="h-5 w-5" />
-       </button>
+                  <h2 className="text-2xl font-semibold mb-6 text-red-600 border-b-2 border-red-600 pb-2">Audit Date</h2>
+                  <p className="text-gray-700 text-sm mb-6">{selectedDate}</p>
 
-       <h2 className="text-xl font-bold mb-4">Audit Date</h2>
-       <p>{selectedDate}</p>
-       
-       <div className="mt-4">
-        <p className="text-sm font-medium">Aroma: <span className="font-normal">{lastAudit?.aroma}</span></p>
-        <p className="text-sm font-medium">Color: <span className="font-normal">{lastAudit?.color}</span></p>
-        <p className="text-sm font-medium">Quality: <span className="font-normal">{lastAudit?.quality}</span></p>
-        <p className="text-sm font-medium">Rating: <span className="font-normal">{lastAudit?.rating}</span></p>
-        <p className="text-sm font-medium">Remark: <span className="font-normal">{lastAudit?.remark}</span></p>
-        <p className="text-sm font-medium">Sugar Level: <span className="font-normal">{lastAudit?.sugarLevel}</span></p>
-        <p className="text-sm font-medium">Taste: <span className="font-normal">{lastAudit?.taste}</span></p>
-        <p className="text-sm font-medium">Temperature: <span className="font-normal">{lastAudit?.temperature}</span></p>
-      </div>
-      {lastAudit?.captureImages && lastAudit?.captureImages.length > 0 && (
-        <div className="mt-4">
-          <h3 className="text-sm font-medium mb-2">Captured Images</h3>
-          <div className="flex flex-wrap gap-2">
-            {lastAudit?.captureImages.map((image, index) => (
-              <img
-                key={index}
-                src={image.imageUrl}  // Assuming image object has a 'url' property for the image source
-                alt={`Captured Image ${index + 1}`}
-                className="w-24 h-24 object-cover rounded-lg"
-              />
-            ))}
-          </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {[
+                      { label: 'Aroma', value: lastAudit?.aroma },
+                      { label: 'Color', value: lastAudit?.color },
+                      { label: 'Quality', value: lastAudit?.quality },
+                      { label: 'Rating', value: lastAudit?.rating },
+                      { label: ' Remark', value: lastAudit?.remark },
+                      { label: 'Sugar Level', value: lastAudit?.sugarLevel },
+                      { label: 'Taste', value: lastAudit?.taste },
+                      { label: 'Temperature', value: lastAudit?.temperature }
+                    ].map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-5 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:scale-105"
+                      >
+                        <span className="text-sm font-medium text-red-700 bg-red-100 px-3 py-1 rounded-full capitalize">
+                          {item.label}
+                        </span>
+                        <span className="font-semibold text-gray-800 text-lg">{item.value || 'N/A'}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {lastAudit?.captureImages && lastAudit?.captureImages.length > 0 && (
+                    <div className="">
+                      <h3 className="text-lg font-medium text-red-600 mb-1">Captured Images</h3>
+                      <div className="flex flex-wrap gap-4">
+                        {lastAudit?.captureImages.map((image, index) => (
+                          <div key={index} className="group relative w-24 h-24 overflow-hidden rounded-lg shadow-lg transition-all duration-300 hover:scale-105">
+                            <img
+                              src={image.imageUrl}
+                              alt={`Captured Image ${index + 1}`}
+                              className="w-full h-full object-cover transition-transform duration-300"
+                            />
+                            <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          {isPopupVisible && (
+            <div className="absolute left-0 mt-2 w-44 p-4 bg-white rounded-lg shadow-lg border border-gray-300 transition-transform transform duration-200 ease-in-out">
+              <ul>
+                {lastAudits.map((date) => (
+                  <li key={date._id} className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150"
+                    onClick={() => handleOpenDialog(date)}
+                  >
+                    {date.auditDate.slice(0, 10)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
-      )}
-     </motion.div>
-   </motion.div>
-     
-     )}
-   </AnimatePresence>
-      {isPopupVisible && (
-    <div className="absolute left-0 mt-2 w-44 p-4 bg-white rounded-lg shadow-lg border border-gray-300 transition-transform transform duration-200 ease-in-out">
-   <ul>
-     {lastAudits.map((date) => (
-        <li key={date._id} className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150"
-         onClick={() => handleOpenDialog(date)}
-       >
-         {date.auditDate.slice(0, 10)}
-       </li>
-     ))}
-   </ul>
-
-   
- </div>
-)}
-    </div>
-       </div>
+      </div>
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          setIsModalOpen(true)
-        }}
-        className="w-full max-w-4xl mx-auto p-4 md:p-8 "
+        onSubmit={handleSubmit}
+        className="w-full max-w-4xl mx-auto p-4 md:p-8"
       >
         <div className="flex flex-col bg-white p-4 md:p-6 rounded-lg shadow-md">
-          <div className="flex items-center  mb-4 md:mb-6">
-            <h1 className="text-xl md:text-2xl  poppins-medium ml-3 md:ml-4">
+          <div className="flex items-center mb-4 md:mb-6">
+            <h1 className="text-xl md:text-2xl poppins-medium ml-3 md:ml-4">
               Tea Audit
             </h1>
-            
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
@@ -308,7 +321,7 @@ const TeaAudit = () => {
                   <div
                     key={tea}
                     onClick={() => handleTeaClick(tea)}
-                    className={`cursor-pointer capitalize  px-3 py-1 mt-2 rounded-full border flex items-center justify-center transition-colors duration-200 hover:bg-red-600 hover:text-white ${selectedTea === tea
+                    className={`cursor-pointer capitalize px-3 py-1 mt-2 rounded-full border flex items-center justify-center transition-colors duration-200 hover:bg-red-600 hover:text-white ${selectedTea === tea
                       ? "bg-red-600 text-white"
                       : "bg-white text-gray-700 border-gray-300"
                       }`}
@@ -321,15 +334,13 @@ const TeaAudit = () => {
 
             {/* Sugar selection */}
             <div>
-              <label className="text-lg  poppins-medium pb-5 mr-4">
-                Sugar Level
-              </label>
+              <label className="text-lg poppins-medium pb-5 mr-4">Sugar Level</label>
               <div className="flex space-x-2 sm:space-x-4">
                 {["high", "low", "perfect"].map((sugar) => (
                   <div
                     key={sugar}
                     onClick={() => handleSugarClick(sugar)}
-                    className={`cursor-pointer capitalize px-3 py-1  mt-2  rounded-full border flex items-center justify-center transition-colors duration-200 hover:bg-red-600 hover:text-white ${selectedSugar === sugar
+                    className={`cursor-pointer capitalize px-3 py-1 mt-2 rounded-full border flex items-center justify-center transition-colors duration-200 hover:bg-red-600 hover:text-white ${selectedSugar === sugar
                       ? "bg-red-600 text-white"
                       : "bg-white text-gray-700 border-gray-300"
                       }`}
@@ -342,15 +353,13 @@ const TeaAudit = () => {
 
             {/* Temperature selection */}
             <div>
-              <label className="text-lg poppins-semibold mr-4">
-                Temperature
-              </label>
+              <label className="text-lg poppins-semibold mr-4">Temperature</label>
               <div className="flex space-x-2 sm:space-x-4">
                 {["hot", "warm", "cold"].map((temperature) => (
                   <div
                     key={temperature}
                     onClick={() => handleTemperatureClick(temperature)}
-                    className={`cursor-pointer capitalize px-3 py-1  mt-2  rounded-full border flex items-center justify-center transition-colors duration-200 hover:bg-red-600 hover:text-white ${selectedTemperature === temperature
+                    className={`cursor-pointer capitalize px-3 py-1 mt-2 rounded-full border flex items-center justify-center transition-colors duration-200 hover:bg-red-600 hover:text-white ${selectedTemperature === temperature
                       ? "bg-red-600 text-white"
                       : "bg-white text-gray-700 border-gray-300"
                       }`}
@@ -369,7 +378,7 @@ const TeaAudit = () => {
                   <div
                     key={color}
                     onClick={() => handleColorClick(color)}
-                    className={`cursor-pointer capitalize px-3 py-1  mt-2  rounded-full border flex items-center justify-center transition-colors duration-200 hover:bg-red-600 hover:text-white ${selectedColor === color
+                    className={`cursor-pointer capitalize px-3 py-1 mt-2 rounded-full border flex items-center justify-center transition-colors duration-200 hover:bg-red-600 hover:text-white ${selectedColor === color
                       ? "bg-red-600 text-white"
                       : "bg-white text-gray-700 border-gray-300"
                       }`}
@@ -382,13 +391,13 @@ const TeaAudit = () => {
 
             {/* Aroma selection */}
             <div>
-              <label className="text-lg  poppins-medium mr-4">Aroma</label>
+              <label className="text-lg poppins-medium mr-4">Aroma</label>
               <div className="flex space-x-2 sm:space-x-4">
                 {["excellent", "bad"].map((aroma) => (
                   <div
                     key={aroma}
                     onClick={() => handleAromaClick(aroma)}
-                    className={`cursor-pointer capitalize px-3 py-1  mt-2  rounded-full border flex items-center justify-center transition-colors duration-200 hover:bg-red-600 hover:text-white ${selectedAroma === aroma
+                    className={`cursor-pointer capitalize px-3 py-1 mt-2 rounded-full border flex items-center justify-center transition-colors duration-200 hover:bg-red-600 hover:text-white ${selectedAroma === aroma
                       ? "bg-red-600 text-white"
                       : "bg-white text-gray-700 border-gray-300"
                       }`}
@@ -401,13 +410,13 @@ const TeaAudit = () => {
 
             {/* Taste selection */}
             <div>
-              <label className="text-lg  poppins-medium mr-4">Taste</label>
+              <label className="text-lg poppins-medium mr-4">Taste</label>
               <div className="flex space-x-2 sm:space-x-4">
                 {["excellent", "bad"].map((taste) => (
                   <div
                     key={taste}
                     onClick={() => handleTasteClick(taste)}
-                    className={`cursor-pointer  capitalize px-3 py-1  mt-2  rounded-full border flex items-center justify-center transition-colors duration-200 hover:bg-red-600 hover:text-white ${selectedTaste === taste
+                    className={`cursor-pointer capitalize px-3 py-1 mt-2 rounded-full border flex items-center justify-center transition-colors duration-200 hover:bg-red-600 hover:text-white ${selectedTaste === taste
                       ? "bg-red-600 text-white"
                       : "bg-white text-gray-700 border-gray-300"
                       }`}
@@ -422,7 +431,7 @@ const TeaAudit = () => {
           {/* Remark and Rating */}
           <div className="flex flex-col sm:flex-row gap-4 mt-6">
             <div className="flex-col w-full">
-              <h2 className="text-lg  poppins-medium">Remark</h2>
+              <h2 className="text-lg poppins-medium">Remark</h2>
               <textarea
                 value={remark}
                 onChange={handleRemarkChange}
@@ -466,7 +475,7 @@ const TeaAudit = () => {
                   />
                   <button
                     onClick={() => removeTeaImage(index)}
-                    className="absolute top-0 right-0 text-red-500 hover:text-red-700"
+                    className="absolute top-0 right-0 p-1 bg-red-500 border text-white border-gray-300 rounded-full shadow-md hover:bg-white hover:text-black transition-colors duration-200"
                   >
                     <XMarkIcon className="w-4 h-4" />
                   </button>
@@ -498,7 +507,7 @@ const TeaAudit = () => {
                 />
                 <button
                   onClick={handleCloseTea}
-                  className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                  className="absolute top-0 right-0 p-1 bg-red-500 border text-white border-gray-300 rounded-full shadow-md hover:bg-white hover:text-black transition-colors duration-200"
                 >
                   <XMarkIcon className="w-6 h-6" />
                 </button>
@@ -506,12 +515,16 @@ const TeaAudit = () => {
             </div>
           )}
           <button
-            // onClick={handleTeaSubmit}
-            disabled={isTesSubmitted}
-            className={`mt-4 w-full text-center py-2 rounded-md text-white ${isTesSubmitted ? "bg-green-600" : "bg-red-600 hover:bg-red-700"
+            disabled={isTesSubmitted || loading} // Disable button if already submitted or loading
+            className={`mt-4 w-full text-center py-2 rounded-md text-white ${isTesSubmitted || loading ? "bg-green-600" : "bg-red-600 hover:bg-red-700"
               } `}
           >
-            {isTesSubmitted ? (
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <span className="loader"></span> {/* Add a loader here */}
+                <span className="ml-2">Submitting...</span>
+              </div>
+            ) : isTesSubmitted ? (
               <div className="flex items-center justify-center">
                 <span>Submitted</span>
               </div>
@@ -525,7 +538,7 @@ const TeaAudit = () => {
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-gray-900 bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg">
             <h2 className="text-lg poppins-semibold">Confirm Submission</h2>
-            <p className="mt-2 poppins-medium                                                                                                       text-md">Once submitted, you won’t be able to edit. Are you sure?</p>
+            <p className="mt-2 poppins-medium text-md">Once submitted, you won’t be able to edit. Are you sure?</p>
             <div className="flex justify-end mt-4 space-x-2">
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -535,7 +548,6 @@ const TeaAudit = () => {
               </button>
               <button
                 onClick={handleSubmit}
-
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
               >
                 Confirm

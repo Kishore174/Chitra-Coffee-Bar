@@ -11,7 +11,7 @@ const AuditReport = () => {
   const signatureRef = useRef({});
   const [auditData, setAuditData] = useState({});
   const { auditId } = useParams();
-
+  const [isRecording, setIsRecording] = useState(false);
   useEffect(() => {
     // Fetch audit data when the component is mounted
     getAudit(auditId).then(res => setAuditData(res.data));
@@ -35,8 +35,10 @@ const AuditReport = () => {
             {new Date(auditData?.auditDate).toLocaleDateString()}
           </p>
         </div>
-        <div className="flex items-center">
-          <RecordingControls />
+        <div className={`flex items-center ${isRecording ? 'fixed right-4 top-4' : ''}`}>
+          <RecordingControls 
+            setIsRecording={setIsRecording} // Pass down the state setter
+          />
         </div>
       </div>
 
@@ -170,9 +172,17 @@ const AuditReport = () => {
   );
 };
 
-const RecordingControls = () => {
+const RecordingControls = ({setIsRecording }) => {
   const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ audio: true });
+  const handleStartRecording = () => {
+    startRecording();
+    setIsRecording(true); // Set recording state to true
+  };
 
+  const handleStopRecording = () => {
+    stopRecording();
+    setIsRecording(false); // Set recording state to false
+  };
   return (
     <div className="flex flex-col items-center mt-4 p-4 border border-gray-300 rounded-lg shadow-md">
       <div className="flex items-center gap-2 mb-4">
@@ -186,13 +196,13 @@ const RecordingControls = () => {
       
       <div className="flex border border-red-600 rounded-full p-1 gap-4">
         <button
-          onClick={startRecording}
+          onClick={handleStartRecording}
           className="flex items-center justify-center w-12 h-12 rounded-full bg-red-500 hover:bg-red-600 shadow-lg transition-all duration-300"
         >
           <BsFillMicFill size={30} className="text-white" />
         </button>
- <button
-          onClick={stopRecording}
+        <button
+          onClick={handleStopRecording}
           className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-400 hover:bg-gray-500 shadow-lg transition-all duration-300"
         >
           <BsStopFill size={30} className="text-white" />
