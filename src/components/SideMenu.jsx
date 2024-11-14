@@ -3,35 +3,56 @@ import { FaTachometerAlt, FaStore, FaClipboardCheck, FaUser, FaSignOutAlt, FaToo
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from "../Assets/logo01.png";
 import { AiOutlineAudit } from "react-icons/ai";
+import { useAuth } from '../context/AuthProvider';
+import {logout} from "../API/auth"
+import toast from 'react-hot-toast';
 
 const SideMenu = () => {
   const location = useLocation();
   const navigate = useNavigate();
-
+  const {user} = useAuth()
   const [activeButton, setActiveButton] = useState(localStorage.getItem('activeButton') || 'Dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
 
-  const menuItems = [
-    { name: 'Dashboard', icon: FaTachometerAlt, path: '/dashboard' },
-    { name: 'My Shops', icon: FaStore, path: '/myshop' },
-    { name: 'Audits', icon:FaClipboardCheck, path: '/aduit' },
-    { name: 'Auditer', icon:AiOutlineAudit , path: '/Auditers' },
-
-    { name: 'Profile', icon: FaUser, path: '/profile' },
-    { name: 'Settings', icon: FaTools, path: '/setting' },
-    {
-      name: 'Routes',
-      icon: FaRoute,
-      subRoutes: [
-        { name: 'Create Routes', path: '/rotes' },
-        { name: 'Set Routes', path: '/SetRoutes' },
-      ]
+  let menuItems;
+  if(user){
+    if(user.role==="super-admin"){
+      menuItems= [
+        { name: 'Dashboard', icon: FaTachometerAlt, path: '/dashboard' },
+        { name: 'My Shops', icon: FaStore, path: '/myshop' },
+        { name: 'Audits', icon:FaClipboardCheck, path: '/aduit' },
+        { name: 'Auditer', icon:AiOutlineAudit , path: '/Auditers' },
+    
+        { name: 'Profile', icon: FaUser, path: '/profile' },
+        { name: 'Settings', icon: FaTools, path: '/setting' },
+        {
+          name: 'Routes',
+          icon: FaRoute,
+          subRoutes: [
+            { name: 'Create Routes', path: '/rotes' },
+            { name: 'Set Routes', path: '/SetRoutes' },
+          ]
+        }
+      ];
+    }else{
+      menuItems= [
+        { name: 'Dashboard', icon: FaTachometerAlt, path: '/dashboard' },
+        { name: 'Audits', icon:FaClipboardCheck, path: '/aduit' },
+        { name: 'Profile', icon: FaUser, path: '/profile' },
+       
+      ];
     }
-  ];
+  }
+  
 
   const handleLogout = () => {
-    navigate("/");
+    logout().then(res=>{
+      toast.success(res.message)
+      navigate("/");
+    }).catch(err=>{
+      console.log(err)
+    })
     console.log('Logging out...');
   };
 
@@ -58,7 +79,7 @@ const SideMenu = () => {
       >
         <div className="h-full overflow-y-auto">
           <Link to="/dashboard">
-         <div className=" flex items-center mx-auto justify-center h-16 w-16 rounded-full bg-red-500  hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">
+         <div className=" flex items-center mx-auto justify-center h-16 w-16 mt-3 rounded-full bg-red-500  hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">
 
               <img src={logo} alt="Logo" className="h-17 w-17" />
             </div>

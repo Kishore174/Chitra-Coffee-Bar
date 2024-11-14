@@ -11,7 +11,7 @@ export const axiosintance = axios.create({
     // headers: {
     //   Authorization: `Bearer ${Cookie.get('token')}`
     // },
-    // withCredentials : true
+    withCredentials : true
   });
 export const signup = async (signupData) => {
     const response = await axiosintance.post('/register', signupData);

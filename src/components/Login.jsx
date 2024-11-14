@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from "../../src/Assets/logo01.png";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { login, resetPassword } from '../API/auth';
+import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthProvider';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '', otp: '', newPassword: '', confirmPassword: '' });
@@ -9,7 +12,8 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const navigate = useNavigate()
+  const {setUser,user,isLogin,setIsLogin} = useAuth()
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -26,15 +30,49 @@ const Login = () => {
     } else if (forgotPasswordStep === 2) {
       setForgotPasswordStep(3);
     } else if (forgotPasswordStep === 3) {
-      if (formData.newPassword === formData.confirmPassword) {
-        console.log('Password reset successful');
-        setForgotPasswordStep(0); // Go back to login step
-      } else {
-        alert('Passwords do not match');
+      const resetPasswordData = {
+        newPassword:formData.newPassword,
+        confirmPassword : formData.confirmPassword
       }
+      resetPassword(resetPasswordData).then((res)=>{
+        navigate('/dashboard')
+        toast.success(res.data?.message)
+      }).catch((err)=>{
+        console.log(err)
+        toast.success(err.response?.data?.message)
+      })
     }
   };
 
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const loginData = {
+      email: formData.email,
+      password: formData.password,
+    };
+    login(loginData)
+      .then((res) => {
+        const data = res.data;
+        if (data.isFirstLogin) {
+          setForgotPasswordStep(3);
+        } else {
+          navigate('/dashboard');
+        }
+        setUser(data);
+        setIsLogin(true);
+        toast.success(res?.message);
+      })
+      .catch((err) => {
+        console.error("Error:", err); // Check for errors
+        toast.error(err?.response?.data?.message);
+      });
+  };
+  
+  useEffect(() => {
+    if (isLogin) {
+      navigate('/dashboard');
+    }
+  }, [isLogin, navigate]);
   return (
     <div className="flex justify-center items-center min-h-screen poppins-regular">
       <div className="flex flex-col lg:flex-row w-[90%] md:w-[80%] lg:w-[900px] lg:h-[500px] bg-white rounded-lg shadow-lg overflow-hidden">
@@ -51,7 +89,7 @@ const Login = () => {
           {forgotPasswordStep === 0 && (
             <>
               <h2 className="text-xl md:text-2xl font-bold mb-5">Sign In to Your Account</h2>
-              <form>
+              <form onSubmit={handleLogin}>
                 <div className="mb-4">
                   <label className="block text-sm font-medium mb-1">E-mail Address</label>
                   <input
@@ -80,14 +118,12 @@ const Login = () => {
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </span>
                 </div>
-                <Link to ="dashboard">
             <button
               type="submit"
               className="w-full bg-red-500 text-white py-2 rounded mt-2 hover:bg-red-600"
             >
               Sign In
             </button>
-            </Link>
                 <div className="mt-4 text-center">
                   <button type="button" onClick={handleForgotPasswordClick} className="text-sm text-red-500 hover:underline">
                     Forgot Password?

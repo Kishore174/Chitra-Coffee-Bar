@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { BuildingStorefrontIcon, ClipboardDocumentCheckIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
+import { getDashboardAdmin, getDashboardAuditor } from '../API/dashboard';
+import { useAuth } from '../context/AuthProvider';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const [shopCount, setShopCount] = useState(0);
+  const [auditorsCount, setAuditorsCount] = useState(0);
+  const [auditsCount, setAuditsCount] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
+
   const data = {
     labels: ['5k', '10k', '15k', '20k', '25k', '30k', '35k', '40k', '45k', '50k', '55k', '60k'],
     datasets: [
@@ -21,30 +30,79 @@ const Dashboard = () => {
         pointHoverBackgroundColor: '#4BC0C0',
         pointHoverBorderColor: '#fff',
         pointHoverRadius: 8,
-        tension: 0.4, // Smooth curve
+        tension: 0.4,
       },
     ],
   };
+
+  useEffect(() => {
+    if (user) {
+      const fetchDashboardData = async () => {
+        try {
+          const response = user.role === "super-admin" 
+            ? await getDashboardAdmin() 
+            : await getDashboardAuditor(user._id);
+
+          if (response && response.status === 200) {
+            const {
+              auditorsCount,
+              shopsCount,
+              totalAudits,
+              pendingAudit,
+              completedAudits,
+            } = response.data;
+
+            setAuditorsCount(auditorsCount || 0);
+            setShopCount(shopsCount || 0);
+            setAuditsCount(totalAudits || 0);
+            setPendingCount(pendingAudit || 0);
+            setCompletedCount(completedAudits || 0);
+          }
+        } catch (err) {
+          console.error("Error fetching dashboard data:", err);
+        }
+      };
+      fetchDashboardData();
+    }
+  }, [user]);
 
   return (
     <div className="p-6 min-h-screen poppins-regular">
       <h1 className="text-3xl font-semibold mb-6 text-start p-4">Dashboard</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        {/* Number of Shops */}
+       {user && user.role === "super-admin" &&
         <div className="bg-gradient-to-r from-red-500 to-red-700 p-6 rounded-lg shadow-lg flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
           <BuildingStorefrontIcon className="text-white h-12 w-12" />
           <div>
-            <h2 className="text-2xl font-bold text-white">1,200</h2>
+            <h2 className="text-2xl font-bold text-white">{shopCount}</h2>
             <p className="text-white">Number of Shops</p>
+          </div>
+        </div>}
+
+        {user && user.role === "super-admin" &&
+        <div className="bg-gradient-to-r from-pink-500 to-pink-700 p-6 rounded-lg shadow-lg flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
+          <BuildingStorefrontIcon className="text-white h-12 w-12" />
+          <div>
+            <h2 className="text-2xl font-bold text-white">{auditorsCount}</h2>
+            <p className="text-white">Number of Auditors</p>
+          </div>
+        </div>}
+        
+        {/* Completed Audits */}
+        <div className="bg-gradient-to-r from-blue-500 to-blue-800 p-6 rounded-lg shadow-lg flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
+          <ClipboardDocumentCheckIcon className="text-white h-12 w-12" />
+          <div>
+            <h2 className="text-2xl font-bold text-white">{auditsCount}</h2>
+            <p className="text-white">Audits</p>
           </div>
         </div>
 
-        {/* Number of Audits */}
+        {/* Completed Audits */}
         <div className="bg-gradient-to-r from-green-500 to-green-800 p-6 rounded-lg shadow-lg flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
           <ClipboardDocumentCheckIcon className="text-white h-12 w-12" />
           <div>
-            <h2 className="text-2xl font-bold text-white">850</h2>
+            <h2 className="text-2xl font-bold text-white">{completedCount}</h2>
             <p className="text-white">Completed Audits</p>
           </div>
         </div>
@@ -53,7 +111,7 @@ const Dashboard = () => {
         <div className="bg-gradient-to-r from-orange-500 to-orange-700 p-6 rounded-lg shadow-lg flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
           <ClipboardDocumentListIcon className="text-white h-12 w-12" />
           <div>
-            <h2 className="text-2xl font-bold text-white">300</h2>
+            <h2 className="text-2xl font-bold text-white">{pendingCount}</h2>
             <p className="text-white">Pending Audits</p>
           </div>
         </div>
