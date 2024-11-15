@@ -87,7 +87,7 @@ const InsideShop = () => {
       </div>
     </div><div className="poppins-regular max-w-7xl md:ml-24 mx-4">
 
-        <div className="flex flex-wrap justify-start mx-auto gap-5">
+        <div className="flex flex-wrap  justify-start mx-auto gap-5">
           {itemTypes.map((itemType) => (
             <InsideShopReuse
               key={itemType}

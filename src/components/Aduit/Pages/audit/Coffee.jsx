@@ -267,10 +267,10 @@ const Coffee = () => {
                         key={index}
                         className="flex items-center justify-between p-5 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:scale-105"
                       >
-                        <span className="text-sm font-medium text-red-700 bg-red-100 px-3 py-1 rounded-full capitalize">
+                        <span className=" font-semibold text-gray-800 text-lg  capitalize">
                           {item.label}
                         </span>
-                        <span className="font-semibold text-gray-800 text-lg">{item.value || 'N/A'}</span>
+                        <span className=" font-medium text-red-700 bg-red-100 px-3 py-1 rounded-full">{item.value || 'N/A'}</span>
                       </div>
                     ))}
                   </div>

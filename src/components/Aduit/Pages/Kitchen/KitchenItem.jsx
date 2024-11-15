@@ -103,7 +103,7 @@ const KitchenItem = ({ title, itemType, onUpdate, data }) => {
   return (
     <div className="border rounded-lg shadow-md p-4 w-full sm:w-2/5 md:w-[250px] justify-between flex flex-col">
 
-      <h2 className="text-xl font-semibold mb-2">{title}</h2>
+      <h2 className="text-xl poppins-semibold  capitalize mb-2">{title}</h2>
       <div>
         <label className="text-sm font-medium text-gray-500 mb-2 block">Hygiene</label>
         <div className="flex space-x-4 mb-4">

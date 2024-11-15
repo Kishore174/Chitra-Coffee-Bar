@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { BsArrowRight } from "react-icons/bs";
 import { getAllAudits } from '../../API/audits';
 import { ScaleLoader } from "react-spinners";
+import { useAuth } from '../../context/AuthProvider';
 
 const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -12,7 +13,7 @@ const Table = () => {
   const [audits, setAudits] = useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-
+const {user}=useAuth()
   const currentWeekDates = Array(6).fill().map((_, index) => {
     return dayjs().startOf('week').add(index + 1, 'day');
   });
@@ -50,14 +51,14 @@ const Table = () => {
 
       <div className='flex justify-between'>
         <h2 className="text-2xl poppins-semibold">MY AUDIT</h2>
-        <button
+      {user && user.role ==="super-admin"&& <button
     className={`${
       isScheduleButtonDisabled ? 'bg-red-400' : 'bg-red-600'
     } text-white rounded-lg poppins-semibold py-1 px-3 flex items-center`}
     disabled={isScheduleButtonDisabled}
   >
     Schedule
-  </button>
+  </button>}
       </div>
 
       {loading ? (
@@ -112,6 +113,11 @@ const Table = () => {
                   <tr>
                     <th className="px-4 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase">S.No</th>
                     <th className="px-4 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase">Shop Details</th>
+                    {
+                      user?.role === "super-admin" && 
+                    <th className="px-4 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase">Auditor</th>
+
+                    }
                     <th className="px-4 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase">Audit Status</th>
                     <th className="px-4 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase">Contact Details</th>
                     <th className="px-4 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase">Action</th>
@@ -132,6 +138,16 @@ const Table = () => {
                             </a>
                           </div>
                         </td>
+                        {
+                          user?.role === "super-admin" &&
+                          <td className="px-4 py-4 border-b border-gray-200 text-sm text-gray-700">
+                          <div className="poppins-regular">
+                            <div>{audit.auditor?.name}</div>
+                            <div>{audit.auditor?.phone}</div>
+                            <div>{audit.auditor?.email}</div>
+                          </div>
+                        </td>
+                        }
                         <td className={`px-4 py-4 border-b poppins-regular border-gray-200 text-sm ${audit.status === 'Completed' ? 'text-green-600' : 'text-red-600'}`}>
                           {audit.status}
                         </td>
@@ -142,12 +158,12 @@ const Table = () => {
                           </a>
                         </td>
                         <td className="px-4 py-4 border-b poppins-regular border-gray-200 text-sm">
-                          {audit.status === 'pending' ? (
+                          {audit.status === 'pending' && user?.role !== "super-admin" ?  (
                             <Link to={`/add-audit/${audit._id}`}>
                               <BsArrowRight className="text-red-600 text-2xl" />
                             </Link>
                           ) : (
-                            <Link to="/Report">
+                            <Link to={`/Report/${audit?._id}`}>
                               <button className="text-blue-500 poppins-regular">View</button>
                             </Link>
                           )}

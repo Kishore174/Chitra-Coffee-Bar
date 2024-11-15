@@ -123,7 +123,7 @@ const LiveSnacks = () => {
   const handleLiveSnackSubmit = async (e) => {
     e.preventDefault();
     setLoading(true); // Set loading to true when submission starts
-
+    setDialogOpen(false)
     try {
       const formattedSnacks = Object.keys(snackAvailability).map(snack => ({
         snack: snacksList.find(item => item.name === snack)._id,
@@ -297,7 +297,7 @@ const LiveSnacks = () => {
                     <div
                       key={status}
                       onClick={() => handleAvailability(snack.name, status)}
-                      className={`cursor-pointer capitalize px-3 py-1 font-medium rounded-full border transition-colors duration-200 hover:bg-red-600 hover:text-white ${
+                      className={`cursor-pointer capitalize px-3 py-1 whitespace-nowrap rounded-full border transition-colors duration-200 hover:bg-red-600 hover:text-white ${
                         snackAvailability[snack.name] === status
                           ? 'bg-red-600 text-white'
                           : 'bg-white text-gray-700 border-gray-300'

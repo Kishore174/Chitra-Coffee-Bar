@@ -249,16 +249,16 @@ const AuditSection = ({ title, data, fields }) => {
               // Handle nested objects
               return (
                 <div key={index} className="flex-shrink-0  w-auto">
-                  <p className="text-sm font-semibold text-gray-600 mb-2">{capitalizeFirstLetter(field)}</p>
-                  <div className="pl-4 flex gap-10 text-gray-800">
+                  <p className="text-sm poppins-bold text-black mb-2">{capitalizeFirstLetter(field)}</p>
+                  <div className="pl-4 flex gap-10 justify-between text-gray-800">
                     {Object.keys(value).filter(i=>i!=="_id").map((nestedField, nestedIndex) => {
                       const nestedValue = value[nestedField];
 
                       // Check if the nested value has images
                       if (nestedField === 'captureImages' && Array.isArray(nestedValue)) {
                         return (
-                          <div key={nestedIndex} className="flex-shrink-0 w-auto">
-                            <p className="text-sm font-semibold text-gray-600 mb-2">Images:</p>
+                          <div key={nestedIndex} className="flex-shrink-0  w-auto">
+                            <p className="text-sm poppins-semibold text-black mb-2">Images:</p>
                             <div className="flex gap-4">
                               {nestedValue.map((image, imgIndex) => (
                                 <img
@@ -276,8 +276,8 @@ const AuditSection = ({ title, data, fields }) => {
                       // Render other nested fields
                       return (
                         <div key={nestedIndex} className="flex-shrink-0 w-auto">
-                          <p className="text-sm font-semibold text-gray-600 mb-1">{capitalizeFirstLetter(nestedField)}</p>
-                          <pre className="bg-gray-50 p-2 rounded-lg overflow-x-auto text-sm">{nestedValue}</pre>
+                          <p className="text-sm poppins-semibold text-black mb-1">{capitalizeFirstLetter(nestedField)}</p>
+                          <pre className="p-2 rounded-lg overflow-x-auto text-sm">{nestedValue}</pre>
                         </div>
                       );
                     })}
@@ -307,8 +307,8 @@ const AuditSection = ({ title, data, fields }) => {
 const InfoRow = ({ label, value }) => {
   return (
     <div className="w-full sm:w-1/2">
-      <p className="text-sm font-semibold text-gray-600">{label}</p>
-      <p className="text-gray-800">{value}</p>
+      <p className="text-sm poppins-semibold text-black">{label}</p>
+      <p className="text-gray-800  whitespace-nowrap">{value}</p> 
     </div>
   );
 };

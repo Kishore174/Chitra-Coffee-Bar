@@ -242,7 +242,7 @@ const TeaAudit = () => {
                   <h2 className="text-2xl font-semibold mb-6 text-red-600 border-b-2 border-red-600 pb-2">Audit Date</h2>
                   <p className="text-gray-700 text-sm mb-6">{selectedDate}</p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
                     {[
                       { label: 'Aroma', value: lastAudit?.aroma },
                       { label: 'Color', value: lastAudit?.color },
@@ -302,7 +302,10 @@ const TeaAudit = () => {
         </div>
       </div>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={(e) => {
+          e.preventDefault();
+          setIsModalOpen(true);
+        }}
         className="w-full max-w-4xl mx-auto p-4 md:p-8"
       >
         <div className="flex flex-col bg-white p-4 md:p-6 rounded-lg shadow-md">
