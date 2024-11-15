@@ -106,7 +106,7 @@ const Navbar = () => {
       {isMenuOpen && (
         <div ref={menuRef}>
           <div className={`absolute top-0 z-50 h-screen bg-white shadow-lg w-64 transition-transform duration-300 ease-in-out 
-          ${isMenuOpen ? 'translate-x-0 md:hidden lg:hidden' : '-translate-x-full'} md:translate-x-0 lg:translate-x-0`}>
+          ${isMenuOpen ? 'translate-x-0 md:hidden lg:hidden' : '-translate-x-full'} lg:translate-x-0`}>
             <div className="h-full overflow-y-auto">
               <Link to="/dashboard">
                 <div className="flex items-center mx-auto justify-center h-16 w-16 mt-3 rounded-full bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">

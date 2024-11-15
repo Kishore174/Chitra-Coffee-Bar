@@ -220,14 +220,15 @@ const Bunzo = () => {
           <AnimatePresence>
   {isDialogOpen && (
     <motion.div
-      className="fixed inset-0 flex z-20 mr-2 justify-end h-screen bg-black bg-opacity-50"
+    className="fixed inset-0 flex z-20 mr-2 justify-end h-screen   bg-black bg-opacity-50"
+
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={handleCloseDialog}
     >
       <motion.div
-        className="relative bg-white rounded-lg p-8 w-2/5 shadow-2xl transition-all duration-300 transform hover:scale-105"
+        className="relative bg-white rounded-lg p-6 sm:p-8  w-2/5  overflow-auto shadow-2xl transition-all duration-300 transform hover:scale-105"
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 50, opacity: 0 }}
@@ -239,40 +240,41 @@ const Bunzo = () => {
         >
           <XMarkIcon className="h-6 w-6" />
         </button>
-
         <h2 className="text-2xl font-semibold mb-6 text-red-600 border-b-2 border-red-600 pb-2">Audit Date</h2>
-        <p className="text-gray-700 text-sm mb-6">{selectedDate}</p>
+        <p className="text-gray-700 text-sm mb-6"><DateFormat date={selectedDate}/></p>
+        <div className="grid grid-cols-1  gap-6">
+  {lastAudit?.map((item, index) => (
+    <div
+      key={index}
+      className="flex  p-6 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:scale-105"
+    >
+      <div className="flex flex-col mb-4">
+        <span className="font-semibold text-gray-800 text-lg capitalize">Product</span>
+        <span className="font-medium text-gray-700">{item.productName || 'N/A'}</span>
+      </div>
+      <div className="flex flex-col mb-4">
+        <span className="font-semibold text-gray-800 text-lg capitalize">Brand</span>
+        <span className="font-medium text-gray-700">{item.brandName || 'N/A'}</span>
+      </div>
+      <div className="flex flex-col mb-4">
+        <span className="font-semibold text-gray-800 text-lg capitalize">Quantity</span>
+        <span className="font-medium text-gray-700">{item.quantity || 'N/A'}</span>
+      </div>
+      <div className="flex flex-col mb-4">
+        <span className="font-semibold text-gray-800 text-lg capitalize">Expiry Date</span>
+        <span className="font-medium text-gray-700">{item.expiryDate ? new Date(item.expiryDate).toLocaleDateString() : 'N/A'}</span>
+      </div>
+    </div>
+  ))}
+</div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
-          {lastAudit.map((item, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-5 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:scale-105"
-            >
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-red-700 bg-red-100 px-3 py-1 rounded-full capitalize">
-                  {item.name}
-                </span>
-                <span className="text-sm text-gray-500">
-                  Brand: {item.brand?.name || 'N/A'}
-                </span>
-                <span className="text-sm text-gray-500">
-                  Created At: {new Date(item.createdAt).toLocaleDateString() || 'N/A'}
-                </span>
-                <span className="text-sm text-gray-500">
-                  Updated At: {new Date(item.updatedAt).toLocaleDateString() || 'N/A'}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
 
         {lastAudit?.captureImages && lastAudit?.captureImages.length > 0 && (
-          <div>
+          <div className="mt-6">
             <h3 className="text-lg font-medium text-red-600 mb-1">Captured Images</h3>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 justify-center">
               {lastAudit?.captureImages.map((image, index) => (
-                <div key={index} className="group relative w-24 h-24 overflow-hidden rounded-lg shadow-lg transition-all duration-300 hover:scale-105">
+                <div key={index} className="group relative w-24 h-24 sm:w-32 sm:h-32 overflow-hidden rounded-lg shadow-lg transition-all duration-300 hover:scale-105">
                   <img
                     src={image.imageUrl}
                     alt={`Captured Image ${index + 1}`}
@@ -288,6 +290,8 @@ const Bunzo = () => {
     </motion.div>
   )}
 </AnimatePresence>
+
+
 
           {isPopupVisible && (
             <div className="absolute left-0 mt-2 w-44 p-4 bg-white rounded-lg shadow-lg border border-gray-300 transition-transform transform duration-200 ease-in-out">

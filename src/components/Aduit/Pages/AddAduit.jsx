@@ -58,7 +58,7 @@ const AddAudit = () => {
       loading ? <Loader/> :
       (
         <>
-        <div className="flex items-center p-6 bg-gradient-to-r ml-24 max-w-2xl my-4 border transition-transform duration-300 transform hover:scale-105">
+        <div className="flex items-center mx-auto p-6 bg-gradient-to-r  max-w-2xl my-4 border transition-transform duration-300 transform hover:scale-105">
         <img
           src={profileImage}
           alt="Profile"
@@ -68,17 +68,17 @@ const AddAudit = () => {
           <h2 className="text-2xl poppins-bold text-gray-800 mb-1 hover:text-red-600 cursor-pointer transition-colors duration-300">{shopDetail?.shopName}</h2>
           <div className="text-sm text-gray-700">
           <p className="mb-1">
-              <span className="font-semibold">Name:</span> <span className="text-gray-600">{shopDetail?.ownerName}</span>
+              <span className="poppins-semibold text-black">Name:</span> <span className="poppins-medium text-gray-600">{shopDetail?.ownerName}</span>
             </p>
             <p className="mb-1">
-              <span className="font-semibold">Email:</span> <span className="text-gray-600">{shopDetail?.email}</span>
+              <span className="poppins-semibold text-black">Email:</span> <span className="poppins-medium text-gray-600">{shopDetail?.email}</span>
             </p>
             <p className="mb-1">
-              <span className="font-semibold">Location:</span> <span className="text-gray-600">{shopDetail?.address}</span>
+              <span className="poppins-semibold text-black">Location:</span> <span className="poppins-medium text-gray-600">{shopDetail?.address}</span>
             </p>
             <p>
               <span className="font-semibold">
-                phone:</span> <span className="text-gray-600">{shopDetail?.phone}</span>
+                phone:</span> <span className= "poppins-medium text-gray-600">{shopDetail?.phone}</span>
             </p>
           </div>
         </div>

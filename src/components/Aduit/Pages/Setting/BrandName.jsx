@@ -70,76 +70,86 @@ useEffect(() => {
   };
 
   return (
-    <div className="relative max-w-4xl mx-auto p-6 "><button onClick={() => navigate(-1)} className="text-gray-700 p-6 flex space-x-1 hover:text-red-600 transition duration-200">
-    <MdArrowBack className="w-6 h-6 mt-1" />
-    <h1 className="text-xl md:text-xl font-semibold  ">Back</h1>
-  </button>
-
-     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-  {inputFields.map((field) => (
-    <div
-      key={field.id}
-      className="flex items-center justify-between border border-gray-200 shadow-lg rounded-lg p-4 bg-white hover:shadow-xl transition-shadow duration-200 ease-in-out"
-    >
-      <span className="flex-grow text-lg font-semibold text-gray-800">{field.name}</span>
-      <div className="flex items-center space-x-2">
-        <button
-          onClick={() => handleOpenDialog(field)}
-          className="text-blue-500 hover:text-blue-700 p-1 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
-          title="Edit Brand"
-        >
-          <HiPencil size={20} />
-        </button>
-        <button
-          onClick={() => handleRemoveField(field._id)}
-          className="text-red-500 hover:text-red-700 p-1 rounded-full bg-red-100 hover:bg-red-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-300"
-          title="Delete Brand"
-        >
-          <HiTrash size={20} />
-        </button>
-      </div>
-    </div>
-  ))}
-</div>
-
- 
+    <div className="max-w-4xl mx-auto p-4 md:p-6">
+    {/* Navigation and Add Button */}
+    <div className="flex justify-between items-center mb-4">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center text-gray-700 space-x-1 hover:text-red-600 transition duration-200"
+      >
+        <MdArrowBack className="w-5 h-5 md:w-6 md:h-6" />
+        <span className="text-sm md:text-lg font-medium">Back</span>
+      </button>
       <button
         onClick={() => handleOpenDialog()}
-        className="fixed top-20 right-6 flex items-center justify-center  px-3 py-1  rounded bg-red-500 text-white shadow-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
+        className="px-4 py-2 rounded bg-red-500 text-white shadow-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 text-sm md:text-base"
       >
-         Add Brand
+        Add Snack
       </button>
+    </div>
 
-     
-      {isDialogOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-            <h2 className="text-2xl mb-4">{currentField.id ? 'Edit Brand' : 'Add Brand'}</h2>
-            <input
-              type="text"
-              value={currentField. name}
-              onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded-lg p-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
-              placeholder="Enter Brand Name"
-            />
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={handleCloseDialog}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:outline-none"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSubmit}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none"
-              >
-                {currentField.id ? 'Update' : 'Add'}
-              </button>
-            </div>
+    {/* Snack List */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {inputFields.map((field) => (
+        <div
+          key={field._id}
+          className="flex items-center justify-between border border-gray-200 shadow-lg rounded-lg p-3 bg-white hover:shadow-xl transition-shadow duration-200 ease-in-out"
+        >
+          <span className="flex-grow text-xs  md:text-base font-medium text-gray-800">
+            {field.name}
+          </span>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => handleOpenDialog(field)}
+              className="text-blue-500 hover:text-blue-700 p-1 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors duration-200 focus:outline-none"
+              title="Edit Snack"
+            >
+              <HiPencil size={18} />
+            </button>
+            <button
+              onClick={() => handleRemoveField(field._id)}
+              className="text-red-500 hover:text-red-700 p-1 rounded-full bg-red-100 hover:bg-red-200 transition-colors duration-200 focus:outline-none"
+              title="Delete Snack"
+            >
+              <HiTrash size={18} />
+            </button>
           </div>
         </div>
-      )}
+      ))}
     </div>
+
+    {/* Dialog */}
+    {isDialogOpen && (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg w-11/12 md:w-96">
+          <h2 className="text-lg md:text-xl font-semibold mb-4">
+            {currentField._id ? 'Edit Snack' : 'Add Snack'}
+          </h2>
+          <input
+            type="text"
+            value={currentField.name}
+            onChange={handleInputChange}
+            className="w-full border border-gray-300 rounded-lg p-2 md:p-3 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+            placeholder="Enter Snack Name"
+          />
+          <div className="flex justify-end space-x-2">
+            <button
+              onClick={handleCloseDialog}
+              className="px-3 py-1 text-sm md:text-base bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:outline-none"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              className="px-3 py-1 text-sm md:text-base bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none"
+            >
+              {currentField._id ? 'Update' : 'Add'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
   );
 };
 

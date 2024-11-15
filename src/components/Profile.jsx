@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from "react";
 import { CiEdit } from "react-icons/ci";
 
 const Profile = () => {
@@ -13,7 +13,7 @@ const Profile = () => {
     contactNumber: "",
     city: "City",
     state: "State",
-    password: ""
+    password: "",
   };
 
   const [values, setValues] = useState(initialValues);
@@ -48,40 +48,40 @@ const Profile = () => {
   };
 
   return (
-    <div className='flex w-4/6 justify-center items-center mx-auto '>
-      <div className=" w-full h-screen  mx-auto flex flex-col justify-center  ">
-        <div className='flex justify-between w-full'>
-          <div className="text-xl text-black font-bold ">
-            <span>Edit Profile</span>
-          </div>
-          <div className='flex justify-end'>
+    <div className="flex justify-center items-center mx-auto p-4 sm:p-8">
+      <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-6">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-semibold text-gray-700">Edit Profile</h2>
+          <div className="relative">
             <input
               type="file"
               ref={fileInputRef}
               onChange={handleChange}
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
             />
-            <div className="flex items-center w-full relative">
-              <img className="h-24 w-24 rounded-full" src={file} alt="Profile" />
+            <div className="relative">
+              <img
+                className="h-24 w-24 sm:h-28 sm:w-28 rounded-full object-cover"
+                src={file || "https://via.placeholder.com/150"}
+                alt="Profile"
+              />
               <div
-                className="absolute top-0 left-0 right-0 mt-12 bg-black bg-opacity-50 rounded-b-full h-12 flex items-center justify-center"
+                className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full cursor-pointer"
+                onClick={handleEditImageClick}
               >
-                <CiEdit
-                  size={26}
-                  className="text-white"
-                  onClick={handleEditImageClick}
-                  style={{ cursor: 'pointer' }}
-                />
+                <CiEdit size={26} className="text-white" />
               </div>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-wrap w-full gap-5 mb-5">
+        {/* Form */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="font-bold text-sm w-full">First Name</label><br />
+            <label className="block text-sm font-medium text-gray-600">First Name</label>
             <input
-              className="w-full border border-gray-400 p-2 rounded-md "
+              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
               type="text"
               placeholder="Enter First Name"
               name="firstName"
@@ -91,9 +91,9 @@ const Profile = () => {
             />
           </div>
           <div>
-            <label className="font-bold text-sm">Last Name</label><br />
+            <label className="block text-sm font-medium text-gray-600">Last Name</label>
             <input
-              className="w-full border border-gray-400 p-2 rounded-md "
+              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
               type="text"
               placeholder="Enter Last Name"
               name="lastName"
@@ -102,59 +102,50 @@ const Profile = () => {
               readOnly={!isEditing}
             />
           </div>
-        </div>
-
-          <div className=' flex'>
-          <div className="flex flex-wrap w-full gap-5 mb-5">
-            <div>
-              <label className="font-bold text-sm">Email</label><br />
-              <input
-                className=" w-full border border-gray-400 p-2 rounded-md "
-                type="email"
-                placeholder="Enter Email"
-                name="email"
-                value={values.email}
-                onChange={handleInputChange}
-                readOnly={!isEditing}
-              />
-            </div>
-            <div>
-              <label className="font-bold text-sm">Password</label><br />
-              <input
-                className=" border border-gray-400 p-2 rounded-md w-full"
-                type="password"
-                placeholder="Enter Password"
-                name="password"
-                value={values.password}
-                onChange={handleInputChange}
-                readOnly={!isEditing}
-              />
-            </div>
-          </div>
-          
-          <div className="flex flex-wrap w-full gap-5 mb-5 ">
-            <div className="mb-5">
-              <label className="font-bold text-sm w-full">City</label><br />
-              <select
-                className="border border-gray-400 p-2 rounded-md w-[100%]"
-                name="city"
-                value={values.city}
-                onChange={handleInputChange}
-                disabled={!isEditing}
-              >
-                <option value="City">City</option>
-                <option value="Vellore">Vellore</option>
-                <option value="Chittoor">Chittoor</option>
-                <option value="Ranipet">Ranipet</option>
-                <option value="Arakkonam">Arakkonam</option>
-              </select>
-            </div>
-          
-          
           <div>
-            <label className="font-bold text-sm w-full">State</label><br />
+            <label className="block text-sm font-medium text-gray-600">Email</label>
+            <input
+              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
+              type="email"
+              placeholder="Enter Email"
+              name="email"
+              value={values.email}
+              onChange={handleInputChange}
+              readOnly={!isEditing}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600">Password</label>
+            <input
+              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
+              type="password"
+              placeholder="Enter Password"
+              name="password"
+              value={values.password}
+              onChange={handleInputChange}
+              readOnly={!isEditing}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600">City</label>
             <select
-              className="border border-gray-400 p-2 rounded-md w-[100%]"
+              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
+              name="city"
+              value={values.city}
+              onChange={handleInputChange}
+              disabled={!isEditing}
+            >
+              <option value="City">City</option>
+              <option value="Vellore">Vellore</option>
+              <option value="Chittoor">Chittoor</option>
+              <option value="Ranipet">Ranipet</option>
+              <option value="Arakkonam">Arakkonam</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600">State</label>
+            <select
+              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
               name="state"
               value={values.state}
               onChange={handleInputChange}
@@ -167,14 +158,10 @@ const Profile = () => {
               <option value="Kerala">Kerala</option>
             </select>
           </div>
-          </div>
-          </div>
-       
-        <div className="flex flex-wrap w-full mb-5 justify-between ">
-          <div className="mb-5 w-1/2 gap-5">
-            <label className="font-bold text-sm">Address</label><br />
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-600">Address</label>
             <textarea
-              className="w-[90%] border border-gray-400 p-2 rounded-md "
+              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
               placeholder="Enter Address"
               name="address"
               value={values.address}
@@ -182,10 +169,10 @@ const Profile = () => {
               readOnly={!isEditing}
             />
           </div>
-          <div className="mb-5 w-1/2 ">
-            <label className="font-bold text-sm">Contact Number</label><br />
+          <div>
+            <label className="block text-sm font-medium text-gray-600">Contact Number</label>
             <input
-              className="w-[80%] border border-gray-400 p-2 rounded-md "
+              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
               type="number"
               placeholder="Enter Contact Number"
               name="contactNumber"
@@ -196,18 +183,19 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="flex gap-5">
+        {/* Buttons */}
+        <div className="flex justify-end gap-4 mt-6">
           <button
-            className="rounded-md border border-gray-500 w-[20%] p-3 mt-5 "
+            className="rounded-md bg-red-600 text-white py-2 px-6 hover:bg-red-700"
             onClick={handleCancel}
           >
             Cancel
           </button>
           <button
-            className="rounded-md hover:cursor-pointer text-white bg-orange-500 w-[20%] p-3 mt-5 "
+            className="rounded-md bg-red-600 text-white py-2 px-6 hover:bg-red-700"
             onClick={handleSave}
           >
-            {isEditing ? "Edit" : "Save"}
+            {isEditing ? "Save" : "Edit"}
           </button>
         </div>
       </div>
