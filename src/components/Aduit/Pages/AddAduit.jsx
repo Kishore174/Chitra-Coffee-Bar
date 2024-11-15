@@ -21,6 +21,7 @@ import Loader from '../../Loader';
 const AddAudit = () => {
   const navigate = useNavigate();
   const [shopDetail, setShopDetail]=useState(null)
+  const [detail, setDetail]=useState(null)
   const [loading, setLoading] = useState(true); 
    const {id} = useParams()
   const handleNextProcess = () => {
@@ -31,25 +32,27 @@ const AddAudit = () => {
   useEffect(() => {
     getAudit(id).then((res) => {
       setShopDetail(res.data?.shop)
+      setDetail(res.data)
       setLoading(false)
     }).catch((err)=>{
       setLoading(false)
     });
   }, []);
   const audits = [
-    { id: 1, image: tea, alt: "tea", label: "Tea", link: `/tea/${id}` },
-    { id: 2, image: coffee, alt: "coffee", label: "Coffee", link: `/coffee/${id}` },
-    { id: 3, image: livesnacks, alt: "snacks", label: "Live Snacks", link: `/livesnacks/${id}` },
-    { id: 4, image: bakery, alt: "bunzo", label: "Snacks", link: `/bunzo/${id}` },
-    { id: 5, image: insideshop, alt: "insideshop", label: "Inside Shop", link: `/insideShop/${id}` },
-    { id: 6, image: insideshop, alt: "insidektchen", label: "Inside Kitchen", link: `/kitchen/${id}` },
-    { id: 7, image: outsideshop, alt: "outsidektchen", label: "Outside Kitchen", link: `/Outsideshop/${id}` },
-    { id: 8, image: WallBranding, alt: "wallBranding", label: "Wall Branding", link: `/Branding/${id}` },
-    { id: 9, image: emp, alt: "employee", label: "Employee", link: `/employee/${id}` },
-    { id: 10, image: stock, alt: "stock", label: "Stock & Store", link: `/Stock/${id}` },
-    { id: 11, image: wallPanting, alt: "panting", label: "Wall Panting", link: `/Wallpanting/${id}` },
-    { id: 12, image: dress, alt: "dress", label: "Dressing", link: `/Dressing/${id}` },
-  ];
+    { id: 1, image: tea, alt: "tea", label: "Tea", item:"teaAudit", link: `/tea/${id}` },
+    { id: 2, image: coffee, alt: "coffee", label: "Coffee",item:"coffeeAudit", link: `/coffee/${id}` },
+    { id: 3, image: livesnacks, alt: "snacks", label: "Live Snacks",item:"liveSnacks", link: `/livesnacks/${id}` },
+    { id: 4, image: bakery, alt: "bunzo", label: "Snacks",item:"bakeryProducts", link: `/bunzo/${id}` },
+    { id: 5, image: insideshop, alt: "insideshop", label: "Inside Shop",item:"insideShop", link: `/insideShop/${id}` },
+    { id: 6, image: insideshop, alt: "insidektchen", label: "Inside Kitchen",item:"insideKitchen", link: `/kitchen/${id}` },
+    { id: 7, image: outsideshop, alt: "outsidektchen", label: "Outside Kitchen",item:"outsideKitchen", link: `/Outsideshop/${id}` },
+    { id: 8, image: WallBranding, alt: "wallBranding", label: "Wall Branding",item:"wallBranding", link: `/Branding/${id}` },
+    { id: 9, image: emp, alt: "employee", label: "Employee",item:"employees", link: `/employee/${id}` },
+    { id: 10, image: stock, alt: "stock", label: "Stock & Store",item:"stack", link: `/Stock/${id}` },
+    { id: 11, image: wallPanting, alt: "panting", label: "Wall Panting",item:"painting", link: `/Wallpanting/${id}` },
+    { id: 12, image: dress, alt: "dress", label: "Dressing",item:"uniformSection", link: `/Dressing/${id}` },
+  ]; 
+  
   return (
     <>{
       loading ? <Loader/> :
@@ -62,8 +65,11 @@ const AddAudit = () => {
           className="h-32 w-32 rounded-full border-4 border-red-500 object-cover transition-transform duration-300 transform hover:scale-110 mr-6"
         />
         <div className="flex flex-col">
-          <h2 className="text-2xl poppins-bold text-gray-800 mb-1 hover:text-red-600 cursor-pointer transition-colors duration-300">{shopDetail?.ownerName}</h2>
+          <h2 className="text-2xl poppins-bold text-gray-800 mb-1 hover:text-red-600 cursor-pointer transition-colors duration-300">{shopDetail?.shopName}</h2>
           <div className="text-sm text-gray-700">
+          <p className="mb-1">
+              <span className="font-semibold">Name:</span> <span className="text-gray-600">{shopDetail?.ownerName}</span>
+            </p>
             <p className="mb-1">
               <span className="font-semibold">Email:</span> <span className="text-gray-600">{shopDetail?.email}</span>
             </p>
@@ -88,20 +94,40 @@ const AddAudit = () => {
                       <div className="absolute inset-0 bg-black opacity-0 hover:opacity-30 transition-opacity"></div>
                     </div>
                     <Link to={audit.link} className='w-full'>
-                      <button className='bg-red-500 text-white w-full py-2 mt-1 poppins-semibold rounded-md hover:bg-red-600 transition-colors'>
-                        {audit.label}
-                      </button>
+                    <button
+                      className={`text-white w-full py-2 mt-1 poppins-semibold rounded-md hover:bg-red-600 transition-colors ${
+                        // Check if it's not an empty object or an empty array
+                        (detail[audit.item] && 
+                          (Array.isArray(detail[audit.item]) 
+                            ? detail[audit.item].length > 0  // Array check
+                            : Object.values(detail[audit.item]).filter(d => d !== "").length>0) // Object check
+                        ) 
+                        ? "bg-green-700" 
+                        : "bg-red-500"
+                      }`}
+                    >
+                      {audit.label}
+                    </button>
                     </Link>
                   </div>
                 ))}
               </div>
               
               {/* Make Next Process button full width */}
-              <button 
-                onClick={handleNextProcess} 
-                className='bg-red-500 text-white py-2 px-4 mt-4 rounded-md hover:bg-red-600 transition-colors w-5/6'>
-                Next Process
-              </button>
+              {audits.every(audit => {
+                const auditItem = detail[audit.item];
+                return (
+                  auditItem &&
+                  (Array.isArray(auditItem) ? auditItem.length > 0 : Object.values(auditItem).filter(val => val !== "").length > 0)
+                );
+              }) && (
+                <button
+                  onClick={handleNextProcess}
+                  className="bg-red-500 text-white py-2 px-4 mt-4 rounded-md hover:bg-red-600 transition-colors w-5/6"
+                >
+                  Next Process
+                </button>
+              )}
             </div>
           </>
       )

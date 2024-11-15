@@ -69,7 +69,7 @@ const Dashboard = () => {
 
   return (
     <div className="p-6 min-h-screen poppins-regular">
-      <h2 className="text-3xl font-semibold mb-6 text-start p-4">Dashboard</h2>
+      <h2 className="text-3xl font-semibold mb-2 text-start p-4">Dashboard</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
        {user && user.role === "super-admin" &&
@@ -100,7 +100,8 @@ const Dashboard = () => {
         </div>}
         
       </div>
-      <h2 className="text-3xl font-semibold mb-6 text-start p-4">Audit Overview</h2>
+      {user && user.role === "super-admin" &&
+      <h2 className="text-3xl font-semibold mb-2 text-start p-4">Audit Overview</h2>}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {/* Completed Audits */}
         <div className="bg-gradient-to-r from-blue-500 to-blue-800 p-6 rounded-lg shadow-lg flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
