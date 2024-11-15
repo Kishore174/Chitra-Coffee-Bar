@@ -1,36 +1,39 @@
-import React, { useState } from 'react';
-import { FaCheckCircle } from 'react-icons/fa';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { createRoute } from '../../API/createRoute';
-import toast from 'react-hot-toast';
-import { createShop, upDateShop } from '../../API/shop';
-import { MdArrowBack } from 'react-icons/md';
+import React, { useState } from "react";
+import { FaCheckCircle } from "react-icons/fa";
+import { useLocation, useNavigate } from "react-router-dom";
+import { createRoute } from "../../API/createRoute";
+import toast from "react-hot-toast";
+import { createShop, upDateShop } from "../../API/shop";
+import { MdArrowBack } from "react-icons/md";
 
 const AddShop = () => {
-  const location = useLocation ();
+  const location = useLocation();
 
-  const { shop, isEdit,isView } = location.state || {};
-  const [formData, setFormData] = useState(shop|| {
-    shopName: '',
-    shopPhoto: '',
-    ownerName: '',
-    propertyType:'',
-    franchiseType: '',
-    phone: '',
-    email: '',
-    address: '',
-    location: '',
-    onBoardingDate: '',
-    renewalDate: '',
-    fssiCertificateNo: '',
-    commercialAgree: null,
-    gstCertificate: null,
-  });
-  const [propertyType, setPropertyType] = useState('');
-  const [franchiseType, setFranchiseType] = useState('');
+  const { shop, isEdit, isView } = location.state || {};
+  const [formData, setFormData] = useState(
+    shop || {
+      shopName: "",
+      shopPhoto: "",
+      ownerName: "",
+      propertyType: "",
+      franchiseType: "",
+      phone: "",
+      email: "",
+      address: "",
+      district:"",
+      state :"",
+      country:"",
+      location: "",
+      onBoardingDate: "",
+      renewalDate: "",
+      fssiCertificateNo: "",
+      commercialAgree: null,
+      gstCertificate: null,
+    }
+  );
+  const [propertyType, setPropertyType] = useState("");
+  const [franchiseType, setFranchiseType] = useState("");
 
-
- 
   const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -40,77 +43,88 @@ const AddShop = () => {
     const { id, files } = e.target;
     setFormData({ ...formData, [id]: files[0] });
   };
-  
- console.log(shop)
-  const handleSubmit =async (e) => {
+
+  console.log(shop);
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData)
-   try {
+    console.log(formData);
+    try {
       let res;
 
       if (isEdit) {
-        res = await upDateShop(shop._id,formData);
+        res = await upDateShop(shop._id, formData);
       } else {
-        res = await createShop(formData );
-
+        res = await createShop(formData);
       }
-     
+
       console.log(res);
       setFormData({
-        shopName: '',
-        shopPhoto: '',
-        ownerName: '',
-        franchiseType: '',
-        propertyType:'',
-        phone: '',
-        email: '',
-        address: '',
-        location: '',
-        onBoardingDate: '',
-        renewalDate: '',
-        fssiCertificateNo: '',
+        shopName: "",
+        shopPhoto: "",
+        ownerName: "",
+        franchiseType: "",
+        propertyType: "",
+        phone: "",
+        email: "",
+        address: "",
+        location: "",
+        onBoardingDate: "",
+        renewalDate: "",
+        fssiCertificateNo: "",
         commercialAgree: null,
         gstCertificate: null,
       });
       toast.success(res.message);
-  navigate('/myshop')
-     
+      navigate("/myshop");
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-   
   };
-   
 
   return (
     <div className="p-8 max-w-5xl mx-auto bg-white rounded-lg shadow-md">
-        <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">
-         <MdArrowBack className="w-6 h-6 mt-1" />
-        
-     <h2 className="text-2xl font-semibold mb-4">{!shop ? "Add Shop" : isEdit ? "Edit Shop" : "View Shop"}</h2>
-     </button>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-       {/* Property Type */}
-<div className="mb-4">
-  <label className="block text-sm font-medium text-gray-700" htmlFor="propertyType">
-    Property Type
-  </label>
-  <select
-    id="propertyType"
-  
-    value={formData.propertyType}
-    onChange={handleChange}
-    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-  >
-    <option value="" disabled>Select property type</option>
-    <option value="rent">Rent</option>
-    <option value="own">Own</option>
-  </select>
-</div>
-  
- {formData.propertyType === 'rent' ? (
+      <button
+        onClick={() => navigate(-1)}
+        className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200"
+      >
+        <MdArrowBack className="w-6 h-6 mt-1" />
+
+        <h2 className="text-2xl font-semibold mb-4">
+          {!shop ? "Add Shop" : isEdit ? "Edit Shop" : "View Shop"}
+        </h2>
+      </button>
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        {/* Property Type */}
+        <div className="mb-4">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="propertyType"
+          >
+            Property Type
+          </label>
+          <select
+            id="propertyType"
+            value={formData.propertyType}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+          >
+            <option value="" disabled>
+              Select property type
+            </option>
+            <option value="rent">Rent</option>
+            <option value="own">Own</option>
+          </select>
+        </div>
+
+        {formData.propertyType === "rent" ? (
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700" htmlFor="rentalAgreement">
+            <label
+              className="block text-sm font-medium text-gray-700"
+              htmlFor="rentalAgreement"
+            >
               Rental Agreement
             </label>
             <input
@@ -120,9 +134,12 @@ const AddShop = () => {
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             />
           </div>
-        ) : formData.propertyType === 'own' ? (
+        ) : formData.propertyType === "own" ? (
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700" htmlFor="ecard">
+            <label
+              className="block text-sm font-medium text-gray-700"
+              htmlFor="ecard"
+            >
               Eb Card
             </label>
             <input
@@ -134,7 +151,10 @@ const AddShop = () => {
           </div>
         ) : null}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="shopName">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="shopName"
+          >
             Shop Name
           </label>
           <input
@@ -149,7 +169,10 @@ const AddShop = () => {
 
         {/* Shop Photo */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="shopPhoto">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="shopPhoto"
+          >
             Shop Photo
           </label>
           <input
@@ -162,7 +185,10 @@ const AddShop = () => {
 
         {/* Owner Name */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="ownerName">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="ownerName"
+          >
             Owner Name
           </label>
           <input
@@ -177,26 +203,32 @@ const AddShop = () => {
 
         {/* Franchise Type */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="franchiseType">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="franchiseType"
+          >
             Franchise Type
           </label>
-  <select   
-    id="franchiseType"
-  
-  
-    value={formData.franchiseType}
-    onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm">  
-
-   
-    <option value="" disabled>Select  Franchise type</option>
-    <option value="partnership">Partner Ship</option>
-    <option value="own">Own</option>
-  </select>
+          <select
+            id="franchiseType"
+            value={formData.franchiseType}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+          >
+            <option value="" disabled>
+              Select Franchise type
+            </option>
+            <option value="partnership">Partner Ship</option>
+            <option value="own">Own</option>
+          </select>
         </div>
 
         {/* Phone */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="phone">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="phone"
+          >
             Phone
           </label>
           <input
@@ -211,7 +243,10 @@ const AddShop = () => {
 
         {/* Email */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="email">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="email"
+          >
             Email ID
           </label>
           <input
@@ -226,7 +261,10 @@ const AddShop = () => {
 
         {/* Address */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="address">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="address"
+          >
             Address
           </label>
           <textarea
@@ -237,10 +275,63 @@ const AddShop = () => {
             placeholder="Enter shop address"
           />
         </div>
-
+         {/* District */}
+         <div className="mb-4">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="district"
+          >
+            District
+          </label>
+          <input
+            id="district"
+            type="text"
+            value={formData.district}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+            placeholder="Enter location"
+          />
+        </div>
+        {/* State */}
+        <div className="mb-4">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="state"
+          >
+            State
+          </label>
+          <input
+            id="state"
+            type="text"
+            value={formData.state}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+            placeholder="Enter location"
+          />
+        </div>
+        {/* Country */}
+        <div className="mb-4">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="country"
+          >
+            Country
+          </label>
+          <input
+            id="country"
+            type="text"
+            value={formData.country}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+            placeholder="Enter location"
+          />
+        </div>
         {/* Location */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="location">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="location"
+          >
             Location
           </label>
           <input
@@ -255,7 +346,10 @@ const AddShop = () => {
 
         {/* Onboarding Date */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="onboardingDate">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="onboardingDate"
+          >
             Onboarding Date
           </label>
           <input
@@ -269,8 +363,11 @@ const AddShop = () => {
 
         {/* Renewal Date */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="renewalDate">
-          Commercial Renewal Date
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="renewalDate"
+          >
+            Commercial Renewal Date
           </label>
           <input
             id="renewalDate"
@@ -283,7 +380,10 @@ const AddShop = () => {
 
         {/* FSSI Certificate Number */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="fssiCertificateNumber">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="fssiCertificateNumber"
+          >
             FSSI Certificate Number
           </label>
           <input
@@ -298,7 +398,10 @@ const AddShop = () => {
 
         {/* Commercial Agreement Upload */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="commercialAgree">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="commercialAgree"
+          >
             Commercial Agreement
           </label>
           <input
@@ -311,7 +414,10 @@ const AddShop = () => {
 
         {/* GST Certificate Upload */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="gstCertificate">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="gstCertificate"
+          >
             GST Certificate
           </label>
           <input
@@ -328,12 +434,10 @@ const AddShop = () => {
             type="submit"
             className="w-full py-2 px-4 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200"
           >
-         {isEdit ? 'Update Shop' : 'Submit'}
+            {isEdit ? "Update Shop" : "Submit"}
           </button>
         </div>
       </form>
- 
-      
     </div>
   );
 };

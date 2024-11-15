@@ -11,6 +11,7 @@ const Dashboard = () => {
   const { user } = useAuth();
   const [shopCount, setShopCount] = useState(0);
   const [auditorsCount, setAuditorsCount] = useState(0);
+  const [routesCount, setRoutesCount] = useState(0);
   const [auditsCount, setAuditsCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
@@ -46,10 +47,12 @@ const Dashboard = () => {
             const {
               auditorsCount,
               shopsCount,
+              routesCount,
               totalAudits,
               pendingAudit,
               completedAudits,
             } = response.data;
+            setRoutesCount(routesCount||0)
             setAuditorsCount(auditorsCount || 0);
             setShopCount(shopsCount || 0);
             setAuditsCount(totalAudits || 0);
@@ -66,7 +69,7 @@ const Dashboard = () => {
 
   return (
     <div className="p-6 min-h-screen poppins-regular">
-      <h1 className="text-3xl font-semibold mb-6 text-start p-4">Dashboard</h1>
+      <h2 className="text-3xl font-semibold mb-6 text-start p-4">Dashboard</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
        {user && user.role === "super-admin" &&
@@ -86,7 +89,19 @@ const Dashboard = () => {
             <p className="text-white">Number of Auditors</p>
           </div>
         </div>}
+
+        {user && user.role === "super-admin" &&
+        <div className="bg-gradient-to-r from-yellow-500 to-yellow-700 p-6 rounded-lg shadow-lg flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
+          <BuildingStorefrontIcon className="text-white h-12 w-12" />
+          <div>
+            <h2 className="text-2xl font-bold text-white">{routesCount}</h2>
+            <p className="text-white">Number of Routes</p>
+          </div>
+        </div>}
         
+      </div>
+      <h2 className="text-3xl font-semibold mb-6 text-start p-4">Audit Overview</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {/* Completed Audits */}
         <div className="bg-gradient-to-r from-blue-500 to-blue-800 p-6 rounded-lg shadow-lg flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
           <ClipboardDocumentCheckIcon className="text-white h-12 w-12" />
@@ -95,7 +110,7 @@ const Dashboard = () => {
             <p className="text-white">Audits</p>
           </div>
         </div>
-
+        
         {/* Completed Audits */}
         <div className="bg-gradient-to-r from-green-500 to-green-800 p-6 rounded-lg shadow-lg flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
           <ClipboardDocumentCheckIcon className="text-white h-12 w-12" />
@@ -115,7 +130,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-lg">
+      {/* <div className="bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-2xl font-semibold mb-4">Audit Overview</h2>
         <Line data={data} options={{
           responsive: true,
@@ -143,7 +158,7 @@ const Dashboard = () => {
             },
           },
         }} />
-      </div>
+      </div> */}
     </div>
   );
 };
