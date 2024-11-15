@@ -42,8 +42,7 @@ const Dashboard = () => {
           const response = user.role === "super-admin" 
             ? await getDashboardAdmin() 
             : await getDashboardAuditor(user._id);
-
-          if (response && response.status === 200) {
+          if (response) {
             const {
               auditorsCount,
               shopsCount,
@@ -51,7 +50,6 @@ const Dashboard = () => {
               pendingAudit,
               completedAudits,
             } = response.data;
-
             setAuditorsCount(auditorsCount || 0);
             setShopCount(shopsCount || 0);
             setAuditsCount(totalAudits || 0);

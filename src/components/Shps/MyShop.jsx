@@ -90,7 +90,7 @@ const MyShop = () => {
             <table className="w-full bg-white border">
               <thead className="bg-red-600 text-white">
                 <tr>
-                  {['S.No', 'Shop Name', 'Location', 'Contact Details', 'Franchise Name', 'Partnership', 'Action'].map((header, idx) => (
+                  {['S.No', 'Shop Name', 'Location', 'Contact Details', 'Franchise Name', 'Property Type', 'Action'].map((header, idx) => (
                     <th key={idx} className="px-2 py-3 border-b-2 border-gray-300 text-left text-xs md:text-sm poppins-semibold uppercase tracking-wider">
                       {header}
                     </th>
@@ -101,9 +101,14 @@ const MyShop = () => {
                 {paginatedShops.map((shop, index) => (
                   <tr key={shop._id} className="hover:bg-gray-100 poppins-regular capitalize">
                     <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                    <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.shopName}</td>
-                    <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm ">{shop.location} <br />
-                      <a href={shop.mapLink} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">
+                    <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">
+                      <div>
+                        <p className=' font-semibold'>{shop.shopName}</p>
+                        <p>{shop.ownerName}</p>
+                      </div>
+                    </td>
+                    <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm ">{shop.address} <br />
+                      <a href={shop.location} target="_blank" className="text-blue cursor-pointer" rel="noopener noreferrer">
                         Map Link
                       </a>
                     </td>
@@ -114,7 +119,7 @@ const MyShop = () => {
                       </a>
                     </td>
                     <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.franchiseType}</td>
-                    <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.partnership}</td>
+                    <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.propertyType}</td>
                     <td className="px-2 py-4 border-b border-gray-200 space-x-2 text-xs md:text-sm">
                       <button className="text-blue-500 hover:underline" onClick={() => handleView(shop)}>View</button>
                       <button className="text-green-500 hover:underline" onClick={() => handleEdit(shop)}><GrEdit /></button>
