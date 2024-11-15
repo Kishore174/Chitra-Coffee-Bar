@@ -5,6 +5,10 @@ import { MdArrowBack } from 'react-icons/md';
 import { getBrand, getProducts } from '../../../../API/settings';
 import { createSnackAudit, getSnackAudit } from '../../../../API/snacks';
 import toast from 'react-hot-toast';
+import Loader from '../../../Loader';
+import DateFormat from '../../../DateFormat';
+import { motion, AnimatePresence } from 'framer-motion';
+import { getPrevious } from '../../../../API/audits';
 
 const Bunzo = () => {
   const [activeTab, setActiveTab] = useState('');
@@ -21,8 +25,13 @@ const Bunzo = () => {
   const [date, setDate] = useState("");
   const [captureImages,setCaptureImages] = useState([]);
   const [previewImage, setPreviewImage] = useState([]);
-
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [lastAudits, setLastAudits] = useState([]);
+  const [loading, setLoading] = useState(false); // Loading state
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { auditId } = useParams();
+  const [lastAudit, setLastAudit] = useState(null);
 
   const initializeProductDetails = () => {
     return { productName: '', quantity: 0, expirationDate: '' };
@@ -30,13 +39,21 @@ const Bunzo = () => {
 
   useEffect(() => {
     const fetchBrandsAndProducts = async () => {
+
+      setLoading(true)
+      
+
       try {
         const brandResponse = await getBrand();
         setBrands(brandResponse.data);
         setActiveTab(brandResponse.data[0].name)
         const productResponse = await getProducts();
         setProducts(productResponse.data);
+        setLoading(false)
+        
       } catch (error) {
+        setLoading(true)
+
         console.error(error.message);
       }
     };
@@ -123,7 +140,11 @@ const Bunzo = () => {
     setLiveSnackImagePreview((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  const handleSubmit =async () => {
+  const handleSubmit =async (e) => {
+    e.preventDefault();
+
+    setLoading(true); 
+
   let data;
   if(activeTab === "Other Brands"){
    data= {productName:details.productName,quantity:details.quantity,expiryDate:details.expirationDate,captureImages,location,date,brandName:"other brand"}
@@ -131,6 +152,7 @@ const Bunzo = () => {
     data={product:details.productName,quantity:details.quantity,expiryDate:details.expirationDate,captureImages,location,date}
   }
   createSnackAudit(auditId,data).then(res=>{
+    setLoading(false)
     toast.success(res.message)
   }).catch(err=>console.log(err.message))
   
@@ -140,6 +162,7 @@ const Bunzo = () => {
       ...prev,
       { ...details, tab: activeTab, brandName: activeTab, productPhoto } 
     ]);
+    setIsModalOpen(false)
     setDetails(initializeProductDetails()); 
     setCaptureImages([])
     setLiveSnackImagePreview([]);  
@@ -147,18 +170,41 @@ const Bunzo = () => {
 
   const togglePopup = () => {
     setIsPopupVisible(!isPopupVisible);
+    getPrevious(auditId).then(res => {
+      setLastAudits(res.data);
+    });
   };
 
   useEffect(()=>{
     getSnackAudit(auditId).then(res=>{
+      setLoading(true)
+
       if(res.data){
         setSubmittedProducts(res.data)
         setPreviewImage(res.data.map(i=>i.captureImages))
       }
+      setLoading(false)
+
     })
   },[])
+  const handleOpenDialog = (data) => {
+    setSelectedDate(data.auditDate);
+    setDialogOpen(true);
+    getSnackAudit(data._id).then(res => {
+      setLastAudit(res.data);
+    });
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setSelectedDate(null);
+  };
+
   return (
-    <>
+  <>
+  {
+    loading ?<Loader/>:(
+      <>
       <div className="flex items-center justify-between mx-auto p-4 max-w-4xl">
         <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">
           <MdArrowBack className="w-6 h-6 mt-1" />
@@ -171,10 +217,88 @@ const Bunzo = () => {
           >
             Previous Audit
           </button>
+          <AnimatePresence>
+  {isDialogOpen && (
+    <motion.div
+      className="fixed inset-0 flex z-20 mr-2 justify-end h-screen bg-black bg-opacity-50"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={handleCloseDialog}
+    >
+      <motion.div
+        className="relative bg-white rounded-lg p-8 w-2/5 shadow-2xl transition-all duration-300 transform hover:scale-105"
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 50, opacity: 0 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          className="absolute top-4 right-4 text-red-600 hover:text-red-800 transition duration-200 p-3 rounded-full bg-gray-100 hover:bg-red-100"
+          onClick={handleCloseDialog}
+        >
+          <XMarkIcon className="h-6 w-6" />
+        </button>
+
+        <h2 className="text-2xl font-semibold mb-6 text-red-600 border-b-2 border-red-600 pb-2">Audit Date</h2>
+        <p className="text-gray-700 text-sm mb-6">{selectedDate}</p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
+          {lastAudit.map((item, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between p-5 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:scale-105"
+            >
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-red-700 bg-red-100 px-3 py-1 rounded-full capitalize">
+                  {item.name}
+                </span>
+                <span className="text-sm text-gray-500">
+                  Brand: {item.brand?.name || 'N/A'}
+                </span>
+                <span className="text-sm text-gray-500">
+                  Created At: {new Date(item.createdAt).toLocaleDateString() || 'N/A'}
+                </span>
+                <span className="text-sm text-gray-500">
+                  Updated At: {new Date(item.updatedAt).toLocaleDateString() || 'N/A'}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {lastAudit?.captureImages && lastAudit?.captureImages.length > 0 && (
+          <div>
+            <h3 className="text-lg font-medium text-red-600 mb-1">Captured Images</h3>
+            <div className="flex flex-wrap gap-4">
+              {lastAudit?.captureImages.map((image, index) => (
+                <div key={index} className="group relative w-24 h-24 overflow-hidden rounded-lg shadow-lg transition-all duration-300 hover:scale-105">
+                  <img
+                    src={image.imageUrl}
+                    alt={`Captured Image ${index + 1}`}
+                    className="w-full h-full object-cover transition-transform duration-300"
+                  />
+                  <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
           {isPopupVisible && (
-            <div className="absolute left-0 mt-2 w-56 p-4 bg-white rounded-lg shadow-lg border border-gray-300 transition-transform transform duration-200 ease-in-out">
-              <ul className="space-y-2">
-                {/* Add previous audit items here */}
+            <div className="absolute left-0 mt-2 w-44 p-4 bg-white rounded-lg shadow-lg border border-gray-300 transition-transform transform duration-200 ease-in-out">
+              <ul>
+                {lastAudits.map((date) => (
+                  <li key={date._id} className="text-gray-800 font-semibold text-lg hover:cursor-pointer transition-colors duration-150"
+                    onClick={() => handleOpenDialog(date)}
+                  >
+                    {date.auditDate.slice(0, 10)}
+                  </li>
+                ))}
               </ul>
             </div>
           )}
@@ -330,11 +454,36 @@ const Bunzo = () => {
             </div>
 
             <button
-              onClick={handleSubmit}
+          onClick={() => {
+         
+          setIsModalOpen(true);
+        }}
               className="px-4 py-2 bg-red-500 text-white rounded shadow-lg hover:bg-red-600 focus:outline-none"
             >
               Add Product
             </button>
+            {isModalOpen && (
+        <div className="fixed inset-0 z-20 flex items-center justify-center bg-gray-900 bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg">
+            <h2 className="text-lg poppins-semibold">Confirm Submission</h2>
+            <p className="mt-2 poppins-medium text-md">Once submitted, you won’t be able to edit. Are you sure?</p>
+            <div className="flex justify-end mt-4 space-x-2">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmit}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
           </div>
         )}
 
@@ -357,7 +506,7 @@ const Bunzo = () => {
                     <td className="px-4 py-2 border-b">{products.find(p=>p._id===product?.product)?.brand.name||product.brandName}</td> {/* Added Brand Name */}
                     <td className="px-4 py-2 border-b">{products.find(p=>p._id===product?.product)?.name||products.find(p=>p._id===product.productName)?.name||product.productName}</td>
                     <td className="px-4 py-2 border-b">{product.quantity}</td>
-                    <td className="px-4 py-2 border-b">{product.expirationDate||product.expiryDate}</td>
+                    <td className="px-4 py-2 border-b">{product.expirationDate||<DateFormat date={product.expiryDate}/>}</td>
                     <td className="px-4 py-2 border-b flex flex-wrap gap-1">
                       {product.productPhoto ? (
                         <img src={product.productPhoto} alt="Product" className="h-5 w-5 object-cover rounded-md" />
@@ -378,6 +527,9 @@ const Bunzo = () => {
         )}
       </div>
     </>
+    )
+  }
+  </>
   );
 };
 

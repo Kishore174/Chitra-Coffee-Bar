@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import { Link, useNavigate } from 'react-router-dom';
 import { BsArrowRight } from "react-icons/bs";
-import { getAllAudits } from '../../API/audits';
+import { getAllAudits, getAuditByAuditor } from '../../API/audits';
 import { ScaleLoader } from "react-spinners";
 import { useAuth } from '../../context/AuthProvider';
 
@@ -27,9 +27,18 @@ const {user}=useAuth()
   };
 
   useEffect(() => {
-    getAllAudits().then((res) => setAudits(res.data)).finally(() => {
-      setLoading(false);
-    });
+    if(user){
+      if(user.role === "super-admin"){
+        getAllAudits().then((res) => setAudits(res.data)).finally(() => {
+          setLoading(false);
+        });
+      }else{
+        getAuditByAuditor(user._id).then((res) => setAudits(res.data)).finally(() => {
+          setLoading(false);
+        });
+      }
+    }
+
   }, []);
 
   const isScheduleButtonDisabled = dayjs().add(6, 'days').isAfter(selectedDate);  

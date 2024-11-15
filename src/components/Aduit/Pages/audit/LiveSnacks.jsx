@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { getSnackBrand } from '../../../../API/settings';
 import { getPrevious } from '../../../../API/audits';
 import { motion, AnimatePresence } from 'framer-motion';
+import Loader from '../../../Loader';
 
 const LiveSnacks = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -32,12 +33,18 @@ const LiveSnacks = () => {
 
   useEffect(() => {
     const fetchSnacks = async () => {
+      setLoading(true)
+
       try {
         const response = await getSnackBrand();
         if (response.data) {
           setSnacksList(response.data);
+        setLoading(false)
+
         }
       } catch (error) {
+        setLoading(true)
+
         console.error('Error fetching snacks:', error);
       }
     };
@@ -46,9 +53,12 @@ const LiveSnacks = () => {
 
   useEffect(() => {
     const fetchLiveSnack = async () => {
+      setLoading(true)
+
       try {
         const res = await getLiveSnack(auditId);
         if (res.data) {
+
           const { snacks, remark, rating, captureImages } = res.data;
           setRemark(remark);
           setRating(rating);
@@ -58,10 +68,15 @@ const LiveSnacks = () => {
           snacks.forEach(snack => {
             availability[snack.snack.name] = snack.status;
           });
+          setIsLiveSnackSubmitted(true)
           setSnackAvailability(availability);
+        setLoading(false)
+
         }
       } catch (err) {
         console.log(err);
+        setLoading(true)
+
       }
     };
     fetchLiveSnack();
@@ -141,6 +156,7 @@ const LiveSnacks = () => {
 
       const res = await createLiveSnacks(auditId, formData);
       toast.success(res.message);
+      setLoading(false)
       navigate(-1);
       console.log('Submitting data:', formData);
       setIsLiveSnackSubmitted(true);
@@ -158,7 +174,7 @@ const LiveSnacks = () => {
 
   const togglePopup = () => {
     setIsPopupVisible(!isPopupVisible);
-    getPrevious(auditId).then(res => {
+    getPrevious (auditId).then(res => {
       setLastAudits(res.data);
     });
   };
@@ -184,7 +200,9 @@ const LiveSnacks = () => {
   };
 
   return (
-    <>
+   <>{
+    loading ?<Loader/>:(
+      <>
       <div className="flex items-center justify-between mx-auto p-4 max-w-4xl">
         <button
           onClick={() => navigate(-1)}
@@ -210,7 +228,7 @@ const LiveSnacks = () => {
                 onClick={handleCloseDialog}
               >
                 <motion.div
-                  className="relative bg-white rounded-lg p-8 w-2/5 shadow-2xl transition-all duration-300 transform hover:scale-105"
+                  className="relative bg-white rounded-lg p-8 w-2/5 overflow-auto  first-letter: shadow-2xl transition-all duration-300 transform hover:scale-105"
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: 50, opacity: 0 }}
@@ -224,25 +242,28 @@ const LiveSnacks = () => {
                   </button>
                   <h2 className="text-2xl font-semibold mb-6 text-red-600 border-b-2 border-red-600 pb-2">Audit Date</h2>
                   <p className="text-gray-700 text-sm mb-6">{selectedDate}</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="grid gap-6">
                     {[
-                      { label: 'Aroma', value: lastAudit?.aroma },
-                      { label: 'Color', value: lastAudit?.color },
-                      { label: 'Quality', value: lastAudit?.quality },
+                      { label: 'Snacks', value: lastAudit?.snacks },
                       { label: 'Rating', value: lastAudit?.rating },
                       { label: 'Remark', value: lastAudit?.remark },
-                      { label: 'Sugar Level', value: lastAudit?.sugarLevel },
-                      { label: 'Taste', value: lastAudit?.taste },
-                      { label: 'Temperature', value: lastAudit?.temperature }
                     ].map((item, index) => (
                       <div
                         key={index}
-                        className="flex items-center justify-between p-5 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:scale-105"
+                        className="flex flex-col  p-5 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:scale-105"
                       >
-                        <span className="text-sm font-medium text-red-700 bg-red-100 px-3 py-1 rounded-full capitalize">
+                        <span className="text-sm font-medium   text-red-700 bg-red-100 px-3 py-1 rounded-full capitalize">
                           {item.label}
                         </span>
-                        <span className="font-semibold text-gray-800 text-lg">{item.value || 'N/A'}</span>
+                        {Array.isArray(item.value)? item.value.map((value,index)=>(
+                          <div key={index} className=' flex flex-wrap mt-2'>
+                            <div className=' flex justify-between  w-full'>
+                              <span className="text-sm font-medium px-3 py-1 rounded-full capitalize">{value?.snack.name || 'N/A'}</span>
+                              <span className=" text-red-700 p-1 poppins-regular px-3 bg-red-100 rounded-full capitalize text-sm">{value?.status || 'N/A'}</span>
+                            </div>
+                          </div>
+                      ) ):
+                        <span className="font-semibold text-gray-800 text-lg">{item.value || 'N/A'}</span>}
                       </div>
                     ))}
                   </div>
@@ -357,7 +378,10 @@ const LiveSnacks = () => {
                   </button>
                 </div>
               ))}
-              <div
+             {
+              !isLiveSnackSubmitted &&
+              <>
+               <div
                 onClick={() => liveSnackFileInputRef.current.click()}
                 className="h-12 w-12 border rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-200"
               >
@@ -371,6 +395,8 @@ const LiveSnacks = () => {
                 className="hidden"
                 multiple
               />
+              </>
+             }
             </div>
           </div>
 
@@ -378,21 +404,25 @@ const LiveSnacks = () => {
             <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
               <div className="relative bg-white p-4 rounded-lg">
                 <img src={previewLiveSnackImage} alt="Preview" className="max-h-96 max-w-full rounded" />
-                <button
-                  type="button"
-                  onClick={handleCloseLiveSnack}
-                  className="absolute top-0 right-0 p-1 bg-red-500 border text-white border-gray-300 rounded-full shadow-md hover:bg-white hover:text-black transition-colors duration-200"
-                >
-                  <XMarkIcon className="w-6 h-6" />
-                </button>
+                  { !isLiveSnackSubmitted &&
+                    <button
+                    type="button"
+                    onClick={handleCloseLiveSnack}
+                    className="absolute top-0 right-0 p-1 bg-red-500 border text-white border-gray-300 rounded-full shadow-md hover:bg-white hover:text-black transition-colors duration-200"
+                  >
+                    <XMarkIcon className="w-6 h-6" />
+                  </button>
+                  }
               </div>
             </div>
           )}
 
-          <button
+          {
+            !isLiveSnackSubmitted &&
+            <button
             type="submit"
-            className={`bg-red-600 text-white font-medium py-2 w-full rounded-md shadow-lg hover:bg-red-700 transition duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            disabled={loading} // Disable button when loading
+            className={`bg-red-600 text-white font-medium py-2 w-full rounded-md shadow-lg hover:bg-red-700 transition duration-200`}
+            disabled={isLiveSnackSubmitted} // Disable button when loading
           >
             {loading ? (
               <div className="flex items-center justify-center">
@@ -400,11 +430,12 @@ const LiveSnacks = () => {
                 <span className="ml-2">Submitting...</span>
               </div>
             ) : isLiveSnackSubmitted ? (
-              <span className="text-green-500">✔ Submitted</span>
+              <span className=" bg-green-700 text-white">✔ Submitted</span>
             ) : (
               'Submit Live Snack'
             )}
           </button>
+          }
         </div>
       </form>
       
@@ -432,6 +463,9 @@ const LiveSnacks = () => {
       )}
 
     </>
+    )
+   }
+   </>
   );
 };
 

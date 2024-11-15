@@ -7,6 +7,10 @@ export const getAllAudits = async () => {
     const response = await axiosintance.get(`/audit/${id}`);
     return response.data;
   };
+  export const getAuditByAuditor = async (id) => {
+    const response = await axiosintance.get(`/audit/auditor/${id}`);
+    return response.data;
+  };
   export const getInsideShop = async (id) => {
     const response = await axiosintance.get(`/audit/${id}/insideShopAudit`);
     return response.data;

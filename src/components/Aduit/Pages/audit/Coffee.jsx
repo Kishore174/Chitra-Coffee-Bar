@@ -7,6 +7,7 @@ import { createCoffee, getCoffee } from '../../../../API/coffee';
 import toast from 'react-hot-toast';
 import { getPrevious } from '../../../../API/audits';
 import { motion, AnimatePresence } from 'framer-motion';
+import Loader from '../../../Loader';
 
 const Coffee = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -168,10 +169,13 @@ const Coffee = () => {
 
   const handleCoffeeSubmit = () => {
     setIsCoffeeSubmitted(true);
-    // Add your submission logic here
+    setIsModalOpen(false);
+    
   };
 
   useEffect(() => {
+    setLoading(true)
+
     getCoffee(auditId)
       .then((res) => {
         if (res.data) {
@@ -190,6 +194,8 @@ const Coffee = () => {
           setDate(res?.data?.captureImages[0]?.date);
           setIsCoffeeSubmitted(true);
         }
+        setLoading(false)
+
       })
       .catch((err) => console.log(err.message));
   }, []);
@@ -216,6 +222,9 @@ const Coffee = () => {
 
   return (
     <>
+    {
+      loading ?<Loader/>:(
+        <>
       <div className="flex items-center justify-between mx-auto p-4 max-w-4xl">
         <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">
           <MdArrowBack className="w-6 h-6 mt-1" />
@@ -539,6 +548,9 @@ const Coffee = () => {
           </div>
         </div>
       )}
+    </>
+      )
+    }
     </>
   );
 };

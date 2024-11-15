@@ -98,8 +98,8 @@ const AuditReport = () => {
       </div>
 
       {/* Stock Section */}
-      <section className="mb-4 border border-red-200 rounded-lg overflow-hidden">
- <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Stock</h2>
+      <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
+        <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Stock</h2>
         <div className="p-2 flex flex-wrap gap-4">
           {auditData?.stock?.captureImages?.map((image, index) => (
             <div key={index} className="flex flex-col items-center">
@@ -131,7 +131,7 @@ const AuditReport = () => {
       </section>
 
       {/* Signature Section */}
-      <section className="mb-4 border border-red-200 rounded-lg overflow-hidden">
+      <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
         <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Signature</h2>
         <div className="p-2 flex flex-col items-center">
           <input 
@@ -176,7 +176,7 @@ const RecordingControls = ({setIsRecording }) => {
   const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ audio: true });
   const handleStartRecording = () => {
     startRecording();
-    setIsRecording(true); // Set recording state to true
+    setIsRecording(true);  
   };
 
   const handleStopRecording = () => {
@@ -220,7 +220,7 @@ const RecordingControls = ({setIsRecording }) => {
 
 const AuditSection = ({ title, data, fields }) => {
   return (
-    <section className="mb-6 border border-red-200 rounded-lg overflow-hidden shadow-lg">
+    <section className="mb-6 border border-red-200 rounded-lg overflow-hidden">
       {/* Section Title */}
       <h2 className="bg-red-100 text-red-600 text-lg font-semibold p-4">{title}</h2>
 
@@ -248,9 +248,9 @@ const AuditSection = ({ title, data, fields }) => {
             } else {
               // Handle nested objects
               return (
-                <div key={index} className="flex-shrink-0  w-auto">
+                <div key={index} className="flex-shrink-0">
                   <p className="text-sm poppins-bold text-black mb-2">{capitalizeFirstLetter(field)}</p>
-                  <div className="pl-4 flex gap-10 justify-between text-gray-800">
+                  <div className="px-4 flex gap-10 text-gray-800">
                     {Object.keys(value).filter(i=>i!=="_id").map((nestedField, nestedIndex) => {
                       const nestedValue = value[nestedField];
 
@@ -258,7 +258,7 @@ const AuditSection = ({ title, data, fields }) => {
                       if (nestedField === 'captureImages' && Array.isArray(nestedValue)) {
                         return (
                           <div key={nestedIndex} className="flex-shrink-0  w-auto">
-                            <p className="text-sm poppins-semibold text-black mb-2">Images:</p>
+                            <p className="text-sm poppins-semibold text-black mb-2">Images</p>
                             <div className="flex gap-4">
                               {nestedValue.map((image, imgIndex) => (
                                 <img
@@ -274,6 +274,9 @@ const AuditSection = ({ title, data, fields }) => {
                       }
 
                       // Render other nested fields
+                      if ((nestedField === 'available' || nestedField === 'brandName'|| nestedField === 'pillarCount') && !nestedValue) {
+                        return null;
+                      }
                       return (
                         <div key={nestedIndex} className="flex-shrink-0 w-auto">
                           <p className="text-sm poppins-semibold text-black mb-1">{capitalizeFirstLetter(nestedField)}</p>

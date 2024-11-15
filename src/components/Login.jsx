@@ -13,6 +13,8 @@ const Login = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(false); // Loading state
+
   const {setUser,user,isLogin,setIsLogin} = useAuth()
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -50,6 +52,7 @@ const Login = () => {
       email: formData.email,
       password: formData.password,
     };
+    setLoading(true)
     login(loginData)
       .then((res) => {
         const data = res.data;
@@ -60,6 +63,7 @@ const Login = () => {
         }
         setUser(data);
         setIsLogin(true);
+        setLoading(false)
         toast.success(res?.message);
       })
       .catch((err) => {

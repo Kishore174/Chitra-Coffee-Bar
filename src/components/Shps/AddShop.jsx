@@ -261,7 +261,7 @@ const AddShop = () => {
           <input
             id="onBoardingDate"
             type="date"
-            value={formData.onBoardingDate}
+            value={formData.onBoardingDate.slice(0,10)}
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
           />
@@ -275,7 +275,7 @@ const AddShop = () => {
           <input
             id="renewalDate"
             type="date"
-            value={formData.renewalDate}
+            value={formData.renewalDate.slice(0,10)}
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
           />

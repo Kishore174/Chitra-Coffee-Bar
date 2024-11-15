@@ -15,11 +15,13 @@ import stock from '../../../Assets/stock_store.jpg';
 import wallPanting from '../../../Assets/wall panting.jpg';
 import dress from '../../../Assets/dress.jpg';
 import { getAudit } from '../../../API/audits';
+import Loader from '../../Loader';
 
 
 const AddAudit = () => {
   const navigate = useNavigate();
   const [shopDetail, setShopDetail]=useState(null)
+  const [loading, setLoading] = useState(true); 
    const {id} = useParams()
   const handleNextProcess = () => {
     // navigate('/Recording');
@@ -27,11 +29,13 @@ const AddAudit = () => {
      
   }; 
   useEffect(() => {
-    getAudit(id).then((res) => {setShopDetail(res.data?.shop)
+    getAudit(id).then((res) => {
+      setShopDetail(res.data?.shop)
+      setLoading(false)
+    }).catch((err)=>{
+      setLoading(false)
     });
-    
   }, []);
-  console.log(shopDetail)
   const audits = [
     { id: 1, image: tea, alt: "tea", label: "Tea", link: `/tea/${id}` },
     { id: 2, image: coffee, alt: "coffee", label: "Coffee", link: `/coffee/${id}` },
@@ -47,56 +51,61 @@ const AddAudit = () => {
     { id: 12, image: dress, alt: "dress", label: "Dressing", link: `/Dressing/${id}` },
   ];
   return (
-
-    <>
-  <div className="flex items-center p-6 bg-gradient-to-r ml-24 max-w-2xl my-4 border transition-transform duration-300 transform hover:scale-105">
-  <img
-    src={profileImage}
-    alt="Profile"
-    className="h-32 w-32 rounded-full border-4 border-red-500 object-cover transition-transform duration-300 transform hover:scale-110 mr-6"
-  />
-  <div className="flex flex-col">
-    <h2 className="text-2xl poppins-bold text-gray-800 mb-1 hover:text-red-600 cursor-pointer transition-colors duration-300">{shopDetail?.ownerName}</h2>
-    <div className="text-sm text-gray-700">
-      <p className="mb-1">
-        <span className="font-semibold">Email:</span> <span className="text-gray-600">{shopDetail?.email}</span>
-      </p>
-      <p className="mb-1">
-        <span className="font-semibold">Location:</span> <span className="text-gray-600">{shopDetail?.address}</span>
-      </p>
-      <p>
-        <span className="font-semibold">
-          phone:</span> <span className="text-gray-600">{shopDetail?.phone}</span>
-      </p>
-    </div>
-  </div>
-</div>
-
-
-      <div className='p-6 mx-auto flex flex-col items-center'>
-        <div className='flex flex-wrap gap-5 justify-center'>
-          {audits.map((audit) => (
-            <div key={audit.id} className='bg-white shadow-lg rounded-lg w-52 flex flex-col items-center p-3 transition-transform transform hover:scale-105 hover:shadow-xl'>
-              <div className="relative h-44 w-full rounded-lg overflow-hidden mb-2">
-                <img src={audit.image} alt={audit.alt} className='h-full w-full object-cover transition-transform transform hover:scale-110' />
-                <div className="absolute inset-0 bg-black opacity-0 hover:opacity-30 transition-opacity"></div>
-              </div>
-              <Link to={audit.link} className='w-full'>
-                <button className='bg-red-500 text-white w-full py-2 mt-1 poppins-semibold rounded-md hover:bg-red-600 transition-colors'>
-                  {audit.label}
-                </button>
-              </Link>
-            </div>
-          ))}
+    <>{
+      loading ? <Loader/> :
+      (
+        <>
+        <div className="flex items-center p-6 bg-gradient-to-r ml-24 max-w-2xl my-4 border transition-transform duration-300 transform hover:scale-105">
+        <img
+          src={profileImage}
+          alt="Profile"
+          className="h-32 w-32 rounded-full border-4 border-red-500 object-cover transition-transform duration-300 transform hover:scale-110 mr-6"
+        />
+        <div className="flex flex-col">
+          <h2 className="text-2xl poppins-bold text-gray-800 mb-1 hover:text-red-600 cursor-pointer transition-colors duration-300">{shopDetail?.ownerName}</h2>
+          <div className="text-sm text-gray-700">
+            <p className="mb-1">
+              <span className="font-semibold">Email:</span> <span className="text-gray-600">{shopDetail?.email}</span>
+            </p>
+            <p className="mb-1">
+              <span className="font-semibold">Location:</span> <span className="text-gray-600">{shopDetail?.address}</span>
+            </p>
+            <p>
+              <span className="font-semibold">
+                phone:</span> <span className="text-gray-600">{shopDetail?.phone}</span>
+            </p>
+          </div>
         </div>
-        
-        {/* Make Next Process button full width */}
-        <button 
-          onClick={handleNextProcess} 
-          className='bg-red-500 text-white py-2 px-4 mt-4 rounded-md hover:bg-red-600 transition-colors w-5/6'>
-          Next Process
-        </button>
       </div>
+      
+      
+            <div className='p-6 mx-auto flex flex-col items-center'>
+              <div className='flex flex-wrap gap-5 justify-center'>
+                {audits.map((audit) => (
+                  <div key={audit.id} className='bg-white shadow-lg rounded-lg w-52 flex flex-col items-center p-3 transition-transform transform hover:scale-105 hover:shadow-xl'>
+                    <div className="relative h-44 w-full rounded-lg overflow-hidden mb-2">
+                      <img src={audit.image} alt={audit.alt} className='h-full w-full object-cover transition-transform transform hover:scale-110' />
+                      <div className="absolute inset-0 bg-black opacity-0 hover:opacity-30 transition-opacity"></div>
+                    </div>
+                    <Link to={audit.link} className='w-full'>
+                      <button className='bg-red-500 text-white w-full py-2 mt-1 poppins-semibold rounded-md hover:bg-red-600 transition-colors'>
+                        {audit.label}
+                      </button>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Make Next Process button full width */}
+              <button 
+                onClick={handleNextProcess} 
+                className='bg-red-500 text-white py-2 px-4 mt-4 rounded-md hover:bg-red-600 transition-colors w-5/6'>
+                Next Process
+              </button>
+            </div>
+          </>
+      )
+    }
     </>
   );
 }

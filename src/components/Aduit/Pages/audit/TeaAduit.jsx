@@ -7,6 +7,7 @@ import { createTea, getTea } from "../../../../API/tea";
 import toast from "react-hot-toast";
 import { getPrevious } from "../../../../API/audits";
 import { motion, AnimatePresence } from 'framer-motion';
+import Loader from "../../../Loader";
 
 const TeaAudit = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -159,6 +160,7 @@ const TeaAudit = () => {
   };
 
   useEffect(() => {
+    setLoading(true)
     getTea(auditId)
       .then((res) => {
         if (res.data) {
@@ -176,7 +178,9 @@ const TeaAudit = () => {
           setLocation(res?.data?.captureImages[0]?.location);
           setDate(res?.data?.captureImages[0]?.date);
           setIsTeaSubmitted(true);
+          setLoading(false)
         }
+        setLoading(false)
       })
       .catch((err) => console.log(err.message));
   }, []);
@@ -202,7 +206,10 @@ const TeaAudit = () => {
   };
 
   return (
-    <>
+   <>{
+    loading ? <Loader/> :
+    (
+      <>
       <div className="flex items-center justify-between mx-auto p-4 max-w-4xl">
         <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">
           <MdArrowBack className="w-6 h-6 mt-1" />
@@ -560,6 +567,9 @@ const TeaAudit = () => {
         </div>
       )}
     </>
+    )
+   }
+   </>
   );
 };
 
