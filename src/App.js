@@ -11,7 +11,7 @@ import Table from "./components/Aduit/Table";
 import AddAudit from "./components/Aduit/Form/AddAudit";
 import Profile from "./components/Profile";
 import Login from "./components/Login";
-import Signup from "./components/Signup";
+// import Signup from "./components/Signup";
 import AddAduit from "./components/Aduit/Pages/AddAduit";
 import TeaAduit from "./components/Aduit/Pages/audit/TeaAduit";
 import Coffee from "./components/Aduit/Pages/audit/Coffee";
@@ -19,7 +19,7 @@ import LiveSnacks from "./components/Aduit/Pages/audit/LiveSnacks";
 import Bunzo from "./components/Aduit/Pages/audit/Bunzo";
 import Bakshanam from "./components/Aduit/Form/Bakshanam";
 // import Next01 from './components/Aduit/Pages/Next01';
-import InsideKitichen from "./components/Aduit/Pages/InsideKitichen";
+// import InsideKitichen from "./components/Aduit/Pages/InsideKitichen";
 // import OutSideShop from './components/Aduit/Pages/OutSideShop';
 // import Brandings from './components/Aduit/Pages/Brandings';
 import Auditers from "./components/Aduit/Pages/Auditers/Auditers";
@@ -58,7 +58,7 @@ function App() {
           <main className="flex-1 p-4"> */}
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="signup" element={<Signup />} />
+          {/* <Route path="signup" element={<Signup />} /> */}
           <Route path="*" element={<Page404 />} />
           <Route
             element={
@@ -78,7 +78,7 @@ function App() {
               <Route path="insideShop/:auditId" element={<InsideShop />} />
 
               {/* <Route path="nextProcess" element={<Next01/>} /> */}
-              <Route path="Kitchenarea" element={<InsideKitichen />} />
+              {/* <Route path="Kitchenarea" element={<InsideKitichen />} /> */}
               {/* <Route path="Outsideshop/:auditId" element={<OutSideShop/>} /> */}
               <Route path="Branding/:auditId" element={<Branding />} />
               <Route path="employee/:auditId" element={<Employee />} />

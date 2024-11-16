@@ -77,7 +77,7 @@ const AddAudit = () => {
               <span className="poppins-semibold text-black">Location:</span> <span className="poppins-medium text-gray-600">{shopDetail?.address}</span>
             </p>
             <p>
-              <span className="font-semibold">
+              <span className="font-semibold text-black ">
                 phone:</span> <span className= "poppins-medium text-gray-600">{shopDetail?.phone}</span>
             </p>
           </div>

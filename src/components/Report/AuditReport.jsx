@@ -391,7 +391,7 @@ const LiveSnacksSection = ({ snacks, remark, rating, captureImages }) => (
     <div className="p-2">
       {snacks?.map((snack, index) => (
         <div key={index} className="mb-4">
-          <div className="font-semibold">{snack.snack || 'No snack name'}</div>
+          <div className="font-semibold">{snack.snack?.name || 'No snack name'}</div>
           <div className="text-sm">Status: {snack.status}</div>
         </div>
       ))}
@@ -424,7 +424,8 @@ const BakeryProductsSection = ({ products }) => (
     <div className="p-2">
       {products.map((product, index) => (
         <div key={index} className="mb-4">
-          <div className="font-semibold">{product.productName || 'No product name'}</div>
+          <div className="font-semibold">{product.productName || product?.product?.name || 'No product name'}</div>
+          <div className="text-sm">Brand Name: {product.brandName || ""}</div>
           <div className="text-sm">Quantity: {product.quantity}</div>
           <div className="text-sm">Expiry Date: {new Date(product.expiryDate).toLocaleDateString()}</div>
           {product.captureImages && product.captureImages.length > 0 && (

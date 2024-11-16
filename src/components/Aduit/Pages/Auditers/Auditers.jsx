@@ -94,7 +94,10 @@ const [loading, setLoading] = useState(true); // Loading state
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{auditor.name}</td>
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">
-                  {auditor.address} <br />
+                <div>{auditor?.address?.length > 15 
+                                  ? `${auditor?.address.slice(0, 15)}...` 
+                                  : auditor?.address}
+                            </div> <br />
                   <a href={auditor.mapLink} className="text-blue- 500 hover:underline" target="_blank" rel="noopener noreferrer">
                     Map Link
                   </a>
@@ -125,7 +128,10 @@ const [loading, setLoading] = useState(true); // Loading state
                 <span className="text-sm text-gray-500">#{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</span>
               </div>
               <div className="text-sm text-gray-700">
-                <p><strong>Location:</strong> {auditor.address}</p>
+                <p><strong>Location:</strong>   <div>{auditor?.address?.length > 15 
+                                  ? `${auditor?.address.slice(0, 15)}...` 
+                                  : auditor?.address}
+                            </div></p>
                 <p><strong>Contact:</strong> {auditor.phone}</p>
                 <p><strong>Email:</strong> <a href={`mailto:${auditor.email}`} className="text-blue-500 hover:underline">{auditor.email}</a></p>
                 <p><strong>Document Type:</strong> {auditor.documentType}</p>

@@ -6,6 +6,7 @@ import { createInsideKitchen, createKitchenData, getInsideKitchen, getKitchenDat
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import Loader from '../../../Loader';
 
 const InsideKitchens = () => {
   const [kitchenData, setKitchenData] = useState({});
@@ -15,7 +16,8 @@ const InsideKitchens = () => {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [lastAudit, setLastAudit] = useState(null);
-
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+  const [loading, setLoading] = useState(false);
   const [fetchData, setFetchData] = useState(null);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const handleItemUpdate = (itemType, data) => {
@@ -30,6 +32,8 @@ const InsideKitchens = () => {
   };
 
   const handleOverallSubmit = () => {
+    setLoading(true);
+
     createInsideKitchen(auditId, kitchenData)
       .then((res) => {
         toast.success(res.message);
@@ -53,7 +57,14 @@ const InsideKitchens = () => {
   ];
 
   useEffect(() => {
-    getInsideKitchen(auditId).then((res) => setFetchData(res.data));
+    setLoading(true);
+
+    getInsideKitchen(auditId).then((res) => {
+      setFetchData(res.data);
+
+      setLoading(false);
+      
+    });
   }, [auditId]);
   const togglePopup = () => {
     setIsPopupVisible(!isPopupVisible);
@@ -73,8 +84,23 @@ const InsideKitchens = () => {
     setDialogOpen(false);
     setSelectedDate(null);
   };
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const confirmSubmit = () => {
+    handleOverallSubmit(); // Proceed with the submission
+    setIsModalOpen(false); // Close the modal after submission
+  };
   return (
-    <>
+  <>
+  {
+    loading? <Loader/>:(
+      <>
       <div className="flex items-center justify-between mx-auto p-4  max-w-4xl">
        <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">
          <MdArrowBack className="w-6 h-6 mt-1" />
@@ -194,15 +220,39 @@ const InsideKitchens = () => {
         ))}
       </div>
       <button
-        onClick={handleOverallSubmit}
+        onClick={openModal}
         
         className='bg-red-500 text-white w-full sm:w-5/6 py-2 mx-auto flex items-center text-center mt-12 rounded-md hover:bg-red-600'
       >
         <span className='text-center mx-auto'>Submit All Data</span>
       </button>
     </div>
-    
+    {isModalOpen && (
+            <div className="fixed inset-0 z-20 flex items-center justify-center bg-gray-900 bg-opacity-50">
+              <div className="bg-white p-6 rounded shadow-lg">
+                <h2 className="text-lg font-semibold">Confirm Submission</h2>
+                <p className="mt-2 text-md">Once submitted, you won’t be able to edit. Are you sure?</p>
+                <div className="flex justify-end mt-4 space-x-2">
+                  <button
+                    onClick={closeModal}
+                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmSubmit}
+                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
     </>
+    )
+  }
+  </>
   );
 };
 

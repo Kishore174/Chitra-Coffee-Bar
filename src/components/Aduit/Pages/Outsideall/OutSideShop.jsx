@@ -21,7 +21,7 @@ const OutSideShop = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [lastAudit, setLastAudit] = useState(null);
   const [loading, setLoading] = useState(false); // Loading state
- 
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
  
   const handleItemUpdate = (itemType, data) => {
       const { captureImages, ...otherData } = data;
@@ -80,7 +80,18 @@ const OutSideShop = () => {
       setDialogOpen(false);
       setSelectedDate(null);
     };
+    const openModal = () => {
+      setIsModalOpen(true);
+    };
   
+    const closeModal = () => {
+      setIsModalOpen(false);
+    };
+  
+    const confirmSubmit = () => {
+      handleOverallSubmit(); // Proceed with the submission
+      setIsModalOpen(false); // Close the modal after submission
+    };
   return (
     <>
     {
@@ -204,13 +215,36 @@ const OutSideShop = () => {
         ))}
       </div>
       <button
-        onClick={handleOverallSubmit}
+        onClick={openModal}
         
         className="bg-red-500 text-white w-full sm:w-5/6 py-2 mx-auto flex items-center text-center mt-12 rounded-md hover:bg-red-600"
       >
         <span className="text-center mx-auto">Submit All Data</span>
       </button>
-    </div></>
+    </div>
+    {isModalOpen && (
+            <div className="fixed inset-0 z-20 flex items-center justify-center bg-gray-900 bg-opacity-50">
+              <div className="bg-white p-6 rounded shadow-lg">
+                <h2 className="text-lg font-semibold">Confirm Submission</h2>
+                <p className="mt-2 text-md">Once submitted, you won’t be able to edit. Are you sure?</p>
+                <div className="flex justify-end mt-4 space-x-2">
+                  <button
+                    onClick={closeModal}
+                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmSubmit}
+                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+    </>
       )
     }
     </>

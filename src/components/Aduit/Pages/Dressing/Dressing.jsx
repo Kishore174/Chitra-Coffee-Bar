@@ -94,12 +94,10 @@ const Dressing = () => {
           setCortNotWeared(cort.notWear);
           setRating(rating);
           setDressingRemark(remark);
-        setLoading(false)
 
         }
+        setLoading(false)
       } catch (error) {
-    setLoading(true)
-
         console.error('Error fetching dress data:', error);
       }
     };

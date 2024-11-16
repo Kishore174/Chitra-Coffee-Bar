@@ -69,15 +69,15 @@ const Dashboard = () => {
 
   return (
     <div className="p-6 min-h-screen poppins-regular">
-      <h2 className="text-3xl font-semibold mb-2 text-start p-4">Dashboard</h2>
+      <h2 className= " text-2xl   poppins-semibold mb-2 text-start p-4">Dashboard</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
        {user && user.role === "super-admin" &&
         <div className="bg-gradient-to-r from-red-500 to-red-700 p-6 rounded-lg shadow-lg flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
           <BuildingStorefrontIcon className="text-white h-12 w-12" />
           <div>
-            <h2 className="text-2xl font-bold text-white">{shopCount}</h2>
-            <p className="text-white">Number of Shops</p>
+            <h2 className="text-2xl font-bold text-center text-white">{shopCount}</h2>
+            <p className="text-white whitespace-nowrap">Number of Shops</p>
           </div>
         </div>}
 
@@ -85,8 +85,8 @@ const Dashboard = () => {
         <div className="bg-gradient-to-r from-pink-500 to-pink-700 p-6 rounded-lg shadow-lg flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
           <BuildingStorefrontIcon className="text-white h-12 w-12" />
           <div>
-            <h2 className="text-2xl font-bold text-white">{auditorsCount}</h2>
-            <p className="text-white">Number of Auditors</p>
+            <h2 className="text-2xl font-bold text-center text-white">{auditorsCount}</h2>
+            <p className="text-white whitespace-nowrap">Number of Auditors</p>
           </div>
         </div>}
 
@@ -94,21 +94,21 @@ const Dashboard = () => {
         <div className="bg-gradient-to-r from-yellow-500 to-yellow-700 p-6 rounded-lg shadow-lg flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
           <BuildingStorefrontIcon className="text-white h-12 w-12" />
           <div>
-            <h2 className="text-2xl font-bold text-white">{routesCount}</h2>
-            <p className="text-white">Number of Routes</p>
+            <h2 className="text-2xl font-bold text-center text-white">{routesCount}</h2>
+            <p className="text-white whitespace-nowrap">Number of Routes</p>
           </div>
         </div>}
         
       </div>
       {user && user.role === "super-admin" &&
-      <h2 className="text-3xl font-semibold mb-2 text-start p-4">Audit Overview</h2>}
+      <h2 className="text-3xl font-semibold mb-2 text-start p-4">Audit Overview {user?.today}</h2>}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {/* Completed Audits */}
         <div className="bg-gradient-to-r from-blue-500 to-blue-800 p-6 rounded-lg shadow-lg flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
           <ClipboardDocumentCheckIcon className="text-white h-12 w-12" />
           <div>
-            <h2 className="text-2xl font-bold text-white">{auditsCount}</h2>
-            <p className="text-white">Audits</p>
+            <h2 className="text-2xl font-bold text-center text-white">{auditsCount}</h2>
+            <p className="text-white whitespace-nowrap">Audits</p>
           </div>
         </div>
         
@@ -116,8 +116,8 @@ const Dashboard = () => {
         <div className="bg-gradient-to-r from-green-500 to-green-800 p-6 rounded-lg shadow-lg flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
           <ClipboardDocumentCheckIcon className="text-white h-12 w-12" />
           <div>
-            <h2 className="text-2xl font-bold text-white">{completedCount}</h2>
-            <p className="text-white">Completed Audits</p>
+            <h2 className="text-2xl font-bold text-center text-white">{completedCount}</h2>
+            <p className="text-white whitespace-nowrap">Completed Audits</p>
           </div>
         </div>
 
@@ -125,8 +125,8 @@ const Dashboard = () => {
         <div className="bg-gradient-to-r from-orange-500 to-orange-700 p-6 rounded-lg shadow-lg flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
           <ClipboardDocumentListIcon className="text-white h-12 w-12" />
           <div>
-            <h2 className="text-2xl font-bold text-white">{pendingCount}</h2>
-            <p className="text-white">Pending Audits</p>
+            <h2 className="text-2xl font-bold text-center text-white">{pendingCount}</h2>
+            <p className="text-white whitespace-nowrap">Pending Audits</p>
           </div>
         </div>
       </div>

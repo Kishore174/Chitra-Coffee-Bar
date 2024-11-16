@@ -141,15 +141,27 @@ const AddAuditer = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Upload Document</label>
-          <input
-            type="file"
-            name="documentFile"
-            onChange={handleFileChange}
-            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-            required
-          />
-        </div>
+  <label className="block text-sm font-medium text-gray-700">Upload Document</label>
+  <input
+    type="file"
+    name="documentFile"
+    onChange={handleFileChange}
+    className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+    disabled={isView} // Disable file upload in view mode
+  />
+ 
+  {auditor?.documentUrl && (
+    <a
+      href={auditor?.documentUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-500 hover:underline mt-2 cursor-pointer"
+    >
+      View Document
+    </a>
+  )}
+</div>
+
         <div className="col-span-1">
           <label className="block text-sm font-medium text-gray-700">
             Route<span className="text-red-500">*</span>
@@ -169,14 +181,14 @@ const AddAuditer = () => {
             ))}
           </select>
         </div>
-        <div className="col-span-full">
-          <button
-            type="submit"
-            className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition duration-200"
-          >
-            {isEdit ? 'Update Auditor' : 'Submit'}
-          </button>
-        </div>
+   {!isView &&   < div className="col-span-full">
+        <button
+          type="submit"
+          className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition duration-200"
+        >
+          {isEdit ? 'Update Auditor' : 'Submit'}
+        </button>
+      </div>}
       </form>
 
     

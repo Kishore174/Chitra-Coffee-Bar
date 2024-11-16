@@ -38,7 +38,7 @@ const Login = () => {
       }
       resetPassword(resetPasswordData).then((res)=>{
         navigate('/dashboard')
-        toast.success(res.data?.message)
+        toast.success(res?.message)
       }).catch((err)=>{
         console.log(err)
         toast.success(err.response?.data?.message)
@@ -62,13 +62,14 @@ const Login = () => {
           navigate('/dashboard');
         }
         setUser(data);
-        setIsLogin(true);
         setLoading(false)
-        toast.success(res?.message);
+        toast.success(res.message);
       })
       .catch((err) => {
         console.error("Error:", err); // Check for errors
-        toast.error(err?.response?.data?.message);
+        toast.error(err.response?.data?.message);
+      }).finally(()=>{
+        setLoading(false)
       });
   };
   
@@ -122,12 +123,23 @@ const Login = () => {
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </span>
                 </div>
+         {
+          loading ? (
             <button
-              type="submit"
-              className="w-full bg-red-500 text-white py-2 rounded mt-2 hover:bg-red-600"
-            >
-              Sign In
-            </button>
+            type="submit"
+            className="w-full bg-red-500 text-white py-2 rounded mt-2 hover:bg-red-600"
+          >
+            Sign in...
+          </button>
+          ):(
+            <button
+            type="submit"
+            className="w-full bg-red-500 text-white py-2 rounded mt-2 hover:bg-red-600"
+          >
+            Sign In
+          </button>
+          )
+         }
                 <div className="mt-4 text-center">
                   <button type="button" onClick={handleForgotPasswordClick} className="text-sm text-red-500 hover:underline">
                     Forgot Password?

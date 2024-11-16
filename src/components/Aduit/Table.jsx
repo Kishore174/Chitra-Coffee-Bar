@@ -120,16 +120,16 @@ const {user}=useAuth()
               <table className="min-w-full bg-white border border-gray-200">
                 <thead className="bg-red-600 text-white poppins-semibold">
                   <tr>
-                    <th className="px-4 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase">S.No</th>
-                    <th className="px-4 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase">Shop Details</th>
+                    <th className="px-4 py-3 border-b-2 border-gray-200 text-center text-xs font-semibold uppercase">S.No</th>
+                    <th className="px-4 py-3 border-b-2 border-gray-200 text-center text-xs font-semibold uppercase">Shop Details</th>
                     {
                       user?.role === "super-admin" && 
-                    <th className="px-4 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase">Auditor</th>
+                    <th className="px-4 py-3 border-b-2 border-gray-200 text-center text-xs font-semibold uppercase">Auditor</th>
 
                     }
-                    <th className="px-4 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase">Audit Status</th>
-                    <th className="px-4 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase">Contact Details</th>
-                    <th className="px-4 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase">Action</th>
+                    <th className="px-4 py-3 border-b-2 border-gray-200 text-center text-xs font-semibold uppercase">Audit Status</th>
+                    <th className="px-4 py-3 border-b-2 border-gray-200 text-center text-xs font-semibold uppercase">Contact Details</th>
+                    <th className="px-4 py-3 border-b-2 border-gray-200 text-center text-xs font-semibold uppercase">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -138,10 +138,13 @@ const {user}=useAuth()
                       <tr key={audit.id}>
                         <td className="px-4 py-4 border-b border-gray-200 text-sm text-gray-700">{index + 1}</td>
                         <td className="px-4 py-4 border-b border-gray-200 text-sm text-gray-700">
-                          <div className="poppins-regular">
+                          <div className="poppins-regular overflow-hidden">
                             <div>{audit.shop?.shopName}</div>
                             <div>{audit.shop?.ownerName}</div>
-                            <div>{audit.shop?.address}</div>
+                            <div>{audit.shop?.address?.length > 15 
+                                  ? `${audit.shop?.address.slice(0, 15)}...` 
+                                  : audit.shop?.address}
+                            </div>
                             <a href={audit.location} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">
                               Map Link
                             </a>
@@ -157,8 +160,11 @@ const {user}=useAuth()
                           </div>
                         </td>
                         }
-                        <td className={`px-4 py-4 border-b poppins-regular border-gray-200 text-sm ${audit.status === 'Completed' ? 'text-green-600' : 'text-red-600'}`}>
-                          {audit.status}
+                        <td className={` border-b poppins-regular border-gray-200 text-sm ${audit.status === 'Completed' ? 'text-green-600' : 'text-red-600'}`}>
+                          <div className="poppins-regular text-center">
+                            {audit.status === "completed" &&<div className='poppins-semibold text-yellow-500'>{audit.rating}</div>}
+                            <div>{audit.status}</div>
+                          </div>
                         </td>
                         <td className="px-4 py-4 border-b poppins-regular border-gray-200 text-sm text-gray-700">
                           <div>{audit.shop.phone}</div>
