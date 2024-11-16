@@ -66,9 +66,9 @@ const MyShop = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 min-h-screen">
+    <div className=" min-h-screen">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-6">
-        <h1 className="text-2xl md:text-3xl poppins-semibold mb-4 md:mb-0">My Shop</h1>
+        <h1 className="text-2xl md:text-3xl poppins-semibold mb-4  p-4 md:mb-0">My Shop</h1>
         <Link to="/addshop">
           <button className="bg-red-600 text-white rounded-lg poppins-semibold py-1 px-3 flex items-center">
             <FaPlus className="mr-2" /> Add Shop
@@ -86,57 +86,67 @@ const MyShop = () => {
       ) : (
         <>
           {/* Responsive Table for Desktop */}
-          <div className="overflow-x-auto rounded-lg hidden lg:block">
-            <table className="w-full bg-white border">
-              <thead className="bg-red-600 whitespace-nowrap text-white">
-                <tr>
-                  {['S.No', 'Shop Name', 'Location', 'Contact Details', 'Franchise Name', 'Property Type', 'Action'].map((header, idx) => (
-                    <th key={idx} className="px-2 py-3 border-b-2 border-gray-300 text-left text-xs md:text-sm poppins-semibold uppercase tracking-wider">
-                      {header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedShops.map((shop, index) => (
-                  <tr key={shop._id} className="hover:bg-gray-100 poppins-regular capitalize">
-                    <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                    <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">
-                      <div>
-                        <p className=' font-semibold'>{shop.shopName}</p>
-                        <p>{shop.ownerName}</p>
-                      </div>
-                    </td>
-                    <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm ">  
-                      <div>{shop?.address?.length > 15 
-                                  ? `${shop?.address.slice(0, 15)}...` 
-                                  : shop?.address}
-                            </div> <br />
-                      <a href={shop.location} target="_blank" className="text-blue cursor-pointer" rel="noopener noreferrer">
-                        Map Link
-                      </a>
-                    </td>
-                    <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">
-                      {shop.phone} <br />
-                      <a href={`mailto:${shop.email}`} className="text-blue-500 hover:underline">
-                        {shop.email}
-                      </a>
-                    </td>
-                    <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.franchiseType}</td>
-                    <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.propertyType}</td>
-                    <td className="px-2 py-4 border-b border-gray-200 space-x-2 text-xs md:text-sm">
-                      <button className="text-blue-500 hover:underline" onClick={() => handleView(shop)}>View</button>
-                      <button className="text-green-500 hover:underline" onClick={() => handleEdit(shop)}><GrEdit /></button>
-                      <button className="text-red-500 hover:underline" onClick={() => handleDeleteClick(shop)}><MdDelete size={20} /></button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <div className="hidden md:block mt-4">
+  <table className="max-w-3xl mx-auto bg-white border">
+    <thead className="bg-red-600 whitespace-nowrap text-white">
+      <tr>
+        {['S.No', 'Shop Name', 'Location', 'Contact Details', 'Franchise Name', 'Property Type', 'Action'].map((header, idx) => (
+          <th key={idx} className="px-2 py-3 border-b-2 border-gray-300 text-left text-xs md:text-sm poppins-semibold uppercase tracking-wider">
+            {header}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {paginatedShops.map((shop, index) => (
+        <tr key={shop._id} className="hover:bg-gray-100 poppins-regular capitalize">
+          <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+          <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">
+            <div>
+              <p className='font-semibold'>{shop.shopName}</p>
+              <p>{shop.ownerName}</p>
+            </div>
+          </td>
+          <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">  
+            <div>{shop?.address?.length > 15 
+                        ? `${shop?.address.slice(0, 15)}...` 
+                        : shop?.address}
+            </div>
+            <br />
+            <a href={shop.location} target="_blank" className="text-blue cursor-pointer" rel="noopener noreferrer">
+              Map Link
+            </a>
+          </td>
+          <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">
+            {shop.phone} <br />
+            <a href={`mailto:${shop.email}`} className="text-blue-500 hover:underline">
+              {shop.email}
+            </a>
+          </td>
+          <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.franchiseType}</td>
+          <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.propertyType}</td>
+          <td className="px-2 py-4 border-b border-gray-200 space-x-2 text-xs whitespace-nowrap md:text-sm">
+            {/* Eye Icon for "View" */}
+            <button className="text-blue-500 hover:underline" onClick={() => handleView(shop)}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12c0 1.5-.5 2.85-1.5 3.95M12 12c0 1.5-.5 2.85-1.5 3.95M12 6c4.6 0 8.7 3.4 9.7 7.5C20.7 17.6 16.6 21 12 21S3.3 17.6 2.3 13.5C3.3 9.4 7.4 6 12 6z" />
+              </svg>
+            </button>
+            <button className="text-green-500 hover:underline" onClick={() => handleEdit(shop)}>
+              <GrEdit />
+            </button>
+            <button className="text-red-500 hover:underline" onClick={() => handleDeleteClick(shop)}>
+              <MdDelete size={20} />
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
 
           {/* Card Layout for Mobile and Tablet */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:hidden gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:hidden lg:hidden gap-4">
             {paginatedShops.map((shop, index) => (
               <div key={shop._id} className="border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-200">
                 <h3 className="text-lg font-semibold">{shop.shopName}</h3>

@@ -76,9 +76,9 @@ const [loading, setLoading] = useState(true); // Loading state
       </div>
       ) : (
 <>
-      <div className="overflow-x-auto rounded-lg">
+      <div className="hidden md:block mt-4">
         {/* Desktop View Table */}
-        <table className="w-full bg-white border hidden lg:table">
+        <table className="w-full bg-white border">
           <thead className="bg-red-600 text-white">
             <tr>
               {['S.No', 'Name', 'Location', 'Contact Details', 'Documents', 'Action'].map((header, idx) => (
@@ -120,7 +120,7 @@ const [loading, setLoading] = useState(true); // Loading state
         </table>
 
         {/* Mobile View Section */}
-        <div className="lg:hidden">
+        <div className="lg:hidden md:hidden">
           {currentAuditors.map((auditor, index) => (
             <div key={auditor.id} className="bg-white mb-4 p-4 rounded-lg shadow">
               <div className="flex justify-between items-center mb-2">

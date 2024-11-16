@@ -7,7 +7,10 @@ import axios from "axios";
 //     // withCredentials : true
 // })
 export const axiosintance = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
+    baseURL:'https://ccb-backend.vercel.app/api/v1'  ,
+    // baseURL: process.env.REACT_APP_API_URL,
+
+   
     // headers: {
     //   Authorization: `Bearer ${Cookie.get('token')}`
     // },

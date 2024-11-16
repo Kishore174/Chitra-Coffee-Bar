@@ -78,14 +78,14 @@ const Navbar = () => {
       <div className="flex items-center justify-between bg-white shadow p-4 h-16 w-full">
         <div className="flex-1">
           <div className="flex items-center">
-            <div className="md:hidden flex items-center">
+            <div className=" flex items-center">
               {!isMenuOpen && (
                 <button
                   onClick={() => setIsMenuOpen(true)}
                   className="text-gray-700"
                   aria-label="Open menu"
                 >
-                  <FaBars className="h-6 w-6" />
+                  <FaBars className="h-6 w-6 -ml-2 text-xl" />
                 </button>
               )}
             </div>
@@ -106,7 +106,7 @@ const Navbar = () => {
       {isMenuOpen && (
         <div ref={menuRef}>
           <div className={`absolute top-0 z-50 h-screen bg-white shadow-lg w-64 transition-transform duration-300 ease-in-out 
-          ${isMenuOpen ? 'translate-x-0 md:hidden lg:hidden' : '-translate-x-full'} lg:translate-x-0`}>
+          ${isMenuOpen ? 'translate-x-0  lg:hidden' : '-translate-x-full'} lg:translate-x-0`}>
             <div className="h-full overflow-y-auto">
               <Link to="/dashboard">
                 <div className="flex items-center mx-auto justify-center h-16 w-16 mt-3 rounded-full bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">
