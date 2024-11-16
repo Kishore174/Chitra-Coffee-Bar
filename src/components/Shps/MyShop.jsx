@@ -88,7 +88,7 @@ const MyShop = () => {
           {/* Responsive Table for Desktop */}
           <div className="overflow-x-auto rounded-lg hidden lg:block">
             <table className="w-full bg-white border">
-              <thead className="bg-red-600 text-white">
+              <thead className="bg-red-600 whitespace-nowrap text-white">
                 <tr>
                   {['S.No', 'Shop Name', 'Location', 'Contact Details', 'Franchise Name', 'Property Type', 'Action'].map((header, idx) => (
                     <th key={idx} className="px-2 py-3 border-b-2 border-gray-300 text-left text-xs md:text-sm poppins-semibold uppercase tracking-wider">
@@ -107,7 +107,11 @@ const MyShop = () => {
                         <p>{shop.ownerName}</p>
                       </div>
                     </td>
-                    <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm ">{shop.address} <br />
+                    <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm ">  
+                      <div>{shop?.address?.length > 15 
+                                  ? `${shop?.address.slice(0, 15)}...` 
+                                  : shop?.address}
+                            </div> <br />
                       <a href={shop.location} target="_blank" className="text-blue cursor-pointer" rel="noopener noreferrer">
                         Map Link
                       </a>

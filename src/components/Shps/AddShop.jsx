@@ -20,9 +20,9 @@ const AddShop = () => {
       phone: "",
       email: "",
       address: "",
-      district:"",
-      state :"",
-      country:"",
+      district: "",
+      state: "",
+      country: "",
       location: "",
       onBoardingDate: "",
       renewalDate: "",
@@ -133,6 +133,17 @@ const AddShop = () => {
               onChange={handleFileChange}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             />
+
+            {shop?.rentalAgree && (
+              <a
+                href={shop?.rentalAgree}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline mt-2 cursor-pointer"
+              >
+                View Document
+              </a>
+            )}
           </div>
         ) : formData.propertyType === "own" ? (
           <div className="mb-4">
@@ -146,8 +157,19 @@ const AddShop = () => {
               id="ebCard"
               type="file"
               onChange={handleFileChange}
+              disabled={isView}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             />
+            {shop?.ebCard && (
+              <a
+                href={shop?.ebCard}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline mt-2 cursor-pointer"
+              >
+                View Document
+              </a>
+            )}
           </div>
         ) : null}
         <div className="mb-4">
@@ -162,6 +184,7 @@ const AddShop = () => {
             type="text"
             value={formData.shopName}
             onChange={handleChange}
+            disabled={isView}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             placeholder="Enter shop name"
           />
@@ -178,9 +201,20 @@ const AddShop = () => {
           <input
             id="shopPhoto"
             type="file"
+            accept=".jpg,.png,.jpeg"
             onChange={handleFileChange}
+            disabled={isView}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
           />
+          {shop?.shopPhoto && (
+            <div className="mt-2">
+              <img
+                src={shop?.shopPhoto}
+                alt="Rental Agreement"
+                className="h-24 w-24 border border-gray-300 bg-gray-300 rounded-md shadow-sm"
+              />
+            </div>
+          )}
         </div>
 
         {/* Owner Name */}
@@ -275,8 +309,8 @@ const AddShop = () => {
             placeholder="Enter shop address"
           />
         </div>
-         {/* District */}
-         <div className="mb-4">
+        {/* District */}
+        <div className="mb-4">
           <label
             className="block text-sm font-medium text-gray-700"
             htmlFor="district"
@@ -355,7 +389,7 @@ const AddShop = () => {
           <input
             id="onBoardingDate"
             type="date"
-            value={formData.onBoardingDate.slice(0,10)}
+            value={formData.onBoardingDate.slice(0, 10)}
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
           />
@@ -372,7 +406,7 @@ const AddShop = () => {
           <input
             id="renewalDate"
             type="date"
-            value={formData.renewalDate.slice(0,10)}
+            value={formData.renewalDate.slice(0, 10)}
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
           />
@@ -408,8 +442,19 @@ const AddShop = () => {
             id="commercialAgree"
             type="file"
             onChange={handleFileChange}
+            disabled={isView}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
           />
+          {shop?.commercialAgree && (
+            <a
+              href={shop?.commercialAgree}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline mt-2 cursor-pointer"
+            >
+              View Document
+            </a>
+          )}
         </div>
 
         {/* GST Certificate Upload */}
@@ -424,19 +469,32 @@ const AddShop = () => {
             id="gstCertificate"
             type="file"
             onChange={handleFileChange}
+            disabled={isView}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
           />
+          {shop?.gstCertificate && (
+            <a
+              href={shop?.gstCertificate}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline mt-2 cursor-pointer"
+            >
+              View Document
+            </a>
+          )}
         </div>
 
         {/* Submit Button */}
-        <div className="col-span-full">
-          <button
-            type="submit"
-            className="w-full py-2 px-4 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200"
-          >
-            {isEdit ? "Update Shop" : "Submit"}
-          </button>
-        </div>
+        {!isView && (
+          <div className="col-span-full">
+            <button
+              type="submit"
+              className="w-full py-2 px-4 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200"
+            >
+              {isEdit ? "Update Shop" : "Submit"}
+            </button>
+          </div>
+        )}
       </form>
     </div>
   );
