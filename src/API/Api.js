@@ -22,3 +22,30 @@ export const login = async (signupData) => {
     const response = await axiosintance.post('/login', signupData);
     return response.data;
 };
+
+export const uploadAudioToBackend = async (id,data) => {
+    const formData = new FormData();
+    
+    const audioFile = new File([data], 'recording.wav', { type: 'audio/wav' });
+    
+    formData.append('audioFile', audioFile);  // Append the audio file to form data
+    formData.append('date', Date.now()); 
+    try {
+      const response = await axiosintance.post(`/audit/${id}/audio`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      console.log('Audio uploaded successfully:', response.data);
+      return response.data
+    } catch (error) {
+      console.error('Error uploading audio:', error);
+    }
+  };
+
+ export const sendSignatureToBackend = async (id,formData) => {
+      const response = await axiosintance.post(`/audit/${id}/signature`, formData)
+
+      return response.data; 
+  }

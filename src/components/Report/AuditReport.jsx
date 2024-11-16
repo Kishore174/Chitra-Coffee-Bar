@@ -4,6 +4,9 @@ import { BsFillMicFill, BsStopFill } from 'react-icons/bs';
 import SignatureCanvas from 'react-signature-canvas';
 import { useParams } from 'react-router-dom';
 import { getAudit } from '../../API/audits';
+import { sendSignatureToBackend, uploadAudioToBackend } from '../../API/Api';
+import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthProvider';
 
 const AuditReport = () => {
   const [name, setName] = useState('');
@@ -12,19 +15,60 @@ const AuditReport = () => {
   const [auditData, setAuditData] = useState({});
   const { auditId } = useParams();
   const [isRecording, setIsRecording] = useState(false);
+  const [audio, setAudio] = useState(null);
+  const [signatureType, setSignatureType] = useState('Owner'); 
   useEffect(() => {
     // Fetch audit data when the component is mounted
-    getAudit(auditId).then(res => setAuditData(res.data));
+    getAudit(auditId).then(res => {
+      setAuditData(res.data)
+      setAudio(res.data?.audioRecord);
+      setSignature(res.data?.signature)
+    });
   }, [auditId]);
 
   const handleClearSignature = () => {
     signatureRef.current.clear();
   };
 
-  const handleSaveSignature = () => {
-    setSignature(signatureRef.current.getTrimmedCanvas().toDataURL('image/png'));
+  const handlePlayAudio = (audioUrl) => {
+    const audio = new Audio(audioUrl);
+    audio.play();
+  };
+  const handleSaveSignature = async () => {
+    // Get the trimmed signature image as a Blob
+    const signatureBlob = signatureRef.current.getTrimmedCanvas().toDataURL('image/png');
+    const file = dataURLtoFile(signatureBlob, `${name}_signature.png`);
+
+    // Prepare the form data to send to backend
+    const formData = new FormData();
+    formData.append('signatureFile', file);  // Add the signature file
+    // formData.append('name', name);       // Add the name
+    formData.append('signatureBy', signatureType); // Add the signature type (Owner/Employee)
+
+    try {
+      const response = await sendSignatureToBackend(auditId,formData);
+      if (response) {
+        toast.success(response.message);
+      } else {
+        toast.error('Failed to save signature');
+      }
+    } catch (error) {
+      toast.error('Error while saving signature');
+    }
   };
 
+  // Convert the base64 signature data to a File object
+  const dataURLtoFile = (dataUrl, filename) => {
+    const arr = dataUrl.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  };
   return (
     <div className="p-4 bg-white text-gray-800 font-sans max-w-3xl mx-auto">
       {/* Report Title */}
@@ -35,11 +79,11 @@ const AuditReport = () => {
             {new Date(auditData?.auditDate).toLocaleDateString()}
           </p>
         </div>
-        <div className={`flex items-center ${isRecording ? 'fixed right-4 top-4' : ''}`}>
+        {!audio && <div className={`flex items-center ${isRecording ? 'fixed right-4 top-4' : ''}`}>
           <RecordingControls 
             setIsRecording={setIsRecording} // Pass down the state setter
           />
-        </div>
+        </div>}
       </div>
 
       {/* General Information Sections */}
@@ -59,7 +103,18 @@ const AuditReport = () => {
           data={auditData?.coffeeAudit}
           fields={['quality', 'color', 'sugarLevel', 'temperature', 'aroma', 'taste', 'remark', 'rating']}
         />
-        
+        {/* Live Snacks Section */}
+        <LiveSnacksSection
+          snacks={auditData?.liveSnacks?.snacks}
+          remark={auditData?.liveSnacks?.remark}
+          rating={auditData?.liveSnacks?.rating}
+          captureImages={auditData?.liveSnacks?.captureImages}
+        />
+        {/* Bakery Products Section */}
+        {auditData?.bakeryProducts && auditData.bakeryProducts.length > 0 && (
+          <BakeryProductsSection products={auditData.bakeryProducts} />
+        )}
+        {/* Additional Sections could go here */}
         <AuditSection
           title="Inside Shop"
           data={auditData?.insideShop}
@@ -129,95 +184,269 @@ const AuditReport = () => {
           <InfoRow label="Overall Rating" value={`${auditData?.rating}/5`} />
         </div>
       </section>
-
+       {audio && (
+        <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
+          <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Previous Audio Report</h2>
+          <div className="p-2">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-gray-800">
+                Audio Recorded On: {new Date(audio.date).toLocaleDateString()}
+              </p>
+              <button
+                onClick={() => handlePlayAudio(audio.recordUrl)}
+                className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+              >
+                Play Audio
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+      {/* Signature Section */}
       {/* Signature Section */}
       <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
         <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Signature</h2>
         <div className="p-2 flex flex-col items-center">
-          <input 
-            type="text" 
-            placeholder="Enter your name" 
-            value={name} 
-            onChange={(e) => setName(e.target.value)} 
-            className="border border-gray-300 rounded p-2 mb-4 w-full"
-          />
-          <SignatureCanvas 
-            ref={signatureRef}
-            penColor='black'
-            canvasProps={{ className: 'border border-gray-300 w-full h-32' }}
-          />
-          <div className="flex justify-between space-x-4 mt-4">
-            <button 
-              onClick={handleClearSignature} 
-              className="bg-gray-400 text-white p-2 rounded hover:bg-gray-500"
-            >
-              Clear
-            </button>
-            <button 
-              onClick={handleSaveSignature} 
-              className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
-            >
-              Save Signature
-            </button>
-          </div>
+          
+          {/* Render the signature input form only if there's no signature already available */}
+          {!signature && (
+            <>
+              <input
+                type="text"
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="border border-gray-300 rounded p-2 mb-4 w-full"
+              />
+
+              {/* Dropdown for Signature Type (Owner/Employee) */}
+              <select
+                value={signatureType}
+                onChange={(e) => setSignatureType(e.target.value)}
+                className="border border-gray-300 rounded p-2 mb-4 w-full"
+              >
+                <option value="Owner">Owner</option>
+                <option value="Employee">Employee</option>
+              </select>
+
+              {/* Signature Canvas */}
+              <SignatureCanvas
+                ref={signatureRef}
+                penColor="black"
+                canvasProps={{ className: 'border border-gray-300 w-full h-32' }}
+              />
+
+              {/* Buttons to clear or save the signature */}
+              <div className="flex justify-between space-x-4 mt-4">
+                <button
+                  onClick={handleClearSignature}
+                  className="bg-gray-400 text-white p-2 rounded hover:bg-gray-500"
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={handleSaveSignature}
+                  className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
+                >
+                  Save Signature
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* If signature is available (either in local state or audit data), show the saved signature */}
           {signature && (
-            <div className="mt-4">
+            <div className="mt-4 p-4">
               <h3 className="font-semibold">Your Signature:</h3>
-              <img src={signature} alt="Signature" className="border border-gray-300 mt-2" />
+              <img
+                src={signature}
+                alt="Signature"
+                className="border border-gray-300 mt-2"
+              />
             </div>
           )}
         </div>
       </section>
+
     </div>
   );
 };
 
-const RecordingControls = ({setIsRecording }) => {
-  const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ audio: true });
-  const handleStartRecording = () => {
-    startRecording();
-    setIsRecording(true);  
+const RecordingControls = ({ setIsRecording }) => {
+  const { user } = useAuth();
+  const { auditId } = useParams();
+  const [status, setStatus] = useState('idle');  // idle, recording, stopped
+  const [isRecordingComplete, setIsRecordingComplete] = useState(false);
+  const [mediaBlobUrl, setMediaBlobUrl] = useState(null);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const mediaRecorderRef = useRef(null); // Reference to store the MediaRecorder instance
+  const audioChunksRef = useRef([]); // Array to store the audio chunks during recording
+
+  // Start recording function
+  const handleStartRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); // Access microphone
+      mediaRecorderRef.current = new MediaRecorder(stream);
+
+      // Collect audio data chunks
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
+      };
+
+      // When recording stops, create a blob and generate a URL for the audio
+      mediaRecorderRef.current.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+        setAudioBlob(audioBlob);
+        const audioUrl = URL.createObjectURL(audioBlob);
+        setMediaBlobUrl(audioUrl);
+        setIsRecordingComplete(true);
+        setStatus('stopped');
+      };
+
+      // Start recording
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
+      setStatus('recording');
+      setIsRecordingComplete(false);
+      audioChunksRef.current = []; // Reset chunks on start
+    } catch (error) {
+      console.error('Error starting audio recording:', error);
+      toast.error('Error accessing microphone');
+    }
   };
 
+  // Stop recording function
   const handleStopRecording = () => {
-    stopRecording();
-    setIsRecording(false); // Set recording state to false
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      setStatus('stopped');
+    }
   };
+
+  // Upload the recorded audio to the backend
+  const uploadAudio = () => {
+    if (audioBlob) {
+      uploadAudioToBackend(auditId, audioBlob).then((res) => {
+        setIsRecordingComplete(false)
+        toast.success(res.message);
+      }).catch((err) => {
+        toast.error('Error uploading audio');
+      });
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center mt-4 p-4 border border-gray-300 rounded-lg shadow-md">
-      <div className="flex items-center gap-2 mb-4">
-        <span className={`text-sm font-semibold ${status === 'recording' ? 'text-red-500' : 'text-gray-600'}`}>
-          Recording Status: {status}
-        </span>
-        {status === 'recording' && (
-          <span className="w-3 h-3 bg-red-500 rounded-full animate-ping"></span>
+    <div className="flex justify-center items-center fixed top-20 right-20 z-50">
+      {/* Quick access floating action buttons */}
+      <div className="relative flex flex-col items-center">
+        <div className="absolute flex flex-col gap-4">
+          {/* Recording Button */}
+          <button
+            onClick={handleStartRecording}
+            className={`w-16 h-16 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg transition-all duration-300 ${status === 'recording' ? 'opacity-50' : ''}`}
+            disabled={status === 'recording'}
+          >
+            <BsFillMicFill size={30} />
+          </button>
+
+          {/* Stop Button */}
+          {status === 'recording' && (
+            <button
+              onClick={handleStopRecording}
+              className="w-16 h-16 rounded-full bg-gray-600 text-white flex items-center justify-center shadow-lg transition-all duration-300"
+            >
+              <BsStopFill size={30} />
+            </button>
+          )}
+        </div>
+        
+        {/* Audio playback section */}
+        {mediaBlobUrl  && isRecordingComplete && (
+          <div className="mt-4">
+            <audio className="rounded-md" controls>
+              <source src={mediaBlobUrl} type="audio/wav" />
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+        )}
+
+        {/* Submit Button */}
+        {isRecordingComplete && (
+          <button
+            onClick={uploadAudio}
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+          >
+            Submit Recording
+          </button>
         )}
       </div>
-      
-      <div className="flex border border-red-600 rounded-full p-1 gap-4">
-        <button
-          onClick={handleStartRecording}
-          className="flex items-center justify-center w-12 h-12 rounded-full bg-red-500 hover:bg-red-600 shadow-lg transition-all duration-300"
-        >
-          <BsFillMicFill size={30} className="text-white" />
-        </button>
-        <button
-          onClick={handleStopRecording}
-          className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-400 hover:bg-gray-500 shadow-lg transition-all duration-300"
-        >
-          <BsStopFill size={30} className="text-white" />
-        </button>
-      </div>
-      {mediaBlobUrl && (
-        <audio className="mt-4" controls>
-          <source src={mediaBlobUrl} type="audio/wav" />
-          Your browser does not support the audio element.
-        </audio>
-      )}
     </div>
   );
 };
+// Live Snacks Section Component
+const LiveSnacksSection = ({ snacks, remark, rating, captureImages }) => (
+  <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
+    <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Live Snacks</h2>
+    <div className="p-2">
+      {snacks?.map((snack, index) => (
+        <div key={index} className="mb-4">
+          <div className="font-semibold">{snack.snack || 'No snack name'}</div>
+          <div className="text-sm">Status: {snack.status}</div>
+        </div>
+      ))}
+      <InfoRow label="Remark" value={remark} />
+      <InfoRow label="Rating" value={rating} />
 
+      {captureImages && captureImages.length > 0 && (
+        <div className="mt-2">
+          <p className="font-medium">Images:</p>
+          <div className="flex gap-2">
+            {captureImages.map((image, idx) => (
+              <div key={idx} className="relative">
+                <img
+                  src={image.imageUrl}
+                  alt={`Snack Image ${idx + 1}`}
+                  className="w-16 h-16 object-cover border border-gray-300"
+                />
+                <p className="absolute bottom-0 left-0 text-xs bg-black text-white px-1 py-0.5">{image.location}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+);
+const BakeryProductsSection = ({ products }) => (
+  <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
+    <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Bakery Products</h2>
+    <div className="p-2">
+      {products.map((product, index) => (
+        <div key={index} className="mb-4">
+          <div className="font-semibold">{product.productName || 'No product name'}</div>
+          <div className="text-sm">Quantity: {product.quantity}</div>
+          <div className="text-sm">Expiry Date: {new Date(product.expiryDate).toLocaleDateString()}</div>
+          {product.captureImages && product.captureImages.length > 0 && (
+            <div className="mt-2">
+              <p className="font-medium">Images:</p>
+              <div className="flex gap-2">
+                {product.captureImages.map((image, idx) => (
+                  <img
+                    key={idx}
+                    src={image.imageUrl}
+                    alt={`Bakery Product Image ${idx + 1}`}
+                    className="w-16 h-16 object-cover border border-gray-300"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+);
 const AuditSection = ({ title, data, fields }) => {
   return (
     <section className="mb-6 border border-red-200 rounded-lg overflow-hidden">
