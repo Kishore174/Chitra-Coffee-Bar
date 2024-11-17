@@ -62,7 +62,7 @@ const [loading, setLoading] = useState(true); // Loading state
   return (
     <div className="p-4 md:p-6 min-h-screen">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-end mb-4 md:mb-6">
-        <Link to="/add-Auditers">
+        <Link to="/add-auditers">
           <button className="bg-red-600 text-white rounded-lg poppins-semibold py-1 px-3 flex items-center">
             <FaPlus className="mr-2" /> Add Auditer
           </button>

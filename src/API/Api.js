@@ -1,14 +1,14 @@
 import axios from "axios";
 //  export const axiosintance =axios.create({
-//     baseURL:"http://192.168.1.9:5454/api/v1" ,
+//     baseURL:"http://localhost:5454/api/v1" ,
 //     // headers: {
 //     //   Authorization: `Bearer ${Cookie.get('token')}`
 //     // },
-//     // withCredentials : true
+//     withCredentials : true
 // })
 export const axiosintance = axios.create({
     // baseURL: process.env.REACT_APP_API_URL,
-    baseURL:"https://apiccb-fkhfhgbrbjhjcrf3.canadacentral-01.azurewebsites.net/api/v1" ,
+    baseURL:"https://ccb-backend.vercel.app/api/v1" ,
    
     // headers: {
     //   Authorization: `Bearer ${Cookie.get('token')}`

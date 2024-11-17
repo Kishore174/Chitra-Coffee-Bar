@@ -7,8 +7,8 @@ const Setting = () => {
 
   const settings = [
     { name: 'Snacks', icon: <MdFastfood className="h-8 w-8 text-red-500" />, path: '/backeryproducts' },
-    { name: 'Brand Name', icon: <MdLabel className="h-8 w-8 text-red-500" />, path: '/BrandName' },
-    { name: 'Live Snacks', icon: <MdFastfood className="h-8 w-8 text-red-500" />, path: '/LiveSnackName' },
+    { name: 'Brand Name', icon: <MdLabel className="h-8 w-8 text-red-500" />, path: '/brandname' },
+    { name: 'Live Snacks', icon: <MdFastfood className="h-8 w-8 text-red-500" />, path: '/livesnackname' },
   ];
 
   return (

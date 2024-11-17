@@ -7,6 +7,7 @@ import { getAllShops } from '../../../../API/shop';
 import { addRoute, createRoute, deleteRoute, getRoute } from '../../../../API/createRoute';
 import toast from 'react-hot-toast';
 import SetRoutes from './SetRoutes';
+import { deleteShopIntoRoute } from '../../../../API/settings';
 
 const RouteCard = ({ routeId, routeName,shops,allShops, onRemoveCard, onEdit }) => {
   const [selectedRoutes, setSelectedRoutes] = useState(shops||[]);
@@ -27,7 +28,13 @@ const RouteCard = ({ routeId, routeName,shops,allShops, onRemoveCard, onEdit }) 
   };
 
   const handleRemoveRoute = (route) => {
-    setSelectedRoutes(selectedRoutes.filter((r) => r.shopName !== route.shopName));
+    console.log(routeId,{shopId:route._id})
+    deleteShopIntoRoute(routeId,{shopId:route._id}).then(res=>{
+      toast.success(res.message)
+      setSelectedRoutes(selectedRoutes.filter((r) => r.shopName !== route.shopName));
+    }).catch(err=>{
+        toast.success(err.response?.data?.message)
+    })
   };
 
   const toggleModal = async () => {

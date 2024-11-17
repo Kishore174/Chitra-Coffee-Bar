@@ -43,14 +43,14 @@ const AddAudit = () => {
     { id: 2, image: coffee, alt: "coffee", label: "Coffee",item:"coffeeAudit", link: `/coffee/${id}` },
     { id: 3, image: livesnacks, alt: "snacks", label: "Live Snacks",item:"liveSnacks", link: `/livesnacks/${id}` },
     { id: 4, image: bakery, alt: "bunzo", label: "Snacks",item:"bakeryProducts", link: `/bunzo/${id}` },
-    { id: 5, image: insideshop, alt: "insideshop", label: "Inside Shop",item:"insideShop", link: `/insideShop/${id}` },
+    { id: 5, image: insideshop, alt: "insideshop", label: "Inside Shop",item:"insideShop", link: `/insideshop/${id}` },
     { id: 6, image: insideshop, alt: "insidektchen", label: "Inside Kitchen",item:"insideKitchen", link: `/kitchen/${id}` },
-    { id: 7, image: outsideshop, alt: "outsidektchen", label: "Outside Kitchen",item:"outsideKitchen", link: `/Outsideshop/${id}` },
-    { id: 8, image: WallBranding, alt: "wallBranding", label: "Wall Branding",item:"wallBranding", link: `/Branding/${id}` },
+    { id: 7, image: outsideshop, alt: "outsidektchen", label: "Outside Kitchen",item:"outsideKitchen", link: `/outsideshop/${id}` },
+    { id: 8, image: WallBranding, alt: "wallBranding", label: "Wall Branding",item:"wallBranding", link: `/branding/${id}` },
     { id: 9, image: emp, alt: "employee", label: "Employee",item:"employees", link: `/employee/${id}` },
-    { id: 10, image: stock, alt: "stock", label: "Stock & Store",item:"stack", link: `/Stock/${id}` },
-    { id: 11, image: wallPanting, alt: "panting", label: "Wall Panting",item:"painting", link: `/Wallpanting/${id}` },
-    { id: 12, image: dress, alt: "dress", label: "Dressing",item:"uniformSection", link: `/Dressing/${id}` },
+    { id: 10, image: stock, alt: "stock", label: "Stock & Store",item:"stack", link: `/stock/${id}` },
+    { id: 11, image: wallPanting, alt: "panting", label: "Wall Panting",item:"painting", link: `/wallpanting/${id}` },
+    { id: 12, image: dress, alt: "dress", label: "Dressing",item:"uniformSection", link: `/dressing/${id}` },
   ]; 
   
   return (

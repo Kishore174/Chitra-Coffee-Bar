@@ -64,42 +64,42 @@ function App() {
           >
             <Route path="/" element={<Main />}>
               <Route path="dashboard" element={<Dashboard />} />
-              <Route path="aduit" element={<Table />} />
-              <Route path="Add-audit/:id" element={<AddAduit />} />
-              <Route path="Profile" element={<Profile />} />
-              <Route path="Tea/:auditId" element={<TeaAduit />} />
+              <Route path="audit" element={<Table />} />
+              <Route path="add-audit/:id" element={<AddAduit />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="tea/:auditId" element={<TeaAduit />} />
               <Route path="coffee/:auditId" element={<Coffee />} />
               <Route path="livesnacks/:auditId" element={<LiveSnacks />} />
-              <Route path="Bunzo/:auditId" element={<Bunzo />} />
+              <Route path="bunzo/:auditId" element={<Bunzo />} />
               <Route path="bakshanm" element={<Bakshanam />} />
-              <Route path="insideShop/:auditId" element={<InsideShop />} />
+              <Route path="insideshop/:auditId" element={<InsideShop />} />
 
               {/* <Route path="nextProcess" element={<Next01/>} /> */}
               {/* <Route path="Kitchenarea" element={<InsideKitichen />} /> */}
               {/* <Route path="Outsideshop/:auditId" element={<OutSideShop/>} /> */}
-              <Route path="Branding/:auditId" element={<Branding />} />
+              <Route path="branding/:auditId" element={<Branding />} />
               <Route path="employee/:auditId" element={<Employee />} />
               <Route path="Stock/:auditId" element={<Stock />} />
-              <Route path="Wallpanting/:auditId" element={<WallPainting />} />
-              <Route path="Recording" element={<Recording />} />
-              <Route path="Report/:auditId" element={<AuditReport />} />
-              <Route path="Dressing/:auditId" element={<Dressing />} />
-              <Route path="Outsideshop/:auditId" element={<OutSideShop />} />
+              <Route path="wallpanting/:auditId" element={<WallPainting />} />
+              <Route path="recording" element={<Recording />} />
+              <Route path="report/:auditId" element={<AuditReport />} />
+              <Route path="dressing/:auditId" element={<Dressing />} />
+              <Route path="outsideshop/:auditId" element={<OutSideShop />} />
               <Route path="kitchen/:auditId" element={<InsideKitchens />} />
             </Route>
           </Route>
           <Route element={<ProtectedRoute allowedRoles={["super-admin"]} />}>
             <Route path="/" element={<Main />}>
               <Route path="myshop" element={<MyShop />} />
-              <Route path="AddShop" element={<AddShop />} />
+              <Route path="addshop" element={<AddShop />} />
               <Route path="setting" element={<Setting />} />
-              <Route path="Auditers" element={<Auditers />} />
-              <Route path="add-Auditers" element={<AddAuditer />} />
-              <Route path="rotes" element={<Rotes />} />
-              <Route path="SetRoutes" element={<SetRoutes />} />
+              <Route path="auditers" element={<Auditers />} />
+              <Route path="add-auditers" element={<AddAuditer />} />
+              <Route path="routes" element={<Rotes />} />
+              <Route path="set-routes" element={<SetRoutes />} />
               <Route path="backeryproducts" element={<BakerProducts />} />
-              <Route path="BrandName" element={<BrandName />} />
-              <Route path="LiveSnackName" element={<LiveSnacksName />} />
+              <Route path="brandName" element={<BrandName />} />
+              <Route path="livesnackname" element={<LiveSnacksName />} />
             </Route>
           </Route>
           {/* <Route path="/login" */}

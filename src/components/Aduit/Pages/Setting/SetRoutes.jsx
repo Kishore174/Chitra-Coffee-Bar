@@ -137,7 +137,7 @@ const SetRoutes = () => {
       {/* Conditionally render SelectedRoutesDisplay only if there are selected routes */}
       {selectedRoutes.length > 0 && (
         <div className='w-full'>
-            <div>{selectedOption.name}</div>
+            {/* <div>{selectedOption.name}</div> */}
            <div className="grid p-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {set.map((s, index) => (
         <ShopCard key={index} routeId={selectedOption?._id} shops={routeShops} selSet={s} index={index}/>

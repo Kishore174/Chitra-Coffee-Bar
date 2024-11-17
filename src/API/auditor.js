@@ -18,7 +18,18 @@ export const deleteAuditor = async (id) => {
   return response.data;
 };
 
-export const upDateAuditor = async (id, updateData) => {
-  const response = await axiosintance.put(`/auditor/${id}`, updateData);
+export const upDateAuditor = async (id, data) => {
+  const formData = new FormData();
+
+  // Append all fields to the formData object
+  for (const key in data) {
+    formData.append(key, data[key]);
+  }
+  const response = await axiosintance.put(`/auditor/${id}`, formData);
   return response.data;
 };
+
+export const auditAssign = async()=>{
+  const response = await axiosintance.post(`/assign-audits`);
+  return response.data;
+}

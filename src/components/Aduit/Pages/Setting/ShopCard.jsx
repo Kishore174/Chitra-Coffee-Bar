@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import { addset } from '../../../../API/createRoute';
 import toast from 'react-hot-toast';
+import { deleteShopIntoSet } from '../../../../API/settings';
 
 const ShopCard = ({ shops,routeId,index, selSet }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -22,7 +23,13 @@ const ShopCard = ({ shops,routeId,index, selSet }) => {
   };
 
   const handleRemoveRoute = (route) => {
-    setSelectedRoutes(selectedRoutes.filter((r) => r._id !== route._id));
+    console.log({setIndex:index,shopId:route._id},routeId)
+    deleteShopIntoSet(routeId,{setIndex:index,shopId:route._id}).then((res)=>{
+      toast.success(res.message)
+      setSelectedRoutes(selectedRoutes.filter((r) => r._id !== route._id));
+    }).catch((err)=>{
+      toast.error(err.response?.data?.message)
+    })
   };
 
   useEffect(() => {

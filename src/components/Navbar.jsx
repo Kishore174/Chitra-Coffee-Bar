@@ -46,8 +46,8 @@ const Navbar = () => {
   const menuItems = user ? (user.role === "super-admin" ? [
     { name: 'Dashboard', icon: FaTachometerAlt, path: '/dashboard' },
     { name: 'My Shops', icon: FaStore, path: '/myshop' },
-    { name: 'Audits', icon: FaClipboardCheck, path: '/aduit' },
-    { name: 'Auditer', icon: AiOutlineAudit, path: '/Auditers' },
+    { name: 'Audits', icon: FaClipboardCheck, path: '/audit' },
+    { name: 'Auditer', icon: AiOutlineAudit, path: '/auditers' },
     { name: 'Profile', icon: FaUser , path: '/profile' },
     { name: 'Settings', icon: FaTools, path: '/setting' },
     {
@@ -55,12 +55,12 @@ const Navbar = () => {
       icon: FaRoute,
       subRoutes: [
         { name: 'Create Routes', path: '/routes' },
-        { name: 'Set Routes', path: '/SetRoutes' },
+        { name: 'Set Routes', path: '/set-routes' },
       ]
     }
   ] : [
     { name: 'Dashboard', icon: FaTachometerAlt, path: '/dashboard' },
-    { name: 'Audits', icon: FaClipboardCheck, path: '/aduit' },
+    { name: 'Audits', icon: FaClipboardCheck, path: '/audit' },
     { name: 'Profile', icon: FaUser , path: '/profile' },
   ]) : [];
 

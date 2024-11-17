@@ -21,8 +21,8 @@ const SideMenu = () => {
       menuItems= [
         { name: 'Dashboard', icon: FaTachometerAlt, path: '/dashboard' },
         { name: 'My Shops', icon: FaStore, path: '/myshop' },
-        { name: 'Audits', icon:FaClipboardCheck, path: '/aduit' },
-        { name: 'Auditer', icon:AiOutlineAudit , path: '/Auditers' },
+        { name: 'Audits', icon:FaClipboardCheck, path: '/audit' },
+        { name: 'Auditer', icon:AiOutlineAudit , path: '/auditers' },
     
         { name: 'Profile', icon: FaUser, path: '/profile' },
         { name: 'Settings', icon: FaTools, path: '/setting' },
@@ -30,15 +30,15 @@ const SideMenu = () => {
           name: 'Routes',
           icon: FaRoute,
           subRoutes: [
-            { name: 'Create Routes', path: '/rotes' },
-            { name: 'Set Routes', path: '/SetRoutes' },
+            { name: 'Create Routes', path: '/routes' },
+            { name: 'Set Routes', path: '/set-routes' },
           ]
         }
       ];
     }else{
       menuItems= [
         { name: 'Dashboard', icon: FaTachometerAlt, path: '/dashboard' },
-        { name: 'Audits', icon:FaClipboardCheck, path: '/aduit' },
+        { name: 'Audits', icon:FaClipboardCheck, path: '/audit' },
         { name: 'Profile', icon: FaUser, path: '/profile' },
        
       ];
@@ -68,7 +68,6 @@ const SideMenu = () => {
     }).catch(err=>{
       console.log(err)
     })
-    console.log('Logging out...');
   };
 
   const handleDropdownToggle = (name) => {

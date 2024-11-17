@@ -39,3 +39,11 @@ export const updateBrand = async (id, data) => {
   const response = await axiosintance.put(`/setting/brand/${id}`, data);
   return response.data;
 };
+export const deleteShopIntoRoute = async (id, data) => {
+  const response = await axiosintance.post(`/route/${id}/remove-shop`,data);
+  return response.data;
+};
+export const deleteShopIntoSet = async (id, data) => {
+  const response = await axiosintance.post(`/route/${id}/remove-set`, data);
+  return response.data;
+};
