@@ -9,6 +9,8 @@
     "sourceType": "module"
   },
   "rules": {
+    "no-extra-semi": "off",
+    "jsx-a11y/img-redundant-alt": "off",
     "no-unused-vars": "warn",
     "no-console": "off",
     "react/prop-types": "warn",
