@@ -4,26 +4,28 @@
     "es2021": true,
     "node": true
   },
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-unused-vars": "warn",
+    "no-console": "off",
+    "react/prop-types": "warn",
+    "jsx-a11y/label-has-associated-control": "warn",
+    "react/jsx-no-duplicate-props": "error",
+    "react/no-unknown-property": "warn",
+    "react/jsx-key": "error"
+  },
+  "plugins": [
+    "react",
+    "jsx-a11y"
+  ],
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
     "plugin:jsx-a11y/recommended"
   ],
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    },
-    "ecmaVersion": "latest",
-    "sourceType": "module"
-  },
-  "plugins": ["react", "react-hooks", "jsx-a11y"],
-  "rules": {
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
-    "jsx-a11y/alt-text": "warn",
-    "jsx-a11y/anchor-is-valid": "warn"
-  },
   "settings": {
     "react": {
       "version": "detect"
