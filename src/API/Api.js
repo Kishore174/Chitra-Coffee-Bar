@@ -7,8 +7,8 @@ import axios from "axios";
 //     // withCredentials : true
 // })
 export const axiosintance = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
-
+    // baseURL: process.env.REACT_APP_API_URL,
+    baseURL:"https://apiccb-fkhfhgbrbjhjcrf3.canadacentral-01.azurewebsites.net/api/v1" ,
    
     // headers: {
     //   Authorization: `Bearer ${Cookie.get('token')}`
