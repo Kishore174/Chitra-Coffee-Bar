@@ -48,7 +48,7 @@ const [loading, setLoading] = useState(true); // Loading state
   useEffect(() => {
     getAllAuditors().then((res) => setAuditors(res.data)).finally(() => {
       setLoading(false);  
-    });;
+    });
   }, []);
 
   // Calculate the total number of pages
