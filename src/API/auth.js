@@ -11,7 +11,7 @@ export const getAuditorBytoken = async(data)=>{
     const response = await axiosintance.get('/auditor-token',data)
     return response.data
 }
-export const logout = async(data)=>{
+export const logout = async()=>{
     const response = await axiosintance.post('/logout')
     return response.data
 }

@@ -6,7 +6,7 @@ export const createSnackAudit = async (id, data) => {
   for (const key in data) {
     if (key === 'captureImages' && Array.isArray(data.captureImages)) {
       // Append each image in captureImages array
-      data.captureImages.forEach((image, index) => {
+      data.captureImages.forEach((image) => {
         formData.append(`captureImages`, image);
       });
     } else {
