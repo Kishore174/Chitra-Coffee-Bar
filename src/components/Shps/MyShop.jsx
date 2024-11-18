@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaPlus } from 'react-icons/fa';
+import { FaEye, FaPlus } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { GrEdit } from 'react-icons/gr';
 import { MdDelete } from 'react-icons/md';
@@ -128,9 +128,8 @@ const MyShop = () => {
           <td className="px-2 py-4 border-b border-gray-200 space-x-2 text-xs whitespace-nowrap md:text-sm">
             {/* Eye Icon for "View" */}
             <button className="text-blue-500 hover:underline" onClick={() => handleView(shop)}>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12c0 1.5-.5 2.85-1.5 3.95M12 12c0 1.5-.5 2.85-1.5 3.95M12 6c4.6 0 8.7 3.4 9.7 7.5C20.7 17.6 16.6 21 12 21S3.3 17.6 2.3 13.5C3.3 9.4 7.4 6 12 6z" />
-              </svg>
+            
+              <FaEye/>
             </button>
             <button className="text-green-500 hover:underline" onClick={() => handleEdit(shop)}>
               <GrEdit />

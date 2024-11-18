@@ -5,6 +5,7 @@ import { createRoute } from "../../API/createRoute";
 import toast from "react-hot-toast";
 import { createShop, upDateShop } from "../../API/shop";
 import { MdArrowBack } from "react-icons/md";
+import Loader from "../Loader";
 
 const AddShop = () => {
   const location = useLocation();
@@ -22,6 +23,7 @@ const AddShop = () => {
       address: "",
       district: "",
       state: "",
+      pincode:'',
       country: "",
       location: "",
       onBoardingDate: "",
@@ -31,22 +33,37 @@ const AddShop = () => {
       gstCertificate: null,
     }
   );
-  const [propertyType, setPropertyType] = useState("");
+  const [showPdfViewer, setShowPdfViewer] = useState("");
   const [franchiseType, setFranchiseType] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state
 
   const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleFileChange = (e) => {
-    const { id, files } = e.target;
-    setFormData({ ...formData, [id]: files[0] });
-  };
+ const handleFileChange = (e) => {
+  const { id, files } = e.target;
+  const file = files[0];
+
+  // Validate file type (only PDFs allowed)
+  if (file && file.type !== "application/pdf") {
+    alert("Please upload a valid PDF file.");
+    return;
+  }
+
+  // Update form data
+  setFormData((prevFormData) => ({
+    ...prevFormData,
+    [id]: file,
+  }));
+};
+
 
   console.log(shop);
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
     console.log(formData);
     try {
       let res;
@@ -67,6 +84,8 @@ const AddShop = () => {
         phone: "",
         email: "",
         address: "",
+      pincode:'',
+
         location: "",
         onBoardingDate: "",
         renewalDate: "",
@@ -79,10 +98,16 @@ const AddShop = () => {
     } catch (error) {
       console.log(error);
     }
+    finally {
+      setLoading(false); // Reset loading state after submission
+    }
   };
 
   return (
-    <div className="p-8 max-w-5xl mx-auto bg-white rounded-lg shadow-md">
+   <>
+   {
+    loading?<Loader/>:(
+      <div className="p-8 max-w-5xl mx-auto bg-white rounded-lg shadow-md">
       <button
         onClick={() => navigate(-1)}
         className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200"
@@ -309,6 +334,22 @@ const AddShop = () => {
             placeholder="Enter shop address"
           />
         </div>
+        <div className="mb-4">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="district"
+          >
+            PinCode
+          </label>
+          <input
+            id="pincode"
+            type="number"
+            value={formData.pincode}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+            placeholder="Enter location"
+          />
+        </div>
         {/* District */}
         <div className="mb-4">
           <label
@@ -459,32 +500,36 @@ const AddShop = () => {
 
         {/* GST Certificate Upload */}
         <div className="mb-4">
-          <label
-            className="block text-sm font-medium text-gray-700"
-            htmlFor="gstCertificate"
-          >
-            GST Certificate
-          </label>
-          <input
-            id="gstCertificate"
-            type="file"
-            onChange={handleFileChange}
-            disabled={isView}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-          />
-          {shop?.gstCertificate && (
-            <a
-              href={shop?.gstCertificate}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 hover:underline mt-2 cursor-pointer"
-            >
-              View Document
-            </a>
-          )}
-        </div>
+  <label
+    className="block text-sm font-medium text-gray-700"
+    htmlFor="gstCertificate"
+  >
+    GST Certificate
+  </label>
+  <input
+    id="gstCertificate"
+    type="file"
+    onChange={handleFileChange}
+    disabled={isView}
+    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+  />
+{shop?.gstCertificate && shop?.gstCertificate.endsWith('.pdf') ? (
+  <a
+    href={shop?.gstCertificate}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-blue-500 hover:underline mt-2 cursor-pointer"
+  >
+    View PDF
+  </a>
+) : (
+  <span className="text-red-500">Invalid file type. Please upload a PDF.</span>
+)}
 
-        {/* Submit Button */}
+</div>
+
+
+        
         {!isView && (
           <div className="col-span-full">
             <button
@@ -497,6 +542,9 @@ const AddShop = () => {
         )}
       </form>
     </div>
+    )
+   }
+   </>
   );
 };
 
