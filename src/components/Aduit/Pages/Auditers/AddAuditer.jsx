@@ -5,6 +5,7 @@ import { createAuditor, upDateAuditor } from '../../../../API/auditor';
 import toast from 'react-hot-toast';
 import { dropDownRoutes, getRoute } from '../../../../API/createRoute';
 import { MdArrowBack } from 'react-icons/md';
+import { getUnassignedRoutes } from '../../../../API/settings';
 
 const AddAuditer = () => {
   const navigate = useNavigate();
@@ -65,9 +66,16 @@ const AddAuditer = () => {
   }
   };
   useEffect(() => {
-    dropDownRoutes().then((data) => {
-      setSelectRoute(data.data);
-    });
+    if(auditor){
+      dropDownRoutes().then((data) => {
+        setSelectRoute(data.data);
+      });
+    }else{
+      getUnassignedRoutes().then((data) => {
+        setSelectRoute(data.data);
+      });
+    }
+  
   }, []);
   return (
     <div className="max-w-4xl mx-auto my-8 p-6 bg-white shadow-lg rounded-lg">

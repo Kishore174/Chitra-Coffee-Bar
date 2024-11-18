@@ -4,16 +4,19 @@ import { addset } from '../../../../API/createRoute';
 import toast from 'react-hot-toast';
 import { deleteShopIntoSet } from '../../../../API/settings';
 
-const ShopCard = ({ shops,routeId,index, selSet }) => {
+const ShopCard = ({ shops,routeId,index ,selSet }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRoutes, setSelectedRoutes] = useState([]);
   
   const toggleModal = () => setModalOpen(!modalOpen);
-  const handleSubmit = async()=>{
+  const handleSubmit = ()=>{
     setModalOpen(!modalOpen);
-    const res= await addset({setIndex:index,shops:selectedRoutes.map(s=>s._id)},routeId)
-    toast.success(res.message)
+    addset({setIndex:index,shops:selectedRoutes.map(s=>s._id)},routeId).then(res=>{
+      toast.success(res.message)
+    }).catch(err=>{
+      toast.error(err.response?.data?.message)
+    })
   }
   const handleSelectRoute = async(route,index) => {
     if (!selectedRoutes.some((r) => r._id === route._id)) {

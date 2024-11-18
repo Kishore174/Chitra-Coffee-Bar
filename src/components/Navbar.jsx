@@ -6,6 +6,7 @@ import logo from "../Assets/logo01.png";
 import { useAuth } from '../context/AuthProvider';
 import { logout } from "../API/auth";
 import toast from 'react-hot-toast';
+import azero from "../Assets/azero.png"
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -75,7 +76,7 @@ const Navbar = () => {
 
   return (
     <div className="relative w-full">
-      <div className="flex items-center justify-between bg-white shadow p-4 h-16 w-full">
+      <div className="flex fixed   items-center justify-between bg-white shadow p-4 h-16 w-full">
         <div className="flex-1">
           <div className="flex items-center">
             <div className=" flex items-center">
@@ -98,7 +99,7 @@ const Navbar = () => {
             alt="User  Profile"
             className="h-8 w-8 rounded-full object-cover"
           />
-          <span className="text-gray-700 font-semibold">Azero Tech</span>
+          <span className="text-gray-700 font-semibold">{user?.name}</span>
         </div>
       </div>
 
@@ -171,6 +172,26 @@ const Navbar = () => {
                   </button>
                 </li>
               </ul>
+              <div className="p-4 mt-auto">
+            <div className="border border-gray-300 text-white bg-red-600 rounded-lg p-6">
+              <div className="flex items-start space-x-2 ">
+                <img src={azero} alt="azero" className="h-12 w-12 my-4 rounded-full border border-white p-1" />
+                <div>
+                  <h2 className="text-md poppins-semibold font-semibold">Need Help?</h2>
+                  <p className="text-xs poppins-light text-white">
+                    Our team is here to assist you. Feel free to reach out!
+                  </p>
+                </div>
+              </div>
+              <div className="mt-6 flex justify-center w-full">
+                <a href="https://azerotech.com/">
+                  <button className="bg-white poppins-semibold text-black text-sm py-2 px-4 rounded-full   transition duration-200">
+                    Contact Us
+                  </button>
+                </a>
+              </div>
+            </div>
+          </div>
             </div>
           </div>
           {isMenuOpen && (

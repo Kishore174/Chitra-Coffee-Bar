@@ -11,9 +11,9 @@ const Main = () => {
         <SideMenu />
       </div>
       {/* Main Content Area */}
-      <div className='flex-1 flex w-full flex-col'>
+      <div className=' flex-1 flex w-full flex-col'>
         <Navbar />
-        <div className='flex-1 mx-auto  md:max-w-screen-lg lg:max-w-screen-2xl p-5  min-w-full'>
+        <div className='flex-1 mx-auto mt-10  md:max-w-screen-lg lg:max-w-screen-2xl p-5  min-w-full'>
           <Outlet />
         </div>
       </div>

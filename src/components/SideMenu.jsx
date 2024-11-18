@@ -10,7 +10,7 @@ import azero from "../Assets/azero.png"
 const SideMenu = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const {user} = useAuth()
+  const {user,setLogin} = useAuth()
   const [activeButton, setActiveButton] = useState(localStorage.getItem('activeButton') || 'Dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -63,7 +63,8 @@ const SideMenu = () => {
   }, []);
   const handleLogout = () => {
     logout().then(res=>{
-      navigate("/");
+      navigate("/"); 
+      setLogin(false)
       toast.success(res.message)
     }).catch(err=>{
       console.log(err)

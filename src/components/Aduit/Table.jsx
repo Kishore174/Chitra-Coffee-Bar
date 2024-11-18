@@ -158,7 +158,7 @@ const Table = () => {
                       {audit.shop?.email}
                     </a>
                     <div className="mt-2">
-                      {audit.status === "pending" ? (
+                      {audit.status !== "completed" ? (
                         <Link to={`/add-audit/${audit._id}`}>
                           <BsArrowRight className="text-red-600 text-2xl" />
                         </Link>
@@ -269,7 +269,7 @@ const Table = () => {
                           </a>
                         </td>
                         <td className="px-4 py-4 border-b poppins-regular border-gray-200 text-sm">
-                          {audit.status === "pending" &&
+                          {audit.status !== "completed" &&
                           user?.role !== "super-admin" ? (
                             <Link to={`/add-audit/${audit._id}`}>
                               <BsArrowRight className="text-red-600 text-2xl" />

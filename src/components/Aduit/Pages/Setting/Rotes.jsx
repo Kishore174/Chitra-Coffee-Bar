@@ -7,13 +7,13 @@ import { getAllShops } from '../../../../API/shop';
 import { addRoute, createRoute, deleteRoute, getRoute } from '../../../../API/createRoute';
 import toast from 'react-hot-toast';
 import SetRoutes from './SetRoutes';
-import { deleteShopIntoRoute } from '../../../../API/settings';
+import { deleteShopIntoRoute, getUnassignedShops } from '../../../../API/settings';
 
-const RouteCard = ({ routeId, routeName,shops,allShops, onRemoveCard, onEdit }) => {
+const RouteCard = ({ routeId, routeName,shops, onRemoveCard, onEdit }) => {
   const [selectedRoutes, setSelectedRoutes] = useState(shops||[]);
   const [searchTerm, setSearchTerm] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
-  const [allRoutes, setAllRoutes] = useState(allShops||[]);
+  const [allRoutes, setAllRoutes] = useState([]);
 
   // Filter routes based on the search term
   const filteredRoutes = allRoutes.filter((route) =>
@@ -53,7 +53,23 @@ const RouteCard = ({ routeId, routeName,shops,allShops, onRemoveCard, onEdit }) 
     }
   };
 
+  useEffect(() => {
+    const fetchRoutes = async () => {
+      try {
+        const res = await getUnassignedShops();
+        const shopNames = res.data.map(shop => ({
+          _id : shop._id,
+          shopName: shop.shopName,
+          address: shop.address,
+        }));
+        setAllRoutes(shopNames);
+      } catch (error) {
+        console.error('Error fetching shops:', error);
+      }
+    };
 
+    fetchRoutes();
+  }, [modalOpen]);
   return (
     <div className="p-0.5 flex flex-col bg-white shadow-lg rounded-lg mb-4 md:max-w-xl lg:max-w-2xl">
     {/* Header Section */}
@@ -218,23 +234,7 @@ const Routes = () => {
     fetchRoutes();
   }, []);
 
-  useEffect(() => {
-    const fetchRoutes = async () => {
-      try {
-        const res = await getAllShops();
-        const shopNames = res.data.map(shop => ({
-          _id : shop._id,
-          shopName: shop.shopName,
-          address: shop.address,
-        }));
-        setAllRoutes(shopNames);
-      } catch (error) {
-        console.error('Error fetching shops:', error);
-      }
-    };
 
-    fetchRoutes();
-  }, []);
   
   console.log("Routes",routeCards)
   const handleAddRouteCard = async () => {

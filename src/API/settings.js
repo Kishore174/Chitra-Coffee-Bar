@@ -47,3 +47,11 @@ export const deleteShopIntoSet = async (id, data) => {
   const response = await axiosintance.post(`/route/${id}/remove-set`, data);
   return response.data;
 };
+export const getUnassignedShops = async () => {
+  const response = await axiosintance.get(`/shops/unassigned`);
+  return response.data;
+};
+export const getUnassignedRoutes = async () => {
+  const response = await axiosintance.get(`/routes/unassigned`);
+  return response.data;
+};
