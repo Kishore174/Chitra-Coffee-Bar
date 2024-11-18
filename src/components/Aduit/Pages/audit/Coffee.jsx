@@ -507,7 +507,7 @@ const Coffee = () => {
           )}
 
           {/* Submit Button */}
-          <button
+       {!isCoffeeSubmitted &&   <button
             type="submit"
             className={`mt-6 w-full py-2 rounded-md text-white ${isCoffeeSubmitted || loading ? 'bg-green-600' : 'bg-red-600 hover:bg-red-700'}`}
             disabled={loading} // Disable button when loading
@@ -522,7 +522,7 @@ const Coffee = () => {
             ) : (
               'Submit'
             )}
-          </button>
+          </button>}
         </div>
       </form>
 

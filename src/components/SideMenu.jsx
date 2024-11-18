@@ -92,13 +92,21 @@ const SideMenu = () => {
         className={`fixed z-50 h-screen bg-white shadow-lg w-64 transition-transform duration-300 ease-in-out 
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} max:translate-x-0 lg:translate-x-0`}
       >
-        <div className="h-full overflow-y-auto">
-          <Link to="/dashboard">
-         <div className=" flex items-center mx-auto justify-center h-16 w-16 mt-3 rounded-full bg-red-500  hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">
+        <div className="  overflow-y-auto">
+        <div className="  p-3  mx-auto ">
+  <Link to="/dashboard" className="flex items-center space-x-4  justify-center boredr border-gray-300  shadow-sm bg-white  text-center hover:bg-gray-100 p-1 rounded-md transition">
+    <img
+      src={logo}
+      alt="User Profile"
+      className="h-12 w-12 rounded-full object-cover border border-gray-300"
+    />
+    <div>
+      <p className="text-lg poppins-semibold text-gray-800">{user?.name || "User Name"}</p>
+       
+    </div>
+  </Link>
+</div>
 
-              <img src={logo} alt="Logo" className="h-17 w-17" />
-            </div>
-          </Link>
           <ul className="space-y-6 p-4">
             {menuItems.map((item) => {
               const Icon = item.icon;

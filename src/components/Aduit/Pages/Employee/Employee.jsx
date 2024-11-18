@@ -20,7 +20,9 @@ const Employee = () => {
     const [lastAudits, setLastAudits] = useState([]);
     const [loading, setLoading] = useState(false); // Loading state
     const [isModalOpen, setIsModalOpen] = useState(false);
-  
+    const [isEmployeeSubmitted, setEmployeeSubmitted] = useState(false);
+    // const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+
     const [employeeData, setEmployeeData] = useState({
         count: 0,
         names: '',
@@ -87,7 +89,14 @@ const Employee = () => {
         setSelectedDate(null);
       };
     
-
+      const openModal = () => {
+        setIsModalOpen(true);
+      };
+    
+      const closeModal = () => {
+        setEmployeeSubmitted(true)
+        setIsModalOpen(false);
+      };
     return (
      <>
      {
@@ -213,13 +222,35 @@ const Employee = () => {
                         onInputChange={handleInputChange}
                     />
 
-                    {/* Submit Button */} 
+                    
                     <button
                         className="w-full py-2 mt-4 bg-red-500 text-white rounded hover:bg-red-600"
-                        onClick={handleSubmit}
+                        onClick={openModal}
                     >
                         Submit
                     </button>
+         {isModalOpen && (
+            <div className="fixed inset-0 z-60 flex items-center justify-center bg-gray-900 bg-opacity-50">
+              <div className="bg-white p-6 rounded shadow-lg">
+                <h2 className="text-lg font-semibold">Confirm Submission</h2>
+                <p className="mt-2 text-md">Once submitted, you won’t be able to edit. Are you sure?</p>
+                <div className="flex justify-end mt-4 space-x-2">
+                  <button
+                    onClick={closeModal}
+                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSubmit}
+                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
                 </div>
             </div>
         </>

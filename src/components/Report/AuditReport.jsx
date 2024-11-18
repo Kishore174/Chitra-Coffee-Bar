@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useReactMediaRecorder } from "react-media-recorder";
 import { BsFillMicFill, BsStopFill } from 'react-icons/bs';
 import SignatureCanvas from 'react-signature-canvas';
-import { useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { getAudit } from '../../API/audits';
 import { sendSignatureToBackend, uploadAudioToBackend } from '../../API/Api';
 import toast from 'react-hot-toast';
@@ -16,7 +16,10 @@ const AuditReport = () => {
   const { auditId } = useParams();
   const [isRecording, setIsRecording] = useState(false);
   const [audio, setAudio] = useState(null);
-  const [signatureType, setSignatureType] = useState('Owner'); 
+  const [signatureType, setSignatureType] = useState(''); 
+  const navigate = useNavigate()
+const { user } = useAuth();
+
   useEffect(() => {
     // Fetch audit data when the component is mounted
     getAudit(auditId).then(res => {
@@ -43,11 +46,12 @@ const AuditReport = () => {
     const formData = new FormData();
     formData.append('signatureFile', file);  // Add the signature file
     // formData.append('name', name);       // Add the name
-    formData.append('signatureBy', signatureType); // Add the signature type (Owner/Employee)
-
+    formData.append('signaturedBy', signatureType); // Add the signature type (Owner/Employee)
+    formData.append('signaturedName',name)
     try {
       const response = await sendSignatureToBackend(auditId,formData);
       if (response) {
+        navigate('/auditors')
         toast.success(response.message);
       } else {
         toast.error('Failed to save signature');
@@ -79,7 +83,7 @@ const AuditReport = () => {
             {new Date(auditData?.auditDate).toLocaleDateString()}
           </p>
         </div>
-        {!audio && <div className={`flex items-center ${isRecording ? 'fixed right-4 top-4' : ''}`}>
+        {!audio && user?.role!== "super-admin" && <div className={`flex items-center ${isRecording ? 'fixed right-4 top-4' : ''}`}>
           <RecordingControls 
             setIsRecording={setIsRecording} // Pass down the state setter
           />
@@ -179,8 +183,8 @@ const AuditReport = () => {
       <section className="border border-red-200 rounded-lg overflow-hidden">
         <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Summary</h2>
         <div className="p-2 flex flex-wrap gap-4">
-          <InfoRow label="Total Items Checked" value={auditData?.total_items_checked} />
-          <InfoRow label="Comments" value={auditData?.comment} />
+          {/* <InfoRow label="Total Items Checked" value={auditData?.total_items_checked} />
+          <InfoRow label="Comments" value={auditData?.comment} /> */}
           <InfoRow label="Overall Rating" value={`${auditData?.rating}/5`} />
         </div>
       </section>
@@ -209,7 +213,7 @@ const AuditReport = () => {
         <div className="p-2 flex flex-col items-center">
           
           {/* Render the signature input form only if there's no signature already available */}
-          {!signature && (
+          {!signature && user?.role!=="super-admin"  && (
             <>
               <input
                 type="text"
@@ -225,8 +229,9 @@ const AuditReport = () => {
                 onChange={(e) => setSignatureType(e.target.value)}
                 className="border border-gray-300 rounded p-2 mb-4 w-full"
               >
-                <option value="Owner">Owner</option>
-                <option value="Employee">Employee</option>
+                <option value="">--Select who signatured--</option>
+                <option value="owner">Owner</option>
+                <option value="employee">Employee</option>
               </select>
 
               {/* Signature Canvas */}
@@ -257,6 +262,7 @@ const AuditReport = () => {
           {/* If signature is available (either in local state or audit data), show the saved signature */}
           {signature && (
             <div className="mt-4 p-4">
+              <h3 className="font-semibold">Signature Name : {`${auditData?.signaturedName}(${auditData?.signaturedBy})`||""}</h3>
               <h3 className="font-semibold">Your Signature:</h3>
               <img
                 src={signature}
@@ -388,14 +394,14 @@ const RecordingControls = ({ setIsRecording }) => {
 const LiveSnacksSection = ({ snacks, remark, rating, captureImages }) => (
   <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
     <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Live Snacks</h2>
-    <div className="p-2">
+    <div className="p-2 flex flex-wrap gap-3">
       {snacks?.map((snack, index) => (
         <div key={index} className="mb-4">
-          <div className="font-semibold">{snack.snack?.name || 'No snack name'}</div>
-          <div className="text-sm">Status: {snack.status}</div>
+          <div className="poppins-semibold text-black">{snack.snack?.name || 'No snack name'}</div>
+          <div className="text-sm text-gray-700 poppins-regular"> {snack.status}</div>
         </div>
       ))}
-      <InfoRow label="Remark" value={remark} />
+      <InfoRow label="Remark" value={remark} className="w-full" />
       <InfoRow label="Rating" value={rating} />
 
       {captureImages && captureImages.length > 0 && (
@@ -409,7 +415,7 @@ const LiveSnacksSection = ({ snacks, remark, rating, captureImages }) => (
                   alt={`Snack Image ${idx + 1}`}
                   className="w-16 h-16 object-cover border border-gray-300"
                 />
-                <p className="absolute bottom-0 left-0 text-xs bg-black text-white px-1 py-0.5">{image.location}</p>
+                {/* <p className="absolute bottom-0 left-0 text-xs bg-black text-white px-1 py-0.5">{image.location}</p> */}
               </div>
             ))}
           </div>
@@ -421,17 +427,17 @@ const LiveSnacksSection = ({ snacks, remark, rating, captureImages }) => (
 const BakeryProductsSection = ({ products }) => (
   <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
     <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Bakery Products</h2>
-    <div className="p-2">
+    <div className="p-2 flex flex-wrap">
       {products.map((product, index) => (
-        <div key={index} className="mb-4">
+        <div key={index} className="mb-4 flex flex-wrap gap-3">
           <div className="font-semibold">{product.productName || product?.product?.name || 'No product name'}</div>
           <div className="text-sm">Brand Name: {product.brandName || ""}</div>
           <div className="text-sm">Quantity: {product.quantity}</div>
           <div className="text-sm">Expiry Date: {new Date(product.expiryDate).toLocaleDateString()}</div>
           {product.captureImages && product.captureImages.length > 0 && (
-            <div className="mt-2">
+            <div className="mx-auto">
               <p className="font-medium">Images:</p>
-              <div className="flex gap-2">
+              <div className="flex ">
                 {product.captureImages.map((image, idx) => (
                   <img
                     key={idx}

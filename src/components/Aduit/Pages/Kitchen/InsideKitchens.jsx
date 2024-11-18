@@ -20,6 +20,8 @@ const InsideKitchens = () => {
   const [loading, setLoading] = useState(false);
   const [fetchData, setFetchData] = useState(null);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [isInsideKitchenSubmitted, setInsideKitchenSubmitted] = useState(false);
+
   const handleItemUpdate = (itemType, data) => {
     const { captureImages, ...otherData } = data;  
     setKitchenData((prevData) => ({
@@ -38,6 +40,8 @@ const InsideKitchens = () => {
       .then((res) => {
         toast.success(res.message);
         navigate(-1);
+    setInsideKitchenSubmitted(true)
+
       })
       .catch((error) => console.log(error));
 
@@ -63,6 +67,9 @@ const InsideKitchens = () => {
       setFetchData(res.data);
 
       setLoading(false);
+      if(res.data&&Object.keys(res.data).length>0){
+        setInsideKitchenSubmitted(true)
+          }
       
     });
   }, [auditId]);
@@ -219,16 +226,16 @@ const InsideKitchens = () => {
           />
         ))}
       </div>
-      <button
+      { !isInsideKitchenSubmitted && <button
         onClick={openModal}
         
         className='bg-red-500 text-white w-full sm:w-5/6 py-2 mx-auto flex items-center text-center mt-12 rounded-md hover:bg-red-600'
       >
         <span className='text-center mx-auto'>Submit All Data</span>
-      </button>
+      </button>}
     </div>
     {isModalOpen && (
-            <div className="fixed inset-0 z-20 flex items-center justify-center bg-gray-900 bg-opacity-50">
+            <div className="fixed inset-0 z-60 flex items-center justify-center bg-gray-900 bg-opacity-50">
               <div className="bg-white p-6 rounded shadow-lg">
                 <h2 className="text-lg font-semibold">Confirm Submission</h2>
                 <p className="mt-2 text-md">Once submitted, you won’t be able to edit. Are you sure?</p>

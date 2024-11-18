@@ -22,7 +22,8 @@ const OutSideShop = () => {
   const [lastAudit, setLastAudit] = useState(null);
   const [loading, setLoading] = useState(false); // Loading state
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
- 
+  const [isOutsideShopSubmitted, setOutsideShopSubmitted] = useState(false);
+
   const handleItemUpdate = (itemType, data) => {
       const { captureImages, ...otherData } = data;
       setOutsideShopData((prevData) => ({
@@ -58,7 +59,9 @@ const OutSideShop = () => {
 
       getOutsideKitchen(auditId).then((res) => {setFetchData(res.data)
         setLoading(false)
-  
+        if(res.data && Object.values(res.data).length>0){
+          setOutsideShopSubmitted(true)
+        }
       });
     }, [auditId]);
     const togglePopup = () => {
@@ -85,6 +88,7 @@ const OutSideShop = () => {
     };
   
     const closeModal = () => {
+      setOutsideShopSubmitted(true)
       setIsModalOpen(false);
     };
   
@@ -214,16 +218,16 @@ const OutSideShop = () => {
             data={fetchData && fetchData[itemType]} />
         ))}
       </div>
-      <button
+    { !isOutsideShopSubmitted &&  <button
         onClick={openModal}
         
         className="bg-red-500 text-white w-full sm:w-5/6 py-2 mx-auto flex items-center text-center mt-12 rounded-md hover:bg-red-600"
       >
         <span className="text-center mx-auto">Submit All Data</span>
-      </button>
+      </button>}
     </div>
     {isModalOpen && (
-            <div className="fixed inset-0 z-20 flex items-center justify-center bg-gray-900 bg-opacity-50">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
               <div className="bg-white p-6 rounded shadow-lg">
                 <h2 className="text-lg font-semibold">Confirm Submission</h2>
                 <p className="mt-2 text-md">Once submitted, you won’t be able to edit. Are you sure?</p>

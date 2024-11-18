@@ -48,7 +48,7 @@ const AddAudit = () => {
     { id: 7, image: outsideshop, alt: "outsidektchen", label: "Outside Kitchen",item:"outsideKitchen", link: `/outsideshop/${id}` },
     { id: 8, image: WallBranding, alt: "wallBranding", label: "Wall Branding",item:"wallBranding", link: `/branding/${id}` },
     { id: 9, image: emp, alt: "employee", label: "Employee",item:"employees", link: `/employee/${id}` },
-    { id: 10, image: stock, alt: "stock", label: "Stock & Store",item:"stack", link: `/stock/${id}` },
+    { id: 10, image: stock, alt: "stock", label: "Stock & Store",item:"stock", link: `/stock/${id}` },
     { id: 11, image: wallPanting, alt: "panting", label: "Wall Panting",item:"painting", link: `/wallpanting/${id}` },
     { id: 12, image: dress, alt: "dress", label: "Dressing",item:"uniformSection", link: `/dressing/${id}` },
   ]; 

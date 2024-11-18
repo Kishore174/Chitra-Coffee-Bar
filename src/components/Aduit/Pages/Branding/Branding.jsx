@@ -23,6 +23,8 @@ const Branding = () => {
   const [lastAudit, setLastAudit] = useState(null);
   const [loading, setLoading] = useState(false); 
   const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isBrandingSubmitted, setBrandingSubmitted] = useState(false);
+
   const handleItemUpdate = (itemType, data) => {
     const { captureImages, ...otherData } = data;
     setBrandingData((prevData) => ({
@@ -59,7 +61,11 @@ const Branding = () => {
   useEffect(() => {
     setLoading(true)
 
-    getWallBranding(auditId).then((res) => {setFetchData(res.data)
+    getWallBranding(auditId).then((res) => {
+      if(res.data&&Object.keys(res.data).length>0){
+        setBrandingSubmitted(true)
+      }
+      setFetchData(res.data)
       setLoading(false)
 
     });
@@ -83,6 +89,7 @@ const Branding = () => {
     setSelectedDate(null);
   };
   const openModal = () => {
+    setBrandingSubmitted(true)
     setIsModalOpen(true);
   };
 
@@ -215,16 +222,16 @@ const Branding = () => {
               data={fetchData && fetchData[itemType]} />
           ))}
         </div>
-        <button
+       { !isBrandingSubmitted && <button
           onClick={openModal}
           // disabled={fetchData}
           className="bg-red-500 text-white w-full sm:w-5/6 py-2 mx-auto flex items-center text-center mt-12 rounded-md hover:bg-red-600"
         >
           <span className="text-center mx-auto">Submit All Data</span>
-        </button>
+        </button>}
       </div>
       {isModalOpen && (
-            <div className="fixed inset-0 z-20 flex items-center justify-center bg-gray-900 bg-opacity-50">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
               <div className="bg-white p-6 rounded shadow-lg">
                 <h2 className="text-lg font-semibold">Confirm Submission</h2>
                 <p className="mt-2 text-md">Once submitted, you won’t be able to edit. Are you sure?</p>

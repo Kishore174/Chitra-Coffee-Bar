@@ -21,6 +21,7 @@ const InsideShop = () => {
   const [lastAudit, setLastAudit] = useState(null);
   const [loading, setLoading] = useState(false); // Loading state
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+  const [isInsideShopSubmitted, setInsideShopSubmitted] = useState(false);
 
   const handleItemUpdate = (itemType, data) => {
     const { captureImages, ...otherData } = data;
@@ -39,6 +40,8 @@ const InsideShop = () => {
       .then((res) => {
         toast.success(res.message);
         navigate(-1);
+        setInsideShopSubmitted(true)
+
       })
       .catch((error) => console.log(error));
 
@@ -63,6 +66,9 @@ const InsideShop = () => {
     setLoading(true);
     getInsideShop(auditId).then((res) => {
       setFetchData(res.data);
+      if(res.data && Object.values(res.data).length>0){
+        setInsideShopSubmitted(true)
+      }
       setLoading(false);
     });
   }, [auditId]);
@@ -89,6 +95,7 @@ const InsideShop = () => {
 
  
   const openModal = () => {
+
     setIsModalOpen(true);
   };
 
@@ -97,6 +104,7 @@ const InsideShop = () => {
   };
 
   const confirmSubmit = () => {
+
     handleOverallSubmit(); // Proceed with the submission
     setIsModalOpen(false); // Close the modal after submission
   };
@@ -120,7 +128,7 @@ const InsideShop = () => {
               <AnimatePresence>
                 {isDialogOpen && (
                   <motion.div
-                    className="fixed inset-0 flex z-20 mr-2 justify-end h-screen bg-black bg-opacity-50"
+                    className="fixed inset-0 flex z-50 mr-2 justify-end h-screen bg-black bg-opacity-50"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -188,8 +196,8 @@ const InsideShop = () => {
             </div>
           </div>
 
-          <div className="poppins-regular max-w-7xl md:ml-24 mx-4">
-            <div className="flex flex-wrap justify-start mx-auto gap-5">
+          <div className="poppins-regular max-w-7xl md:ml-24  ">
+            <div className="flex flex-wrap  justify-start mx-auto gap-5">
               {itemTypes.map((itemType) => (
                 <InsideShopReuse
                   key={itemType}
@@ -199,17 +207,17 @@ const InsideShop = () => {
                   data={fetchData && fetchData[itemType]} />
               ))}
             </div>
-            <button
+          { !isInsideShopSubmitted && <button
               onClick={openModal}
               className="bg-red-500 text-white w-full sm:w-5/6 py-2 mx-auto flex items-center text-center mt-12 rounded-md hover:bg-red-600"
             >
               <span className="text-center mx-auto">Submit All Data</span>
-            </button>
+            </button>}
           </div>
 
         
           {isModalOpen && (
-            <div className="fixed inset-0 z-20 flex items-center justify-center bg-gray-900 bg-opacity-50">
+            <div className="fixed inset-0  z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
               <div className="bg-white p-6 rounded shadow-lg">
                 <h2 className="text-lg font-semibold">Confirm Submission</h2>
                 <p className="mt-2 text-md">Once submitted, you won’t be able to edit. Are you sure?</p>

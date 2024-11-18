@@ -525,7 +525,7 @@ const TeaAudit = () => {
               </div>
             </div>
           )}
-          <button
+      { !isTesSubmitted &&    <button
             disabled={isTesSubmitted || loading} // Disable button if already submitted or loading
             className={`mt-4 w-full text-center py-2 rounded-md text-white ${isTesSubmitted || loading ? "bg-green-600" : "bg-red-600 hover:bg-red-700"
               } `}
@@ -542,7 +542,7 @@ const TeaAudit = () => {
             ) : (
               "Submit"
             )}
-          </button>
+          </button>}
         </div>
       </form>
       {isModalOpen && (

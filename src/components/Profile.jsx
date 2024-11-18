@@ -90,18 +90,7 @@ const Profile = () => {
               readOnly={!isEditing}
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600">Last Name</label>
-            <input
-              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
-              type="text"
-              placeholder="Enter Last Name"
-              name="lastName"
-              value={values.lastName}
-              onChange={handleInputChange}
-              readOnly={!isEditing}
-            />
-          </div>
+      
           <div>
             <label className="block text-sm font-medium text-gray-600">Email</label>
             <input
@@ -114,51 +103,11 @@ const Profile = () => {
               readOnly={!isEditing}
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600">Password</label>
-            <input
-              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
-              type="password"
-              placeholder="Enter Password"
-              name="password"
-              value={values.password}
-              onChange={handleInputChange}
-              readOnly={!isEditing}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600">City</label>
-            <select
-              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
-              name="city"
-              value={values.city}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-            >
-              <option value="City">City</option>
-              <option value="Vellore">Vellore</option>
-              <option value="Chittoor">Chittoor</option>
-              <option value="Ranipet">Ranipet</option>
-              <option value="Arakkonam">Arakkonam</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600">State</label>
-            <select
-              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
-              name="state"
-              value={values.state}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-            >
-              <option value="State">State</option>
-              <option value="Tamil Nadu">Tamil Nadu</option>
-              <option value="Andhra Pradesh">Andhra Pradesh</option>
-              <option value="Karnataka">Karnataka</option>
-              <option value="Kerala">Kerala</option>
-            </select>
-          </div>
-          <div className="md:col-span-2">
+     
+         
+         
+       
+          <div className="">
             <label className="block text-sm font-medium text-gray-600">Address</label>
             <textarea
               className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
@@ -186,7 +135,7 @@ const Profile = () => {
         {/* Buttons */}
         <div className="flex justify-end gap-4 mt-6">
           <button
-            className="rounded-md bg-red-600 text-white py-2 px-6 hover:bg-red-700"
+            className="rounded-md border text-black py-2 px-6 "
             onClick={handleCancel}
           >
             Cancel
