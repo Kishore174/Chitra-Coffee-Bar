@@ -5,6 +5,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { login, resetPassword } from '../API/auth';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthProvider';
+import Loader from './Loader';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '', otp: '', newPassword: '', confirmPassword: '' });
@@ -79,7 +80,11 @@ const Login = () => {
     }
   }, [isLogin, navigate]);
   return (
-    <div className="flex justify-center items-center min-h-screen poppins-regular">
+    <>
+    {
+      loading?<Loader/>:(
+
+        <div className="flex justify-center items-center min-h-screen poppins-regular">
       <div className="flex flex-col lg:flex-row w-[90%] md:w-[80%] lg:w-[900px] lg:h-[500px] bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="flex flex-col justify-center items-center w-full lg:w-1/2 bg-gradient-to-br from-red-800 to-red-500 text-white p-10">
           <img src={logo} alt="logo" className="h-24 w-24 md:h-36 md:w-36 mb-4" />
@@ -123,23 +128,12 @@ const Login = () => {
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </span>
                 </div>
-         {
-          loading ? (
-            <button
-            type="submit"
-            className="w-full bg-red-500 text-white py-2 rounded mt-2 hover:bg-red-600"
-          >
-            Sign in...
-          </button>
-          ):(
-            <button
+                <button
             type="submit"
             className="w-full bg-red-500 text-white py-2 rounded mt-2 hover:bg-red-600"
           >
             Sign In
           </button>
-          )
-         }
                 <div className="mt-4 text-center">
                   <button type="button" onClick={handleForgotPasswordClick} className="text-sm text-red-500 hover:underline">
                     Forgot Password?
@@ -234,6 +228,9 @@ const Login = () => {
         </div>
       </div>
     </div>
+      )
+    }
+    </>
   );
 };
 
