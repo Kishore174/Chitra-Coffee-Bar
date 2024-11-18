@@ -75,8 +75,8 @@ const Navbar = () => {
   }, [location.pathname, menuItems]);
 
   return (
-    <div className="relative w-full">
-      <div className="flex fixed   items-center justify-between bg-white shadow p-4 h-16 w-full">
+    <div className="relative  w-full">
+      <div className="flex fixed z-40  items-center justify-between bg-white shadow p-4 h-16 w-full">
         <div className="flex-1">
           <div className="flex items-center">
             <div className=" flex items-center">
@@ -106,7 +106,7 @@ const Navbar = () => {
       {/* Conditional Rendering of Side Menu */}
       {isMenuOpen && (
         <div ref={menuRef}>
-          <div className={`absolute top-0 z-50 h-screen bg-white shadow-lg w-64 transition-transform duration-300 ease-in-out 
+          <div className={`fixed top-0 z-50 h-screen bg-white shadow-lg w-64 transition-transform duration-300 ease-in-out 
           ${isMenuOpen ? 'translate-x-0  lg:hidden' : '-translate-x-full'} lg:translate-x-0`}>
             <div className="h-full overflow-y-auto">
               <Link to="/dashboard">
