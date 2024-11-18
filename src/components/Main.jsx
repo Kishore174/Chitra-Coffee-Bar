@@ -12,7 +12,7 @@ const Main = () => {
       </div>
       {/* Main Content Area */}
       <div className=' flex-1 flex w-full flex-col'>
-        <Navbar />
+        <Navbar className='' />
         <div className='flex-1 mx-auto mt-10  md:max-w-screen-lg lg:max-w-screen-2xl p-5  min-w-full'>
           <Outlet />
         </div>

@@ -89,7 +89,7 @@ const SideMenu = () => {
   return (
     <div>
       <div
-        className={`fixed z-20 h-screen bg-white shadow-lg w-64 transition-transform duration-300 ease-in-out 
+        className={`fixed z-50 h-screen bg-white shadow-lg w-64 transition-transform duration-300 ease-in-out 
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} max:translate-x-0 lg:translate-x-0`}
       >
         <div className="h-full overflow-y-auto">
