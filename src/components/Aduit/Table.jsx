@@ -7,6 +7,7 @@ import { ScaleLoader } from "react-spinners";
 import { useAuth } from "../../context/AuthProvider";
 import { auditAssign } from "../../API/auditor";
 import toast from "react-hot-toast";
+import Loader from "../Loader";
 
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -116,9 +117,7 @@ const Table = () => {
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center min-h-[60vh]">
-          <ScaleLoader height="15" width="7" color="#FF0000" />
-        </div>
+         <Loader/>
       ) : (
         <>
           {/* Responsive Card View for Mobile */}

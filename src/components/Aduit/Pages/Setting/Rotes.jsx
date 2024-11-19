@@ -8,6 +8,7 @@ import { addRoute, createRoute, deleteRoute, getRoute } from '../../../../API/cr
 import toast from 'react-hot-toast';
 import SetRoutes from './SetRoutes';
 import { deleteShopIntoRoute, getUnassignedShops } from '../../../../API/settings';
+import Loader from '../../../Loader';
 
 const RouteCard = ({ routeId, routeName,shops, onRemoveCard, onEdit }) => {
   const [selectedRoutes, setSelectedRoutes] = useState(shops||[]);
@@ -221,12 +222,15 @@ const Routes = () => {
   const navigate = useNavigate();
   const [isConfirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [routeToDelete, setRouteToDelete] = useState(null);
+  const [loading, setLoading] = useState(true); // Loading state
 
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
         const routes = await getRoute(); // Update based on parameters if needed
         setRouteCards(routes.data);
+      setLoading(false);  
+
       } catch (error) {
         console.error("Error fetching routes:", error);
       }
@@ -304,14 +308,18 @@ const Routes = () => {
     </div>
   
     {/* No Routes Available Message */}
-    {routeCards.length === 0 && (
+   <>
+   {
+    loading?<Loader/>:(
+      <>
+       {routeCards.length === 0 && (
       <div className="text-gray-500 text-center text-2xl md:text-3xl poppins-semibold">
         No Routes Available
       </div>
     )}
   
     {/* Route Cards Grid */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mx-auto gap-4">
       {routeCards &&
         routeCards.map((card) => (
           <RouteCard
@@ -381,6 +389,11 @@ const Routes = () => {
         </div>
       </div>
     )}
+      </>
+
+    )
+   }
+   </>
   </div>
   
   );

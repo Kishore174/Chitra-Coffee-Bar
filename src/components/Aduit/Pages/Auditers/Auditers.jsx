@@ -5,7 +5,8 @@ import { GrEdit } from 'react-icons/gr';
 import { MdDelete } from 'react-icons/md';
 import { deleteAuditor, getAllAuditors } from '../../../../API/auditor';
 import toast from 'react-hot-toast';
-import { ScaleLoader } from "react-spinners";
+ 
+import Loader from '../../../Loader';
 
 
 const ITEMS_PER_PAGE = 5; // Set the number of items per page
@@ -69,11 +70,7 @@ const [loading, setLoading] = useState(true); // Loading state
         </Link>
       </div>
       {loading ? (
-        <div className="flex justify-center items-center min-h-[60vh]">
-        <ScaleLoader  height="15"
-            width="7"
-            color="#FF0000"/> {/* Using the hex code for red-600 */}
-      </div>
+      <Loader/>
       ) : (
 <>
       <div className="hidden md:block mt-4">
