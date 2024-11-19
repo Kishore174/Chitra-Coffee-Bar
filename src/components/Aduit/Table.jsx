@@ -162,7 +162,7 @@ const Table = () => {
                           <BsArrowRight className="text-red-600 text-2xl" />
                         </Link>
                       ) : (
-                        <Link to="/report">
+                        <Link to={`/report/${audit._id}`}>
                           <button className="text-blue-500 poppins-regular">
                             View
                           </button>

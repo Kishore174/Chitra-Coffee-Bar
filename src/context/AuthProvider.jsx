@@ -8,12 +8,12 @@ const AuthProvider = ({children}) => {
   const [user,setUser] = useState(null)
 
   useEffect(()=>{
-    const localData  =  localStorage.getItem('user')
     getAuditorBytoken().then((res)=>{
       setUser(res.data)
       setLogin(true)
     }).catch((err)=>{
       console.log(err.message)
+      setUser(null)
       setLogin(false)
     })
   },[])

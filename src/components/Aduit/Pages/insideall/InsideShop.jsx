@@ -35,6 +35,7 @@ const InsideShop = () => {
   };
 
   const handleOverallSubmit = () => {
+    if (!validateForm()) return;
     setLoading(true);
     createInsideshop(auditId, insideShopData)
       .then((res) => {
@@ -61,7 +62,32 @@ const InsideShop = () => {
     "snackCounter",
     "dustbin",
   ];
-
+  const validateForm = () => {
+    for (const itemType of itemTypes) {
+      const itemData = insideShopData[itemType];
+      if (itemData) {
+        
+        if (!itemData.hygiene) {
+          toast.error(`Please provide hygiene information for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+          return false;
+        }
+        if (!itemData.rating) {
+          toast.error(`Please provide a rating for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+          return false;
+        }
+        if (!itemData.remark) {
+          toast.error(`Please provide a remark for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+          return false;
+        }
+        // Check if images are provided
+        if (!insideShopData[`${itemType}Images`] || insideShopData[`${itemType}Images`].length === 0) {
+          toast.error(`Please upload at least one image for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+          return false;
+        }
+      }
+    }
+    return true;
+  };
   useEffect(() => {
     setLoading(true);
     getInsideShop(auditId).then((res) => {

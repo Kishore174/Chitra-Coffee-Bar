@@ -48,6 +48,7 @@ export const WallPainting = () => {
   const navigate = useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
     setLoading(true); // Set loading to true when submission starts
 
     try {
@@ -78,7 +79,25 @@ export const WallPainting = () => {
     // console.log('Submitted Data:', auditData);
     // Here, you can also send the data to a server or perform further actions.
   };
-
+  const validateForm = () => {
+    if (!fan || !light || !celling || !wallPainting || !floorTail) {
+      toast.error('Please select  all options.');
+      return false;
+    }
+    if (!remark.trim()) {
+      toast.error('Please provide a remark.');
+      return false;
+    }
+    if (rating <= 0) {
+      toast.error('Please provide a rating.');
+      return false;
+    }
+    if (captureImages.length === 0) {
+      toast.error('Please capture at least one image.');
+      return false;
+    }
+    return true;
+  };
   const fileInputRef = useRef(null);
   const handWashFileInputRef = useRef(null);
 
@@ -266,7 +285,7 @@ setIsTeaSubmitted(true)
                               key={index}
                               className="flex items-center justify-between p-5 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:scale-105"
                             >
-                              <span className="text-sm font-medium capitalize text-red-700 bg-red-100 px-3 py-1 rounded-full capitalize">
+                              <span className="text-sm font-medium  text-red-700 bg-red-100 px-3 py-1 rounded-full capitalize">
                                 {item.label}
                               </span>
                               <span className="font-semibold text-gray-800 text-lg">{item.value || 'N/A'}</span>

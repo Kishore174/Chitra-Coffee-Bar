@@ -16,6 +16,7 @@ import wallPanting from '../../../Assets/wall panting.jpg';
 import dress from '../../../Assets/dress.jpg';
 import { getAudit } from '../../../API/audits';
 import Loader from '../../Loader';
+import { EyeDropperIcon } from '@heroicons/react/24/outline';
 
 
 const AddAudit = () => {
@@ -102,7 +103,7 @@ const AddAudit = () => {
                             ? detail[audit.item].length > 0  // Array check
                             : Object.values(detail[audit.item]).filter(d => d !== "").length>0) // Object check
                         ) 
-                        ? "bg-green-700" 
+                        ? "bg-green-700 hover:bg-green-700 " 
                         : "bg-red-500"
                       }`}
                     >

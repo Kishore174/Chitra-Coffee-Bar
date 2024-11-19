@@ -30,7 +30,25 @@ const LiveSnacks = () => {
   const [lastAudits, setLastAudits] = useState([]);
   const [loading, setLoading] = useState(false); // Loading state
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const validateForm = () => {
+    if (Object.keys(snackAvailability).length === 0) {
+      toast.error("Please select snack availability.");
+      return false;
+    }
+    if (remark.trim() === "") {
+      toast.error("Please add a remark.");
+      return false;
+    }
+    if (rating === 0) {
+      toast.error("Please give a rating.");
+      return false;
+    }
+    if (captureImages.length === 0) {
+      toast.error("Please upload at least one image.");
+      return false;
+    }
+    return true;
+  };
   useEffect(() => {
     const fetchSnacks = async () => {
       setLoading(true)
@@ -137,6 +155,7 @@ const LiveSnacks = () => {
 
   const handleLiveSnackSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
     setLoading(true); // Set loading to true when submission starts
     setDialogOpen(false)
     try {
@@ -440,7 +459,7 @@ const LiveSnacks = () => {
       </form>
       
       {isModalOpen && (
-        <div className="fixed inset-0 z-20 flex items-center justify-center bg-gray-900 bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg">
             <h2 className="text-lg poppins-semibold">Confirm Submission</h2>
             <p className="mt-2 poppins-medium text-md">Once submitted, you won’t be able to edit. Are you sure?</p>

@@ -33,7 +33,7 @@ const TeaAudit = () => {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [loading, setLoading] = useState(false); // Loading state
-
+    
   const handleTeaClick = (option) => setSelectedTea(option);
   const handleSugarClick = (level) => setSelectedSugar(level);
   const handleTemperatureClick = (temperature) => setSelectedTemperature(temperature);
@@ -44,10 +44,55 @@ const TeaAudit = () => {
   const handleRatingClick = (rate) => setRating(rate);
 
   const navigate = useNavigate();
+  const validateForm = () => {
+    if (!selectedTea) {
+      toast.error("Please select the tea quality.");
+      return false;
+    }
+    if (!selectedSugar) {
+      toast.error("Please select the sugar level.");
+      return false;
+    }
+    if (!selectedTemperature) {
+      toast.error("Please select the temperature.");
+      return false;
+    }
+    if (!selectedColor) {
+      toast.error("Please select the tea color.");
+      return false;
+    }
+    if (!selectedAroma) {
+      toast.error("Please select the aroma.");
+      return false;
+    }
+    if (!selectedTaste) {
+      toast.error("Please select the taste.");
+      return false;
+    }
+    if (remark.trim() === "") {
+      toast.error("Please add a remark.");
+      return false;
+    }
+    if (rating === 0) {
+      toast.error("Please give a rating.");
+      return false;
+    }
+    if (capturedPhoto.length === 0) {
+      toast.error("Please upload at least one image.");
+      return false;
+    }
+    return true;
+  };
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission behavior
     setLoading(true); // Set loading to true when submission starts
-
+    if (!validateForm()) {
+      setLoading(false); // Reset loading state if validation fails
+      return;
+    }
     try {
       const auditData = {
         quality: selectedTea,
@@ -156,6 +201,7 @@ const TeaAudit = () => {
   };
 
   const handleTeaSubmit = () => {
+  
     setIsTeaSubmitted(true);
     setIsModalOpen(false);
   };
@@ -546,7 +592,7 @@ const TeaAudit = () => {
         </div>
       </form>
       {isModalOpen && (
-        <div className="fixed inset-0 z-20 flex items-center justify-center bg-gray-900 bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg">
             <h2 className="text-lg poppins-semibold">Confirm Submission</h2>
             <p className="mt-2 poppins-medium text-md">Once submitted, you won’t be able to edit. Are you sure?</p>

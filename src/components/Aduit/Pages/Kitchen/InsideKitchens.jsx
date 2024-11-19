@@ -34,6 +34,7 @@ const InsideKitchens = () => {
   };
 
   const handleOverallSubmit = () => {
+    if (!validateForm()) return;
     setLoading(true);
 
     createInsideKitchen(auditId, kitchenData)
@@ -59,6 +60,36 @@ const InsideKitchens = () => {
     "kitchenLight",
 
   ];
+  const validateForm = () => {
+    for (const itemType of itemTypes) {
+      const itemData = kitchenData[itemType];
+      if (itemData) {
+        // Check required fields for each item type
+        if (!itemData.hygiene) {
+          toast.error(`Please provide hygiene information for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+          return false;
+        }
+        if (!itemData.brandName) {
+          toast.error(`Please provide a brand name for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+          return false;
+        }
+        if (!itemData.rating) {
+          toast.error(`Please provide a rating for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+          return false;
+        }
+        if (!itemData.remark) {
+          toast.error(`Please provide a remark for ${itemType.replace(/([A-Z])/g, " $1").trim()}}.`);
+          return false;
+        }
+        // Check if images are provided
+        if (!kitchenData[`${itemType}Images`] || kitchenData[`${itemType}Images`].length === 0) {
+          toast.error(`Please upload at least one image for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+          return false;
+        }
+      }
+    }
+    return true;
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -235,7 +266,7 @@ const InsideKitchens = () => {
       </button>}
     </div>
     {isModalOpen && (
-            <div className="fixed inset-0 z-60 flex items-center justify-center bg-gray-900 bg-opacity-50">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
               <div className="bg-white p-6 rounded shadow-lg">
                 <h2 className="text-lg font-semibold">Confirm Submission</h2>
                 <p className="mt-2 text-md">Once submitted, you won’t be able to edit. Are you sure?</p>

@@ -73,9 +73,9 @@ const [loading, setLoading] = useState(true); // Loading state
       <Loader/>
       ) : (
 <>
-      <div className="hidden md:block mt-4">
+      <div className="">
         {/* Desktop View Table */}
-        <table className="w-full bg-white border">
+        <table className="w-full hidden md:block mt-4 bg-white border">
           <thead className="bg-red-600 text-white">
             <tr>
               {['S.No', 'Name', 'Location', 'Contact Details', 'Documents', 'Action'].map((header, idx) => (

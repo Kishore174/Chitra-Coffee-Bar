@@ -36,7 +36,25 @@ const Bunzo = () => {
   const initializeProductDetails = () => {
     return { productName: '', quantity: 0, expirationDate: '' };
   };
-
+  const validateForm = () => {
+    if (!details.productName) {
+      toast.error("Please select or enter a product name.");
+      return false;
+    }
+    if (details.quantity <= 0) {
+      toast.error("Please enter a valid quantity.");
+      return false;
+    }
+    if (activeTab !== 'Other Brands' && !details.expirationDate) {
+      toast.error("Please select an expiration date.");
+      return false;
+    }
+    if (liveSnackImagePreview.length === 0) {
+      toast.error("Please upload at least one image.");
+      return false;
+    }
+    return true;
+  };
   useEffect(() => {
     const fetchBrandsAndProducts = async () => {
 
@@ -142,7 +160,7 @@ const Bunzo = () => {
 
   const handleSubmit =async (e) => {
     e.preventDefault();
-
+    if (!validateForm()) return;
     setLoading(true); 
 
   let data;
@@ -467,7 +485,7 @@ const Bunzo = () => {
               Add Product
             </button>
             {isModalOpen && (
-        <div className="fixed inset-0 z-20 flex items-center justify-center bg-gray-900 bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg">
             <h2 className="text-lg poppins-semibold">Confirm Submission</h2>
             <p className="mt-2 poppins-medium text-md">Once submitted, you won’t be able to edit. Are you sure?</p>
