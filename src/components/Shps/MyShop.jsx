@@ -68,7 +68,7 @@ const MyShop = () => {
 
   return (
     <div className=" min-h-screen">
-      <div className="flex flex-col max-w-3xl  mx-auto md:flex-row items-start md:items-center justify-between mb-4 md:mb-6">
+      <div className="flex  max-w-3xl  mx-auto flex-row items-start md:items-center justify-between mb-4 md:mb-6">
         <h1 className="text-2xl md:text-3xl poppins-semibold mb-4  md:mb-0">My Shop</h1>
         <Link to="/addshop">
           <button className="bg-red-600 text-white rounded-lg poppins-semibold py-1 px-3 flex items-center">

@@ -171,8 +171,8 @@ const TeaAudit = () => {
           ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
           ctx.fillRect(10, img.height - 60, 220, 50); // background rectangle
           ctx.fillStyle = "black";
-          ctx.fillText(`Location: ${location}`, 15, img.height - 40);
-          ctx.fillText(`Date: ${date}`, 15, img.height - 20);
+          ctx.fillText(`Location: ${loc}`, 15, img.height - 40);
+          ctx.fillText(`Date: ${dateTime}`, 15, img.height - 20);
 
           // Convert canvas to data URL and store it in the state
           const watermarkedImage = canvas.toDataURL("image/png");
@@ -273,7 +273,7 @@ const TeaAudit = () => {
           <AnimatePresence>
             {isDialogOpen && (
               <motion.div
-                className="fixed inset-0 flex z-20 mr-2 justify-end h-screen bg-black bg-opacity-50"
+                className="fixed inset-0 flex z-50 mr-2 justify-end h-screen bg-black bg-opacity-50"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

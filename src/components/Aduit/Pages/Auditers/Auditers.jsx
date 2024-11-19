@@ -73,10 +73,10 @@ const [loading, setLoading] = useState(true); // Loading state
       <Loader/>
       ) : (
 <>
-      <div className="">
-        {/* Desktop View Table */}
-        <table className="w-full hidden md:block mt-4 bg-white border">
-          <thead className="bg-red-600 text-white">
+      <div className=" ">
+         <div className='md:block hidden'>
+        <table className="min-w-full  mt-4 bg-white border">
+          <thead className="bg-red-600 text-white w-full">
             <tr>
               {['S.No', 'Name', 'Location', 'Contact Details', 'Documents', 'Action'].map((header, idx) => (
                 <th key={idx} className="px-2 py-3 border-b-2 border-gray-300 text-left text-xs md:text-sm font-semibold uppercase tracking-wider">
@@ -85,7 +85,7 @@ const [loading, setLoading] = useState(true); // Loading state
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className='w-full'>
             {currentAuditors.map((auditor, index) => (
               <tr key={auditor.id} className="hover:bg-gray-100 poppins-regular capitalize">
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
@@ -115,7 +115,7 @@ const [loading, setLoading] = useState(true); // Loading state
             ))}
           </tbody>
         </table>
-
+        </div>
         {/* Mobile View Section */}
         <div className="lg:hidden md:hidden">
           {currentAuditors.map((auditor, index) => (
