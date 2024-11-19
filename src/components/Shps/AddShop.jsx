@@ -522,7 +522,7 @@ const AddShop = () => {
   >
     View PDF
   </a>
-) : (
+) : shop?.gstCertificate && (
   <span className="text-red-500">Invalid file type. Please upload a PDF.</span>
 )}
 

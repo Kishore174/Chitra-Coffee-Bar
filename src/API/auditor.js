@@ -33,3 +33,7 @@ export const auditAssign = async()=>{
   const response = await axiosintance.post(`/assign-audits`);
   return response.data;
 }
+export const getProfile = async(id)=>{
+  const response = await axiosintance.get(`/auditor/${id}`);
+  return response.data;
+}

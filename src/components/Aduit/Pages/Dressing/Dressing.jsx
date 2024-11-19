@@ -31,8 +31,25 @@ const Dressing = () => {
   const handleRatingClick = (value) => {
     setRating(value);
   };
+  const validateForm = () => {
+    if (capWeared < 0 && capNotWeared < 0 && apronWeared < 0 && apronNotWeared < 0 && cortWeared < 0 && glovesWeared < 0 && glovesNotWeared < 0) {
+      toast.error('Please enter valid numbers for all fields.');
+      return false;
+    }
+    if (rating <= 0) {
+      toast.error('Please provide a rating.');
+      return false;
+    }
+    if (!dressingRemark.trim()) {
+      toast.error('Please provide a remark.');
+      return false;
+    }
+    return true;
+  };
+
 
   const handleSubmit = async () => {
+    if (!validateForm()) return;
     const dressingData = {
       cap: { wear: capWeared, notWear: capNotWeared },
       apron: { wear: apronWeared, notWear: apronNotWeared },
@@ -94,9 +111,12 @@ const Dressing = () => {
           setCortNotWeared(cort.notWear);
           setRating(rating);
           setDressingRemark(remark);
+          setSubmitted(true)
 
         }
+
         setLoading(false)
+
       } catch (error) {
         console.error('Error fetching dress data:', error);
       }
@@ -346,19 +366,34 @@ const Dressing = () => {
         </div>
 
         {/* Submit Button */}
-        <button
-          onClick={handleSubmit}
-          className={`flex items-center justify-center w-full py-2 px-4 rounded-md ${submitted ? 'bg-green-500' : 'bg-red-500'} text-white font-semibold`}
-        >
-          {submitted ? (
-            <>
-              <CheckIcon className="w-5 h-5 mr-2" />
-              Submitted
-            </>
-          ) : (
-            'Submit'
+{ !submitted && <button
+  onClick={() => setIsModalOpen(true)}
+  className={`flex items-center justify-center w-full py-2 px-4 rounded-md ${submitted ? 'bg-green-500' : 'bg-red-500'} text-white font-semibold`}
+>
+  Submit
+</button>}
+        {isModalOpen && (
+            <div className="fixed inset-0  z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
+              <div className="bg-white p-6 rounded shadow-lg">
+                <h2 className="text-lg font-semibold">Confirm Submission</h2>
+                <p className="mt-2 text-md">Once submitted, you won’t be able to edit. Are you sure?</p>
+                <div className="flex justify-end mt-4 space-x-2">
+                  <button
+                 onClick={() => setIsModalOpen(false)}
+                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSubmit}
+                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
-        </button>
       </div>
     </>
     )

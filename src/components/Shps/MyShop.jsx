@@ -6,7 +6,8 @@ import { MdDelete } from 'react-icons/md';
 import { deleteShop, getAllShops } from '../../API/shop';
 import toast from 'react-hot-toast';
 // import { LineWave } from 'react-loader-spinner';/ // Import the loader/
-import { ScaleLoader } from "react-spinners";
+ 
+import Loader from '../Loader';
 
 const MyShop = () => {
   const [shops, setShops] = useState([]);
@@ -78,11 +79,7 @@ const MyShop = () => {
 
       {/* Loader while data is being fetched */}
       {loading ? (
-        <div className="flex justify-center items-center min-h-[60vh]">
-        <ScaleLoader  height="15"
-            width="7"
-            color="#FF0000"/> {/* Using the hex code for red-600 */}
-      </div>
+        <Loader/>
       ) : (
         <>
           {/* Responsive Table for Desktop */}

@@ -36,6 +36,7 @@ const OutSideShop = () => {
     };
   
     const handleOverallSubmit = () => {
+      if (!validateForm()) return; 
     setLoading(true)
 
       createOutsideKitchen(auditId, outsideShopData)
@@ -53,7 +54,36 @@ const OutSideShop = () => {
       "lollipopStandArea",
       
     ];
-  
+    const validateForm = () => {
+      for (const itemType of itemTypes) {
+        const itemData = outsideShopData[itemType];
+        if (itemData) {
+          // Check required fields for each item type
+          if (!itemData.hygiene) {
+            toast.error(`Please provide hygiene information for ${itemType}.`);
+            return false;
+          }
+          if (!itemData.available) {
+            toast.error(`Please specify availability for ${itemType}.`);
+            return false;
+          }
+          if (!itemData.rating) {
+            toast.error(`Please provide a rating for ${itemType}.`);
+            return false;
+          }
+          if (!itemData.remark) {
+            toast.error(`Please provide a remark for ${itemType}.`);
+            return false;
+          }
+          // Check if images are provided
+          if (!outsideShopData[`${itemType}Images`] || outsideShopData[`${itemType}Images`].length === 0) {
+            toast.error(`Please upload at least one image for ${itemType}.`);
+            return false;
+          }
+        }
+      }
+      return true;
+    };
     useEffect(() => {
     setLoading(true)
 

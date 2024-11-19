@@ -37,6 +37,7 @@ const Branding = () => {
   };
 
   const handleOverallSubmit = () => {
+    if (!validateForm()) return; 
     setLoading(true)
 
     createWallBranding(auditId, brandingData)
@@ -57,7 +58,32 @@ const Branding = () => {
     "pillarBranding",
     
   ];
-
+  const validateForm = () => {
+    for (const itemType of itemTypes) {
+      const itemData = brandingData[itemType];
+      if (itemData) {
+        // Check required fields for each item type
+        if (!itemData.available) {
+          toast.error(`Please specify availability for ${itemType}.`);
+          return false;
+        }
+        if (!itemData.rating) {
+          toast.error(`Please provide a rating for ${itemType}.`);
+          return false;
+        }
+        if (!itemData.remark) {
+          toast.error(`Please provide a remark for ${itemType}.`);
+          return false;
+        }
+        // Check if images are provided
+        if (!brandingData[`${itemType}Images`] || brandingData[`${itemType}Images`].length === 0) {
+          toast.error(`Please upload at least one image for ${itemType}.`);
+          return false;
+        }
+      }
+    }
+    return true;
+  };
   useEffect(() => {
     setLoading(true)
 
@@ -89,7 +115,7 @@ const Branding = () => {
     setSelectedDate(null);
   };
   const openModal = () => {
-    setBrandingSubmitted(true)
+   
     setIsModalOpen(true);
   };
 

@@ -83,29 +83,30 @@ const SideMenu = () => {
     if (currentItem) {
       setActiveButton(currentItem.name);
       localStorage.setItem('activeButton', currentItem.name);
+      localStorage.setItem('activeRoute', location.pathname);
     }
   }, [location.pathname]);
 
   return (
     <div>
       <div
-        className={`fixed z-50 h-screen bg-white shadow-lg w-64 transition-transform duration-300 ease-in-out 
+        className={`fixed z-50 overflow-y-auto scrollbar-custom h-screen bg-white shadow-lg w-64 transition-transform duration-300 ease-in-out 
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} max:translate-x-0 lg:translate-x-0`}
       >
-        <div className="  overflow-y-auto">
-        <div className="  p-3  mx-auto ">
-  <Link to="/dashboard" className="flex items-center space-x-4  justify-center boredr border-gray-300  shadow-sm bg-white  text-center hover:bg-gray-100 p-1 rounded-md transition">
-    <img
-      src={logo}
-      alt="User Profile"
-      className="h-12 w-12 rounded-full object-cover border border-gray-300"
-    />
-    <div>
-      <p className="text-lg poppins-semibold text-gray-800">{user?.name || "User Name"}</p>
-       
-    </div>
-  </Link>
-</div>
+        <div className="">
+        <div className="p-2 ">
+          <Link to="/dashboard" className="flex items-center space-x-4  border  rounded-lg  shadow-xs bg-white text-center hover:bg-gray-100 p-1  transition">
+            <img
+              src={logo}
+              alt="User  Profile"
+              className="h-12 w-12 rounded-full object-cover border border-gray-300"
+            />
+            <div>
+              <p className="text-lg poppins-semibold text-gray-800">{user?.name || "User  Name"}</p>
+              <p className="text-sm  poppins-medium capitalize text-gray-600">{user?.role} </p>
+            </div>
+          </Link>
+        </div>
 
           <ul className="space-y-6 p-4">
             {menuItems.map((item) => {

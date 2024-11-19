@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import "./App.css"; // Ensure this includes your flex layout sty
@@ -43,6 +43,12 @@ import Page404 from "./components/Page404";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
+  useEffect(() => {
+    const images = document.querySelectorAll("img");
+    images.forEach((img) => {
+      img.setAttribute("loading", "lazy");
+    });
+  }, []);
   return (
     <AuthProvider>
       <BrowserRouter>

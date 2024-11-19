@@ -75,8 +75,13 @@ const Login = () => {
   };
   
   useEffect(() => {
+    setLoading(true)
     if (isLogin) {
-      navigate('/dashboard');
+      setLoading(false)
+      const route = localStorage.getItem('activeRoute');
+      navigate(route);
+    }else{
+      setLoading(false)
     }
   }, [isLogin, navigate]);
   return (

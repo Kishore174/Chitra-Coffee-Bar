@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import { dropDownRoutes, getRouteById } from "../../../../API/createRoute";
 import ShopCard from "./ShopCard";
+import Loader from "../../../Loader";
 
 const SetRoutes = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -12,6 +13,7 @@ const SetRoutes = () => {
   const [routes, setRoutes] = useState([]);
   const [routeShops, setRouteShops] = useState([]);
   const [set, setSet] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // // Options for the dropdown
   // const options = [
@@ -26,10 +28,12 @@ const SetRoutes = () => {
 
   // Example routes for modal
   useEffect(() => {
+    setLoading(true)
     const fetchRoutes = async () => {
       try {
         const res = await dropDownRoutes();
         setRoutes(res.data);
+        setLoading(false)
       } catch (error) {
         console.error("Error fetching routes:", error);
       }
@@ -39,9 +43,11 @@ const SetRoutes = () => {
 
   const getRouteDeatils = async (routeId) => {
     try {
+      setLoading(true)
       const res = await getRouteById(routeId);
       setRouteShops(res.data?.shops);
       setSet(res.data?.sets);
+      setLoading(false)
     } catch (error) {
       console.error("Error fetching routes:", error);
     }
@@ -149,31 +155,40 @@ const SetRoutes = () => {
       </div>
 
       {/* Conditionally render SelectedRoutesDisplay only if there are selected routes */}
-      {selectedRoutes.length > 0 && (
-        <div className="w-full">
-          {/* <div>{selectedOption.name}</div> */}
-          <div className="grid p-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {set.map((s, index) => (
-              <ShopCard
-                key={index}
-                routeId={selectedOption?._id}
-                shops={filterShops}
-                selSet={s}
-                index={index}
-              />
-            ))}
-          </div>
-          {/* <SelectedRoutesDisplay
-            selectedRoutes={selectedRoutes}
-            toggleModal={toggleModal}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            modalOpen={modalOpen}
-            filteredRoutes={filteredRoutes}
-            handleRemoveRoute={handleRemoveRoute}
-          /> */}
-        </div>
-      )}
+    <>
+    {
+      loading?<Loader/>:(
+
+        <>
+        {selectedRoutes.length > 0 && (
+           <div className="w-full">
+             {/* <div>{selectedOption.name}</div> */}
+             <div className="grid p-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+               {set.map((s, index) => (
+                 <ShopCard
+                   key={index}
+                   routeId={selectedOption?._id}
+                   shops={filterShops}
+                   selSet={s}
+                   index={index}
+                 />
+               ))}
+             </div>
+             {/* <SelectedRoutesDisplay
+               selectedRoutes={selectedRoutes}
+               toggleModal={toggleModal}
+               searchTerm={searchTerm}
+               setSearchTerm={setSearchTerm}
+               modalOpen={modalOpen}
+               filteredRoutes={filteredRoutes}
+               handleRemoveRoute={handleRemoveRoute}
+             /> */}
+           </div>
+         )}
+        </>
+      )
+    }
+    </>
     </div>
   );
 };

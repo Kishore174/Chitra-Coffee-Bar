@@ -39,6 +39,7 @@ const Employee = () => {
     };
 
     const handleSubmit = () => {
+      if (!validateForm()) return;
     setLoading(true); // Set loading to true when submission starts
 
         createEmployees(auditId, employeeData).then(res => {
@@ -50,7 +51,17 @@ const Employee = () => {
     };
 
     const tabs = ['kitchen', 'tea counter', 'sales', 'cash counter', 'cleaning', 'security'];
-
+    const validateForm = () => {
+      if (employeeData.count <= 0) {
+          toast.error('Please enter a valid number of employees.');
+          return false;
+      }
+      if (!employeeData.names.trim()) {
+          toast.error('Please enter employee names.');
+          return false;
+      }
+      return true;
+  };
     useEffect(() => {
       setLoading(true)
 
@@ -230,7 +241,7 @@ const Employee = () => {
                         Submit
                     </button>
          {isModalOpen && (
-            <div className="fixed inset-0 z-60 flex items-center justify-center bg-gray-900 bg-opacity-50">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
               <div className="bg-white p-6 rounded shadow-lg">
                 <h2 className="text-lg font-semibold">Confirm Submission</h2>
                 <p className="mt-2 text-md">Once submitted, you won’t be able to edit. Are you sure?</p>

@@ -1,19 +1,21 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { CiEdit } from "react-icons/ci";
-
+import{getProfile} from '../API/auditor'
+import { useAuth } from "../context/AuthProvider";
+import Loader from "./Loader";
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [file, setFile] = useState();
+  const {user} = useAuth()
+  const [loading, setLoading] = useState(true); 
 
   const initialValues = {
-    firstName: "",
-    lastName: "",
+    name: "", 
     email: "",
     address: "",
-    contactNumber: "",
-    city: "City",
-    state: "State",
-    password: "",
+    contact: "",
+    profile:""
+    
   };
 
   const [values, setValues] = useState(initialValues);
@@ -45,32 +47,50 @@ const Profile = () => {
 
   const handleEditImageClick = () => {
     fileInputRef.current.click();
+    
   };
-
+useEffect(()=>{
+  getProfile(user?._id).then((res)=>{setValues(res?.data)
+    setLoading(false) 
+  })
+   
+},[])
   return (
-    <div className="flex justify-center items-center mx-auto p-4 sm:p-8">
+  <>
+  {
+    loading?<Loader/>:
+    (
+      
+      <>
+        <div className="flex justify-center poppins-medium items-center mx-auto p-4 sm:p-8">
       <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-6">
-        {/* Header */}
+       
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-gray-700">Edit Profile</h2>
+          <h2 className="text-2xl font-semibold text-gray-700">{isEditing?"Edit Profile":" Profile"}</h2>
           <div className="relative">
             <input
               type="file"
               ref={fileInputRef}
               onChange={handleChange}
               style={{ display: "none" }}
+              readOnly={!isEditing}
+
             />
             <div className="relative">
               <img
                 className="h-24 w-24 sm:h-28 sm:w-28 rounded-full object-cover"
-                src={file || "https://via.placeholder.com/150"}
+                src={values.profile || "https://via.placeholder.com/150"}
                 alt="Profile"
               />
               <div
                 className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full cursor-pointer"
                 onClick={handleEditImageClick}
+              readOnly={!isEditing}
+
               >
-                <CiEdit size={26} className="text-white" />
+                <CiEdit size={26} className="text-white" 
+              readOnly={!isEditing}
+              />
               </div>
             </div>
           </div>
@@ -79,28 +99,31 @@ const Profile = () => {
         {/* Form */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-600">First Name</label>
+            <label className="block text-sm font-medium text-gray-600">Name</label>
             <input
-              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
+              className="w-full border border-gray-300 outline-none p-3 rounded-md  "
               type="text"
               placeholder="Enter First Name"
-              name="firstName"
-              value={values.firstName}
+              name="name"
+              value={values.name}
               onChange={handleInputChange}
               readOnly={!isEditing}
+              disabled={!isEditing}
             />
           </div>
       
           <div>
             <label className="block text-sm font-medium text-gray-600">Email</label>
             <input
-              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
+              className="w-full border border-gray-300 p-3 rounded-md outline-none"
               type="email"
               placeholder="Enter Email"
               name="email"
               value={values.email}
               onChange={handleInputChange}
               readOnly={!isEditing}
+              disabled={!isEditing}
+
             />
           </div>
      
@@ -110,25 +133,30 @@ const Profile = () => {
           <div className="">
             <label className="block text-sm font-medium text-gray-600">Address</label>
             <textarea
-              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
+              className="w-full border border-gray-300 p-3 rounded-md outline-none"
               placeholder="Enter Address"
               name="address"
               value={values.address}
               onChange={handleInputChange}
               readOnly={!isEditing}
+              disabled={!isEditing}
+
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-600">Contact Number</label>
             <input
-              className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-red-600"
+              className="w-full border border-gray-300 p-3 rounded-md "
               type="number"
               placeholder="Enter Contact Number"
-              name="contactNumber"
-              value={values.contactNumber}
+              name="phone"
+              value={values.phone}
               onChange={handleInputChange}
               readOnly={!isEditing}
+              disabled={!isEditing}
+
             />
+
           </div>
         </div>
 
@@ -149,6 +177,11 @@ const Profile = () => {
         </div>
       </div>
     </div>
+      </>
+    )
+  }
+  </>
+
   );
 };
 
