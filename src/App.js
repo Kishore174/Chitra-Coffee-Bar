@@ -99,8 +99,8 @@ function App() {
               <Route path="myshop" element={<MyShop />} />
               <Route path="addshop" element={<AddShop />} />
               <Route path="setting" element={<Setting />} />
-              <Route path="auditers" element={<Auditers />} />
-              <Route path="add-auditers" element={<AddAuditer />} />
+              <Route path="auditors" element={<Auditers />} />
+              <Route path="add-auditors" element={<AddAuditer />} />
               <Route path="routes" element={<Rotes />} />
               <Route path="set-routes" element={<SetRoutes />} />
               <Route path="backeryproducts" element={<BakerProducts />} />

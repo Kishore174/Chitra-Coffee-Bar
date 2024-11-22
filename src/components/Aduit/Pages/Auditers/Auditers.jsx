@@ -62,10 +62,12 @@ const [loading, setLoading] = useState(true); // Loading state
   };
   return (
     <div className="p-4 md:p-6 min-h-screen">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-end mb-4 md:mb-6">
-        <Link to="/add-auditers">
-          <button className="bg-red-600 text-white rounded-lg poppins-semibold py-1 px-3 flex items-center">
-            <FaPlus className="mr-2" /> Add Auditer
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-6">
+      <h1 className="text-2xl md:text-3xl poppins-semibold mb-4  md:mb-0">Auditors</h1>
+
+        <Link to="/add-auditors">
+          <button className="bg-red-600 text-white rounded-md  poppins-semibold py-1 px-3 flex items-center">
+            <FaPlus className="mr-2" /> Add Auditor
           </button>
         </Link>
       </div>
@@ -79,7 +81,7 @@ const [loading, setLoading] = useState(true); // Loading state
           <thead className="bg-red-600 text-white w-full">
             <tr>
               {['S.No', 'Name', 'Location', 'Contact Details', 'Documents', 'Action'].map((header, idx) => (
-                <th key={idx} className="px-2 py-3 border-b-2 border-gray-300 text-left text-xs md:text-sm font-semibold uppercase tracking-wider">
+                <th key={idx} className="px-2 py-3 border-b-2 border-gray-300 text-left text-xs md:text-sm poppins-semibold uppercase tracking-wider">
                   {header}
                 </th>
               ))}
@@ -87,7 +89,7 @@ const [loading, setLoading] = useState(true); // Loading state
           </thead>
           <tbody className='w-full'>
             {currentAuditors.map((auditor, index) => (
-              <tr key={auditor.id} className="hover:bg-gray-100 poppins-regular capitalize">
+              <tr key={auditor.id} className="hover:bg-gray-100 poppins-regular ">
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{auditor.name}</td>
                 <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">

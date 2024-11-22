@@ -29,6 +29,7 @@ const AddShop = () => {
       onBoardingDate: "",
       renewalDate: "",
       fssiCertificateNo: "",
+      fssiRenewalDate:"",
       commercialAgree: null,
       gstCertificate: null,
     }
@@ -46,11 +47,7 @@ const AddShop = () => {
   const { id, files } = e.target;
   const file = files[0];
 
-  // Validate file type (only PDFs allowed)
-  if (file && file.type !== "application/pdf") {
-    alert("Please upload a valid PDF file.");
-    return;
-  }
+  
 
   // Update form data
   setFormData((prevFormData) => ({
@@ -60,7 +57,7 @@ const AddShop = () => {
 };
 
 
-  console.log(shop);
+  // console.log(shop);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true)
@@ -89,6 +86,7 @@ const AddShop = () => {
         location: "",
         onBoardingDate: "",
         renewalDate: "",
+        fssiRenewalDate:"",
         fssiCertificateNo: "",
         commercialAgree: null,
         gstCertificate: null,
@@ -134,6 +132,8 @@ const AddShop = () => {
             id="propertyType"
             value={formData.propertyType}
             onChange={handleChange}
+            disabled={isView}
+
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
           >
             <option value="" disabled>
@@ -156,6 +156,8 @@ const AddShop = () => {
               id="rentalAgreement"
               type="file"
               onChange={handleFileChange}
+            disabled={isView}
+
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             />
 
@@ -248,12 +250,14 @@ const AddShop = () => {
             className="block text-sm font-medium text-gray-700"
             htmlFor="ownerName"
           >
-            Owner Name
+          Franchisee Name
           </label>
           <input
             id="ownerName"
             type="text"
             value={formData.ownerName}
+            disabled={isView}
+
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             placeholder="Enter owner name"
@@ -271,6 +275,8 @@ const AddShop = () => {
           <select
             id="franchiseType"
             value={formData.franchiseType}
+            disabled={isView}
+
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
           >
@@ -294,6 +300,8 @@ const AddShop = () => {
             id="phone"
             type="tel"
             value={formData.phone}
+            disabled={isView}
+
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             placeholder="Enter phone number"
@@ -312,6 +320,8 @@ const AddShop = () => {
             id="email"
             type="email"
             value={formData.email}
+            disabled={isView}
+
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             placeholder="Enter email address"
@@ -329,6 +339,8 @@ const AddShop = () => {
           <textarea
             id="address"
             value={formData.address}
+            disabled={isView}
+
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             placeholder="Enter shop address"
@@ -345,6 +357,8 @@ const AddShop = () => {
             id="pincode"
             type="number"
             value={formData.pincode}
+            disabled={isView}
+
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             placeholder="Enter location"
@@ -362,6 +376,8 @@ const AddShop = () => {
             id="district"
             type="text"
             value={formData.district}
+            disabled={isView}
+
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             placeholder="Enter location"
@@ -379,6 +395,8 @@ const AddShop = () => {
             id="state"
             type="text"
             value={formData.state}
+            disabled={isView}
+
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             placeholder="Enter location"
@@ -396,6 +414,8 @@ const AddShop = () => {
             id="country"
             type="text"
             value={formData.country}
+            disabled={isView}
+
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             placeholder="Enter location"
@@ -413,6 +433,8 @@ const AddShop = () => {
             id="location"
             type="text"
             value={formData.location}
+            disabled={isView}
+
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             placeholder="Enter location"
@@ -431,27 +453,14 @@ const AddShop = () => {
             id="onBoardingDate"
             type="date"
             value={formData.onBoardingDate.slice(0, 10)}
+            disabled={isView}
+
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
           />
         </div>
 
-        {/* Renewal Date */}
-        <div className="mb-6">
-          <label
-            className="block text-sm font-medium text-gray-700"
-            htmlFor="renewalDate"
-          >
-            Commercial Renewal Date
-          </label>
-          <input
-            id="renewalDate"
-            type="date"
-            value={formData.renewalDate.slice(0, 10)}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-          />
-        </div>
+      
 
         {/* FSSI Certificate Number */}
         <div className="mb-4">
@@ -466,11 +475,30 @@ const AddShop = () => {
             type="text"
             value={formData.fssiCertificateNo}
             onChange={handleChange}
+            disabled={isView}
+
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
             placeholder="Enter FSSI certificate number"
           />
         </div>
+        <div className="mb-4">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="fssiRenewalDate"
+          >
+           FSSI Renewal Date
+          </label>
+          <input
+            id="fssiRenewalDate"
+            type="date"
+            disabled={isView}
+            value={formData.fssiRenewalDate.slice(0, 10)}
+             
 
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+          />
+        </div>
         {/* Commercial Agreement Upload */}
         <div className="mb-4">
           <label
@@ -483,6 +511,7 @@ const AddShop = () => {
             id="commercialAgree"
             type="file"
             onChange={handleFileChange}
+            
             disabled={isView}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
           />
@@ -497,7 +526,26 @@ const AddShop = () => {
             </a>
           )}
         </div>
+  {/* Renewal Date */}
+  <div className="mb-6">
+          <label
+            className="block text-sm font-medium text-gray-700"
+            htmlFor="renewalDate"
+          >
+            Commercial Renewal Date
+          </label>
+          <input
+            id="renewalDate"
+            type="date"
+            disabled={isView}
 
+            value={formData.renewalDate.slice(0, 10)}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+          />
+         
+        </div>
+         
         {/* GST Certificate Upload */}
         <div className="mb-4">
   <label

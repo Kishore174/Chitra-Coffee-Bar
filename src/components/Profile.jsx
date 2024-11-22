@@ -82,7 +82,7 @@ useEffect(()=>{
                 src={values.profile || "https://via.placeholder.com/150"}
                 alt="Profile"
               />
-              <div
+              { isEditing && <div
                 className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full cursor-pointer"
                 onClick={handleEditImageClick}
               readOnly={!isEditing}
@@ -91,7 +91,7 @@ useEffect(()=>{
                 <CiEdit size={26} className="text-white" 
               readOnly={!isEditing}
               />
-              </div>
+              </div>}
             </div>
           </div>
         </div>

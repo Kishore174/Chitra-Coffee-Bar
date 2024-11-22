@@ -48,7 +48,7 @@ const Navbar = () => {
     { name: 'Dashboard', icon: FaTachometerAlt, path: '/dashboard' },
     { name: 'My Shops', icon: FaStore, path: '/myshop' },
     { name: 'Audits', icon: FaClipboardCheck, path: '/audit' },
-    { name: 'Auditer', icon: AiOutlineAudit, path: '/auditers' },
+    { name: 'Auditor', icon: AiOutlineAudit, path: '/auditors' },
     { name: 'Profile', icon: FaUser , path: '/profile' },
     { name: 'Settings', icon: FaTools, path: '/setting' },
     {
@@ -77,16 +77,16 @@ const Navbar = () => {
   return (
     <div className="relative  w-full">
       <div className="flex fixed z-40  items-center justify-between bg-white shadow p-4 h-16 w-full">
-        <div className="flex-1">
+        <div className="">
           <div className="flex items-center">
             <div className=" flex items-center">
               {!isMenuOpen && (
                 <button
                   onClick={() => setIsMenuOpen(true)}
-                  className="text-gray-700"
+                  className="text-gray-700 lg:hidden"
                   aria-label="Open menu"
                 >
-                  <FaBars className="h-6 w-6 -ml-2 text-xl" />
+                  <FaBars className="h-6 w-6  text-xl" />
                 </button>
               )}
             </div>

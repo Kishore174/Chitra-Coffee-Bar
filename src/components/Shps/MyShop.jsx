@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaEye, FaPlus } from 'react-icons/fa';
+import { FaEye, FaPlus, FaSearch } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { GrEdit } from 'react-icons/gr';
 import { MdDelete } from 'react-icons/md';
@@ -17,12 +17,13 @@ const MyShop = () => {
   const itemsPerPage = 10; // Set items per page
   const [loading, setLoading] = useState(true); // Loading state
   const navigate = useNavigate();
-
+  const [filteredShops, setFilteredShops] = useState([]);
   useEffect(() => {
     setLoading(true);  
     getAllShops()
       .then((res) => {
         setShops(res.data);
+        setFilteredShops(res.data);
       })
       .catch((err) => {
         toast.error(`Error: ${err.message}`);
@@ -59,17 +60,36 @@ const MyShop = () => {
   };
 
   // Pagination controls
-  const totalPages = Math.ceil(shops.length / itemsPerPage);
-  const paginatedShops = shops.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const totalPages = Math.ceil(filteredShops.length / itemsPerPage);
+  const paginatedShops = filteredShops.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-
+  const handleSearch = (e) => {
+    const lowercasedTerm = e.target.value.toLowerCase() ;
+    setFilteredShops(
+      shops.filter((shop) =>
+        Object.keys(shop).some((key) => 
+          typeof shop[key] === 'string' && shop[key].toLowerCase().includes(lowercasedTerm)
+        )
+      )
+    );
+  };
   return (
-    <div className=" min-h-screen">
-      <div className="flex  max-w-3xl  mx-auto flex-row items-start md:items-center justify-between mb-4 md:mb-6">
-        <h1 className="text-2xl md:text-3xl poppins-semibold mb-4  md:mb-0">My Shop</h1>
+    <div className=" max-w-screen-lg mx-auto  mt-2  min-h-screen">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-6">
+
+        <h1 className="text-2xl md:text-2xl poppins-semibold mb-4  md:mb-0">My Shop</h1>
+        <div className="relative w-full md:w-64">
+      <input
+        type="text"
+        placeholder="Search shop..."
+        className="w-full py-2 pr-4 text-sm border p-2 rounded-lg poppins-medium focus:outline-none focus:ring-1 focus:ring-red-400"
+        onChange={handleSearch}
+      />
+      <FaSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500" />
+    </div>
         <Link to="/addshop">
           <button className="bg-red-600 text-white rounded-lg poppins-semibold py-1 px-3 flex items-center">
             <FaPlus className="mr-2" /> Add Shop
@@ -77,18 +97,21 @@ const MyShop = () => {
         </Link>
       </div>
 
-      {/* Loader while data is being fetched */}
+   
       {loading ? (
         <Loader/>
       ) : (
         <>
           {/* Responsive Table for Desktop */}
-          <div className="hidden md:block mt-4">
-  <table className="max-w-3xl mx-auto bg-white border">
+          <div className='md:block hidden'>
+
+          <table className="min-w-full  mt-4 bg-white border">
+
+
     <thead className="bg-red-600 whitespace-nowrap text-white">
       <tr>
-        {['S.No', 'Shop Name', 'Location', 'Contact Details', 'Franchise Name', 'Property Type', 'Action'].map((header, idx) => (
-          <th key={idx} className="px-2 py-3 border-b-2 border-gray-300 text-left text-xs md:text-sm poppins-semibold uppercase tracking-wider">
+        {['S.No', 'Shop Name', 'Location', 'Contact Details', 'Franchise Type', 'Property Type', 'Action'].map((header, idx) => (
+          <th key={idx} className="px-2 py-3 border-b-2 border-gray-300 text-left text-xs md:text-xs poppins-semibold uppercase tracking-wider">
             {header}
           </th>
         ))}
@@ -105,19 +128,19 @@ const MyShop = () => {
             </div>
           </td>
           <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">  
-            <div>{shop?.address?.length > 15 
+            <div title={shop.address} className=' cursor-context-menu'>{shop?.address?.length > 15 
                         ? `${shop?.address.slice(0, 15)}...` 
                         : shop?.address}
             </div>
-            <br />
-            <a href={shop.location} target="_blank" className="text-blue cursor-pointer" rel="noopener noreferrer">
+          
+            <a href={shop.location} target="_blank" className="text-blue-500 cursor-pointer" rel="noopener noreferrer">
               Map Link
             </a>
           </td>
           <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">
             {shop.phone} <br />
-            <a href={`mailto:${shop.email}`} className="text-blue-500 hover:underline">
-              {shop.email}
+            <a href={`mailto:${shop.email}`} className="text-blue-500 lowercase hover:underline">
+              {shop.email.slice(0,16)}...
             </a>
           </td>
           <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.franchiseType}</td>

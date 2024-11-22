@@ -158,7 +158,7 @@ const { user } = useAuth();
 
       {/* Stock Section */}
       <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
-        <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Stock</h2>
+        <h2 className="bg-red-100 text-red-600 text-md poppins-bold p-2">Stock</h2>
         <div className="p-2 flex flex-wrap gap-4">
           {auditData?.stock?.captureImages?.map((image, index) => (
             <div key={index} className="flex flex-col items-center">
@@ -171,7 +171,7 @@ const { user } = useAuth();
 
       {/* Employees Section */}
       <section className="mb-4 border border-red-200 rounded-lg overflow-hidden">
-        <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Employees</h2>
+        <h2 className="bg-red-100 text-red-600 text-md poppins-bold p-2">Employees</h2>
         <div className="p-2 flex flex-wrap gap-4">
           {auditData?.employees?.map((employee, index) => (
             <InfoRow key={index} label={`Area: ${employee.area}`} value={`Count: ${employee.count}, Names: ${employee.names}`} />
@@ -181,7 +181,7 @@ const { user } = useAuth();
 
       {/* Summary Section */}
       <section className="border border-red-200 rounded-lg overflow-hidden">
-        <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Summary</h2>
+        <h2 className="bg-red-100 text-red-600 text-md poppins-bold p-2">Summary</h2>
         <div className="p-2 flex flex-wrap gap-4">
           {/* <InfoRow label="Total Items Checked" value={auditData?.total_items_checked} />
           <InfoRow label="Comments" value={auditData?.comment} /> */}
@@ -190,7 +190,7 @@ const { user } = useAuth();
       </section>
        {audio && (
         <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
-          <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Previous Audio Report</h2>
+          <h2 className="bg-red-100 text-red-600 text-md poppins-semibold p-2">Previous Audio Report</h2>
           <div className="p-2">
             <div className="flex items-center justify-between mb-4">
               <p className="text-gray-800">
@@ -393,7 +393,7 @@ const RecordingControls = ({ setIsRecording }) => {
 // Live Snacks Section Component
 const LiveSnacksSection = ({ snacks, remark, rating, captureImages }) => (
   <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
-    <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Live Snacks</h2>
+    <h2 className="bg-red-100 text-red-600 text-md poppins-bold p-2">Live Snacks</h2>
     <div className="p-2 flex flex-wrap gap-3">
       {snacks?.map((snack, index) => (
         <div key={index} className="mb-4">
@@ -406,7 +406,7 @@ const LiveSnacksSection = ({ snacks, remark, rating, captureImages }) => (
 
       {captureImages && captureImages.length > 0 && (
         <div className="mt-2">
-          <p className="font-medium">Images:</p>
+          <p className="poppins-medium">Images:</p>
           <div className="flex gap-2">
             {captureImages.map((image, idx) => (
               <div key={idx} className="relative">
@@ -458,7 +458,7 @@ const AuditSection = ({ title, data, fields }) => {
   return (
     <section className="mb-6 border border-red-200 rounded-lg overflow-hidden">
       {/* Section Title */}
-      <h2 className="bg-red-100 text-red-600 text-lg font-semibold p-4">{title}</h2>
+      <h2 className="bg-red-100 text-red-600 text-lg poppins-bold p-4">{title}</h2>
 
       {/* Content Wrapper */}
       <div className="p-4 flex flex-wrap gap-6">
@@ -471,7 +471,7 @@ const AuditSection = ({ title, data, fields }) => {
             if (Array.isArray(value)) {
               return (
                 <div key={index} className="flex-shrink-0  w-auto">
-                  <p className="text-sm font-semibold text-gray-600 mb-2">{capitalizeFirstLetter(field)}</p>
+                  <p className="text-sm poppins-semibold text-gray-600 mb-2">{capitalizeFirstLetter(field)}</p>
                   <ul className="list-disc pl-5 text-gray-800">
                     {value.map((item, idx) => (
                       <li key={idx} className="mb-2">
@@ -547,7 +547,7 @@ const InfoRow = ({ label, value }) => {
   return (
     <div className="w-full sm:w-1/2">
       <p className="text-sm poppins-semibold text-black">{label}</p>
-      <p className="text-gray-800  whitespace-nowrap">{value}</p> 
+      <p className="text-gray-600  poppins-regular  whitespace-nowrap">{value}</p> 
     </div>
   );
 };

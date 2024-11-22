@@ -22,7 +22,7 @@ const SideMenu = () => {
         { name: 'Dashboard', icon: FaTachometerAlt, path: '/dashboard' },
         { name: 'My Shops', icon: FaStore, path: '/myshop' },
         { name: 'Audits', icon:FaClipboardCheck, path: '/audit' },
-        { name: 'Auditer', icon:AiOutlineAudit , path: '/auditers' },
+        { name: 'Auditor', icon:AiOutlineAudit , path: '/auditors' },
     
         { name: 'Profile', icon: FaUser, path: '/profile' },
         { name: 'Settings', icon: FaTools, path: '/setting' },

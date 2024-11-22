@@ -72,7 +72,7 @@ const RouteCard = ({ routeId, routeName,shops, onRemoveCard, onEdit }) => {
     fetchRoutes();
   }, [modalOpen]);
   return (
-    <div className="p-0.5 flex flex-col bg-white shadow-lg rounded-lg mb-4 md:max-w-xl lg:max-w-2xl">
+    <div className="p-0.5 flex flex-col  bg-white shadow-lg rounded-lg mb-4 md:max-w-xl lg:max-w-2xl">
     {/* Header Section */}
     <div className="flex justify-between bg-red-600 items-center rounded-br-2xl p-2 poppins-semibold">
       <button className="text-white text-sm md:text-base lg:text-lg">{routeName}</button>
@@ -88,13 +88,13 @@ const RouteCard = ({ routeId, routeName,shops, onRemoveCard, onEdit }) => {
   
     {/* Action Button */}
     <div className="m-2 flex justify-end">
-      <button onClick={toggleModal} className="px-2 py-1 text-xs md:text-sm lg:text-base text-white bg-red-600 rounded-md transition">
+      <button onClick={toggleModal} className="px-2 py-1 text-xs md:text-sm lg:text-base poppins-semibold text-white bg-red-600 rounded-md transition">
         Select Shops
       </button>
     </div>
   
     {/* Selected Routes */}
-    <div className="flex flex-wrap mt-2 gap-2 mb-4">
+    <div className="flex flex-wrap h-44 p-2 overflow-y-auto scrollbar-custom mt-2 gap-2 mb-4">
       {selectedRoutes.length === 0 ? (
         <div className="text-gray-500 text-sm text-center flex justify-center mx-auto poppins-semibold">
           No shops Available
@@ -103,7 +103,7 @@ const RouteCard = ({ routeId, routeName,shops, onRemoveCard, onEdit }) => {
         selectedRoutes.map((route, index) => (
           <div
             key={index}
-            className="flex items-center px-3 py-1 bg-gray-200 rounded-full text-sm text-black shadow-sm"
+            className="flex items-center h-fit px-3 py-1 bg-gray-200 rounded-full text-sm text-black shadow-sm"
           >
             <span>{route.shopName}</span>
             <button
@@ -119,7 +119,7 @@ const RouteCard = ({ routeId, routeName,shops, onRemoveCard, onEdit }) => {
     </div>
   
     {/* Count of Selected Shops */}
-    <p className="text-gray-500 text-xs md:text-sm text-end p-2 poppins-medium">
+    <p className="text-gray-500 text-xs md:text-sm text-end p-2 poppins-semibold">
       Selected Shops: {selectedRoutes.length}
     </p>
   
@@ -189,7 +189,7 @@ const RouteCard = ({ routeId, routeName,shops, onRemoveCard, onEdit }) => {
                 </div>
               ))
             ) : (
-              <div className="p-2 text-gray-500 text-center text-sm">No routes found</div>
+              <div className="p-2 text-gray-500 text-center text-sm">No Shops Found</div>
             )}
           </div>
   
@@ -301,7 +301,7 @@ const Routes = () => {
       </button>
       <button
         onClick={() => setModalOpen(true)}
-        className="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
+        className="px-3 py-1 bg-red-600 text-white rounded-md poppins-semibold hover:bg-red-700 transition"
       >
         Create Route
       </button>
@@ -319,7 +319,7 @@ const Routes = () => {
     )}
   
     {/* Route Cards Grid */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mx-auto gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 mx-auto gap-2 p-6">
       {routeCards &&
         routeCards.map((card) => (
           <RouteCard
@@ -336,7 +336,7 @@ const Routes = () => {
   
     {/* Confirm Delete Dialog */}
     {isConfirmDialogOpen && (
-      <div className="fixed inset-0 z-20 flex items-center justify-center bg-gray-800 bg-opacity-50">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold mb-4">Are you sure you want to delete this shop?</h2>
           <div className="flex justify-end space-x-4">
