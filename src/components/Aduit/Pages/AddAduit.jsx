@@ -89,7 +89,7 @@ const AddAudit = () => {
             <div className='p-6 mx-auto flex flex-col items-center'>
               <div className='flex flex-wrap gap-5 justify-center'>
                 {audits.map((audit) => (
-                  <div key={audit.id} className='bg-white shadow-lg rounded-lg w-52 flex flex-col items-center p-3 transition-transform transform hover:scale-105 hover:shadow-xl'>
+                  <div key={audit.id} className='bg-white shadow-lg rounded-lg lg:w-56 md:w-52 w-full flex flex-col items-center p-3 transition-transform transform hover:scale-105 hover:shadow-xl'>
                     <div className="relative h-44 w-full rounded-lg overflow-hidden mb-2">
                       <img src={audit.image} alt={audit.alt} className='h-full w-full object-cover transition-transform transform hover:scale-110' />
                       <div className="absolute inset-0 bg-black opacity-0 hover:opacity-30 transition-opacity"></div>

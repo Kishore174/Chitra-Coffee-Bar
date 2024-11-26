@@ -21,11 +21,11 @@ const [loading, setLoading] = useState(true); // Loading state
   const navigate = useNavigate();
 
   const handleEdit = (auditor) => {
-    navigate('/add-Auditers', { state: { auditor, isEdit: true } });
+    navigate('/add-auditors', { state: { auditor, isEdit: true } });
   };
 
   const handleView = (auditor) => {
-    navigate('/add-Auditers', { state: { auditor, isView: true } });
+    navigate('/add-auditors', { state: { auditor, isView: true } });
   };
 
   const confirmDelete = () => {

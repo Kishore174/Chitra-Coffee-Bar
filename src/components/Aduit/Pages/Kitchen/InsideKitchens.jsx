@@ -69,10 +69,10 @@ const InsideKitchens = () => {
           toast.error(`Please provide hygiene information for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
           return false;
         }
-        if (!itemData.brandName) {
-          toast.error(`Please provide a brand name for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
-          return false;
-        }
+        // if (!itemData.brandName) {
+        //   toast.error(`Please provide a brand name for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+        //   return false;
+        // }
         if (!itemData.rating) {
           toast.error(`Please provide a rating for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
           return false;

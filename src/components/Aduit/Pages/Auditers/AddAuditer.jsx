@@ -13,13 +13,12 @@ const AddAuditer = () => {
   
   const { auditor, isEdit, isView } = location.state || {};
 
-  // State to store form values
-  const [formData, setFormData] = useState(auditor || {
+   const [formData, setFormData] = useState(auditor || {
     name: '',
     email: '',
     phone: '',
     address: '',
-    documentType: 'aadhar', // Default document type
+    documentType: 'aadhar',  
     documentFile: null,
     route: '',
     drivingLicenseNo: '',
@@ -68,7 +67,7 @@ const AddAuditer = () => {
       });
       
       toast.success(res.message);
-      navigate('/Auditers');
+      navigate('/auditors');
     } catch (error) {
       console.log(error);
     }

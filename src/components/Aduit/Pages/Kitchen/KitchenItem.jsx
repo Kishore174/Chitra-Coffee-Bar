@@ -103,7 +103,7 @@ const KitchenItem = ({ title, itemType, onUpdate, data }) => {
   return (
     <div className="border rounded-lg shadow-md p-4 w-full sm:w-2/5 md:w-[250px] justify-between flex flex-col">
 
-      <h2 className="text-xl poppins-semibold  capitalize mb-2">{title}</h2>
+      <h2 className="text-xl poppins-semibold  capitalize mb-2">{title.replace(/([A-Z])/g, " $1").trim()}</h2>
       <div>
         <label className="text-sm font-medium text-gray-500 mb-2 block">Hygiene</label>
         <div className="flex space-x-4 mb-4">
@@ -128,6 +128,7 @@ const KitchenItem = ({ title, itemType, onUpdate, data }) => {
             value={brandName} // Bind the input value to brandName state
             onChange={(e) => setBrandName(e.target.value)} // Update brandName state on change
             className="border rounded-md p-2 w-full mb-2" 
+            required
           />
         </div>
       )}

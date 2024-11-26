@@ -9,6 +9,8 @@ const BrandName = () => {
   const [inputFields, setInputFields] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentField, setCurrentField] = useState({ _id: null,  name: '' });
+  // const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleOpenDialog = (field = { id: null,  name: '' }) => {
@@ -22,6 +24,7 @@ const BrandName = () => {
   };
 
   const handleSubmit = async() => {
+    
     if (currentField._id) {
       updateBrand(currentField._id,{name:currentField.name})
       .then((res) => {

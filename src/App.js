@@ -100,7 +100,7 @@ function App() {
               <Route path="addshop" element={<AddShop />} />
               <Route path="setting" element={<Setting />} />
               <Route path="auditors" element={<Auditers />} />
-              <Route path="add-auditors" element={<AddAuditer />} />
+              <Route path="add-auditors" element={<AddAuditer/>} />
               <Route path="routes" element={<Rotes />} />
               <Route path="set-routes" element={<SetRoutes />} />
               <Route path="backeryproducts" element={<BakerProducts />} />
