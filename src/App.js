@@ -79,6 +79,10 @@ function App() {
               <Route path="bunzo/:auditId" element={<Bunzo />} />
               <Route path="bakshanm" element={<Bakshanam />} />
               <Route path="insideshop/:auditId" element={<InsideShop />} />
+                   <Route path="routes" element={<Rotes />} />
+              <Route path="set-routes" element={<SetRoutes />} />
+              <Route path="addshop" element={<AddShop />} />
+              <Route path="myshop" element={<MyShop />} />
 
               {/* <Route path="nextProcess" element={<Next01/>} /> */}
               {/* <Route path="Kitchenarea" element={<InsideKitichen />} /> */}
@@ -96,13 +100,13 @@ function App() {
           </Route>
           <Route element={<ProtectedRoute allowedRoles={["super-admin"]} />}>
             <Route path="/" element={<Main />}>
-              <Route path="myshop" element={<MyShop />} />
-              <Route path="addshop" element={<AddShop />} />
+              {/* <Route path="myshop" element={<MyShop />} /> */}
+              {/* <Route path="addshop" element={<AddShop />} /> */}
               <Route path="setting" element={<Setting />} />
               <Route path="auditors" element={<Auditers />} />
               <Route path="add-auditors" element={<AddAuditer/>} />
-              <Route path="routes" element={<Rotes />} />
-              <Route path="set-routes" element={<SetRoutes />} />
+              {/* <Route path="routes" element={<Rotes />} />
+              <Route path="set-routes" element={<SetRoutes />} /> */}
               <Route path="backeryproducts" element={<BakerProducts />} />
               <Route path="brandName" element={<BrandName />} />
               <Route path="livesnackname" element={<LiveSnacksName />} />

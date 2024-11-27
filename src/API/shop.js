@@ -13,6 +13,10 @@ export const getAllShops = async (allshops) => {
   const response = await axiosintance.get(`/shops`, allshops);
   return response.data;
 };
+export const getShopByAuditor = async () => {
+  const response = await axiosintance.get(`/routes/shops`, );
+  return response.data;
+};
 export const upDateShop = async (id, updateData) => {
   const formData = new FormData();
 

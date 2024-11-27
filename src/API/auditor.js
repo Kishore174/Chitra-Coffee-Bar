@@ -4,7 +4,16 @@ export const createAuditor = async (shopdata) => {
 
   // Append all fields to the formData object
   for (const key in shopdata) {
-    formData.append(key, shopdata[key]);
+    if (key !== 'routes') {
+      formData.append(key, shopdata[key]);
+    }
+  }
+
+  // Ensure shopdata.routes is an array and append it separately
+  if (Array.isArray(shopdata.routes)) {
+    shopdata.routes.forEach((route) => {
+      formData.append('routes', route); // Append each route as a separate entry
+    });
   }
   const response = await axiosintance.post(`/auditor-create`, formData);
   return response.data;
@@ -35,5 +44,9 @@ export const auditAssign = async()=>{
 }
 export const getProfile = async(id)=>{
   const response = await axiosintance.get(`/auditor/${id}`);
+  return response.data;
+}
+export const updateProfile = async(id)=>{
+  const response = await axiosintance.patch(`/auditor/${id}/profile`);
   return response.data;
 }

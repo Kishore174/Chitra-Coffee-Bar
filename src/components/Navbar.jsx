@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaTachometerAlt, FaStore, FaClipboardCheck, FaUser , FaTools, FaRoute, FaBars, FaTimes, FaSignOutAlt, FaAngleDown } from 'react-icons/fa';
+import { FaTachometerAlt, FaStore, FaClipboardCheck, FaUser , FaTools, FaRoute, FaBars, FaTimes, FaSignOutAlt, FaAngleDown, FaPhoneAlt } from 'react-icons/fa';
 import { AiOutlineAudit } from 'react-icons/ai';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from "../Assets/logo01.png";
@@ -59,10 +59,22 @@ const Navbar = () => {
         { name: 'Set Routes', path: '/set-routes' },
       ]
     }
-  ] : [
+  ] :  [
     { name: 'Dashboard', icon: FaTachometerAlt, path: '/dashboard' },
-    { name: 'Audits', icon: FaClipboardCheck, path: '/audit' },
-    { name: 'Profile', icon: FaUser , path: '/profile' },
+    { name: 'My Shops', icon: FaStore, path: '/myshop' },
+
+    { name: 'Audits', icon:FaClipboardCheck, path: '/audit' },
+    {
+      name: 'Routes',
+      icon: FaRoute,
+      subRoutes: [
+        // { name: 'Create Routes', path: '/routes' },
+        { name: 'Set Routes', path: '/set-routes' },
+      ]
+    },
+    { name: 'Profile', icon: FaUser, path: '/profile' },
+   
+
   ]) : [];
 
   useEffect(() => {
@@ -184,11 +196,13 @@ const Navbar = () => {
                 </div>
               </div>
               <div className="mt-6 flex justify-center w-full">
-                <a href="https://azerotech.com/">
-                  <button className="bg-white poppins-semibold text-black text-sm py-2 px-4 rounded-full   transition duration-200">
-                    Contact Us
+               
+              <button className="bg-white poppins-semibold text-black text-sm py-2 px-4 rounded-full transition duration-200 flex items-center gap-2">
+                    <a href="tel:+91 9363 95 9787"  className="flex items-center">
+ <FaPhoneAlt size="19"  />
+ <span className="ml-2  whitespace-nowrap">+91 9363959787</span>
+</a>
                   </button>
-                </a>
               </div>
             </div>
           </div>

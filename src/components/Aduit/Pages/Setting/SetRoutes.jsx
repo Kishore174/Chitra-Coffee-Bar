@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
-import { dropDownRoutes, getRouteById } from "../../../../API/createRoute";
+import { dropDownRoutes, getRouteById, getRoutesByAuditor } from "../../../../API/createRoute";
 import ShopCard from "./ShopCard";
 import Loader from "../../../Loader";
+import { useAuth } from "../../../../context/AuthProvider";
 
 const SetRoutes = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,6 +15,7 @@ const SetRoutes = () => {
   const [routeShops, setRouteShops] = useState([]);
   const [set, setSet] = useState([]);
   const [loading, setLoading] = useState(false);
+  const {user} = useAuth()
 
   // // Options for the dropdown
   // const options = [
@@ -31,7 +33,8 @@ const SetRoutes = () => {
     setLoading(true)
     const fetchRoutes = async () => {
       try {
-        const res = await dropDownRoutes();
+        const res= await dropDownRoutes()
+        // const res = user?.role === "super-admin" ? await dropDownRoutes() : await getRoutesByAuditor();
         setRoutes(res.data);
         setLoading(false)
       } catch (error) {

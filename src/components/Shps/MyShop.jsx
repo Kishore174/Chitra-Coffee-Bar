@@ -3,11 +3,12 @@ import { FaEye, FaPlus, FaSearch } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { GrEdit } from 'react-icons/gr';
 import { MdDelete } from 'react-icons/md';
-import { deleteShop, getAllShops } from '../../API/shop';
+import { deleteShop, getAllShops, getShopByAuditor } from '../../API/shop';
 import toast from 'react-hot-toast';
 // import { LineWave } from 'react-loader-spinner';/ // Import the loader/
  
 import Loader from '../Loader';
+import { useAuth } from '../../context/AuthProvider';
 
 const MyShop = () => {
   const [shops, setShops] = useState([]);
@@ -18,9 +19,11 @@ const MyShop = () => {
   const [loading, setLoading] = useState(true); // Loading state
   const navigate = useNavigate();
   const [filteredShops, setFilteredShops] = useState([]);
+  const {user} = useAuth()
   useEffect(() => {
-    setLoading(true);  
-    getAllShops()
+    setLoading(true);
+    const getApi = user?.role === "super-admin" ? getAllShops : getShopByAuditor
+    getApi()
       .then((res) => {
         setShops(res.data);
         setFilteredShops(res.data);

@@ -46,12 +46,12 @@ const AddAudit = () => {
     { id: 4, image: bakery, alt: "bunzo", label: "Snacks",item:"bakeryProducts", link: `/bunzo/${id}` },
     { id: 5, image: insideshop, alt: "insideshop", label: "Inside Shop",item:"insideShop", link: `/insideshop/${id}` },
     { id: 6, image: insideshop, alt: "insidektchen", label: "Inside Kitchen",item:"insideKitchen", link: `/kitchen/${id}` },
-    { id: 7, image: outsideshop, alt: "outsidektchen", label: "Outside Kitchen",item:"outsideKitchen", link: `/outsideshop/${id}` },
+    { id: 7, image: outsideshop, alt: "outsidektchen", label: "Outside Shop",item:"outsideKitchen", link: `/outsideshop/${id}` },
     { id: 8, image: WallBranding, alt: "wallBranding", label: "Wall Branding",item:"wallBranding", link: `/branding/${id}` },
     { id: 9, image: emp, alt: "employee", label: "Employee",item:"employees", link: `/employee/${id}` },
     { id: 10, image: stock, alt: "stock", label: "Stock & Store",item:"stock", link: `/stock/${id}` },
-    { id: 11, image: wallPanting, alt: "panting", label: "Wall Panting",item:"painting", link: `/wallpanting/${id}` },
-    { id: 12, image: dress, alt: "dress", label: "Dressing",item:"uniformSection", link: `/dressing/${id}` },
+    { id: 11, image: wallPanting, alt: "panting", label: "Interior",item:"painting", link: `/wallpanting/${id}` },
+    { id: 12, image: dress, alt: "dress", label: "Dress Code",item:"uniformSection", link: `/dressing/${id}` },
   ]; 
   
   return (

@@ -16,7 +16,10 @@ const AuditReport = () => {
   const { auditId } = useParams();
   const [isRecording, setIsRecording] = useState(false);
   const [audio, setAudio] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(true); // Modal state
+
   const [signatureType, setSignatureType] = useState(''); 
+  const [currentAudio, setCurrentAudio] = useState(null);
   const navigate = useNavigate()
 const { user } = useAuth();
 
@@ -25,6 +28,9 @@ const { user } = useAuth();
     getAudit(auditId).then(res => {
       setAuditData(res.data)
       setAudio(res.data?.audioRecord);
+      if(res.data?.audioRecord){
+        setIsModalOpen(false)
+      }
       setSignature(res.data?.signature)
     });
   }, [auditId]);
@@ -34,8 +40,27 @@ const { user } = useAuth();
   };
 
   const handlePlayAudio = (audioUrl) => {
+    // Stop currently playing audio if it exists
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0; // Reset to start
+    }
+
     const audio = new Audio(audioUrl);
+    setCurrentAudio(audio); // Set the current audio
     audio.play();
+
+    // Add an event listener to reset the current audio when it ends
+    audio.onended = () => {
+      setCurrentAudio(null);
+    };
+  };
+  const handleStopAudio = () => {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0; // Reset to start
+      setCurrentAudio(null); // Clear the current audio state
+    }
   };
   const handleSaveSignature = async () => {
     // Get the trimmed signature image as a Blob
@@ -75,6 +100,34 @@ const { user } = useAuth();
   };
   return (
     <div className="p-4 bg-white text-gray-800 font-sans max-w-3xl mx-auto">
+         {isModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
+              <div className="bg-white p-6 rounded shadow-lg">
+                {/* <h2 className="text-lg font-semibold">Confirm Submission</h2> */}
+                <p className="mt-2 text-md">Once you start the audio, you won't be able to go back. <br/>Ensure you're ready before proceeding</p>
+                <div className="flex justify-end mt-4 space-x-2">
+                  <button
+                    onClick={()=>{
+                      setIsModalOpen(false)
+                      navigate(-1)
+                    }}
+                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={()=>{
+                      setIsRecording(true)
+                      setIsModalOpen(false)
+                    }}
+                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
       {/* Report Title */}
       <div className="flex items-center justify-between text-center mb-6 border-b border-gray-300 pb-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
@@ -130,7 +183,7 @@ const { user } = useAuth();
           fields={['exhaustFan', 'grinder', 'kitchenFloor', 'kitchenLight', 'milkFreezer', 'sink', 'snackMaking', 'workTable']}
         />
         <AuditSection
-          title="Outside Kitchen"
+          title="Outside Shop"
           data={auditData?.outsideKitchen}
           fields={['lollipopStandArea', 'shopBoard']}
         />
@@ -142,7 +195,7 @@ const { user } = useAuth();
          
         
         <AuditSection
-          title="Painting"
+          title="Interior"
           data={auditData?.painting}
           fields={['fan', 'light', 'celling',  'wallPainting',
             "floorTail",
@@ -150,7 +203,7 @@ const { user } = useAuth();
             "rating",]}
         />
         <AuditSection
-          title="Uniform Section"
+          title="Dress Code "
           data={auditData?.uniformSection}
           fields={['cap', 'cort', 'gloves', 'apron']}
         />
@@ -188,7 +241,7 @@ const { user } = useAuth();
           <InfoRow label="Overall Rating" value={`${auditData?.rating}/5`} />
         </div>
       </section>
-       {audio && (
+      {audio && (
         <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
           <h2 className="bg-red-100 text-red-600 text-md poppins-semibold p-2">Previous Audio Report</h2>
           <div className="p-2">
@@ -196,12 +249,18 @@ const { user } = useAuth();
               <p className="text-gray-800">
                 Audio Recorded On: {new Date(audio.date).toLocaleDateString()}
               </p>
-              <button
-                onClick={() => handlePlayAudio(audio.recordUrl)}
-                className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
-              >
-                Play Audio
-              </button>
+              <div className="flex space-x-2">
+                {/* <button
+                  onClick={() => handlePlayAudio(audio.recordUrl)}
+                  className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+                >
+                  Play Audio
+                </button> */}
+             { audio &&  <audio className="rounded-md" controls>
+              <source src={audio.recordUrl} type="audio/wav" />
+              Your browser does not support the audio element.
+            </audio>}
+              </div>
             </div>
           </div>
         </section>
