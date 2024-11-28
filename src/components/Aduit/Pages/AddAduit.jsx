@@ -66,10 +66,10 @@ const AddAudit = () => {
           className="h-32 w-32 rounded-full border-4 border-red-500 object-cover transition-transform duration-300 transform hover:scale-110 mr-6"
         />
         <div className="flex flex-col">
-          <h2 className="text-2xl poppins-bold text-gray-800 mb-1 hover:text-red-600 cursor-pointer transition-colors duration-300">{shopDetail?.shopName}</h2>
+          <h2 className="text-2xl poppins-bold text-gray-800 mb-1 hover:text-red-600 cursor-pointer transition-colors capitalize duration-300">{shopDetail?.shopName}</h2>
           <div className="text-sm text-gray-700">
           <p className="mb-1">
-              <span className="poppins-semibold text-black">Name:</span> <span className="poppins-medium text-gray-600">{shopDetail?.ownerName}</span>
+              <span className="poppins-semibold text-black">Name:</span> <span className="poppins-medium capitalize text-gray-600">{shopDetail?.ownerName}</span>
             </p>
             <p className="mb-1">
               <span className="poppins-semibold text-black">Email:</span> <span className="poppins-medium text-gray-600">{shopDetail?.email}</span>

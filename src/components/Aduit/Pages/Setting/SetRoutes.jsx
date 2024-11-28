@@ -33,8 +33,8 @@ const SetRoutes = () => {
     setLoading(true)
     const fetchRoutes = async () => {
       try {
-        const res= await dropDownRoutes()
-        // const res = user?.role === "super-admin" ? await dropDownRoutes() : await getRoutesByAuditor();
+        // const res= await dropDownRoutes()
+        const res = user?.role === "super-admin" ? await dropDownRoutes() : await getRoutesByAuditor(user?._id);
         setRoutes(res.data);
         setLoading(false)
       } catch (error) {

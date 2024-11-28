@@ -55,15 +55,15 @@ const ShopCard = ({ shops,routeId,index ,selSet }) => {
         </button>
       </div>
 
-      <div className="flex flex-wrap gap-3 mb-4">
+      <div className="flex flex-wrap  h-44 p-2 overflow-y-auto scrollbar-custom  gap-3 mb-4">
         {selectedRoutes.map((route) => (
           <div
             key={route._id}
-            className="flex items-center px-4 py-2 bg-gray-100 rounded-full text-gray-800 shadow-sm"
+            className="flex items-center px-4 h-fit  bg-gray-100  rounded-full text-gray-800 shadow-sm"
           >
             <span className="text-sm">{route.shopName}</span>
             <button
-              className="ml-2 text-red-500 hover:text-red-700"
+              className="ml-2 text-red-500 hove:text-red-700"
               onClick={() => handleRemoveRoute(route)}
               aria-label={`Remove ${route.shopName}`}
             >

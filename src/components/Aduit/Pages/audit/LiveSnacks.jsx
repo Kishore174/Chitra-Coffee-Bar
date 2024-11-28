@@ -8,6 +8,7 @@ import { getSnackBrand } from '../../../../API/settings';
 import { getPrevious } from '../../../../API/audits';
 import { motion, AnimatePresence } from 'framer-motion';
 import Loader from '../../../Loader';
+import DateFormat from '../../../DateFormat';
 
 const LiveSnacks = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -240,7 +241,7 @@ const LiveSnacks = () => {
           <AnimatePresence>
             {isDialogOpen && (
               <motion.div
-                className="fixed inset-0 flex z-20 mr-2 justify-end h-screen bg-black bg-opacity-50"
+                className="fixed inset-0 flex z-50 mr-2 justify-end h-screen bg-black bg-opacity-50"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -260,7 +261,7 @@ const LiveSnacks = () => {
                     <XMarkIcon className="h-6 w-6" />
                   </button>
                   <h2 className="text-2xl font-semibold mb-6 text-red-600 border-b-2 border-red-600 pb-2">Audit Date</h2>
-                  <p className="text-gray-700 text-sm mb-6">{selectedDate}</p>
+                  <p className="text-gray-700 text-sm mb-6"><DateFormat date={selectedDate}/></p>
                   <div className="grid gap-6">
                     {[
                       { label: 'Snacks', value: lastAudit?.snacks },

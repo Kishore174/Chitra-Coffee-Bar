@@ -292,7 +292,7 @@ const AddAuditer = () => {
         </div>*/}
         <div className="col-span-1">
           <label className="block text-sm font-medium text-gray-700">
-            Route
+            Routes
           </label>
           <div className="relative">
            

@@ -29,7 +29,7 @@ export const getRouteById = async (id) => {
   const response = await axiosintance.get(`/route/${id}`);
   return response.data;
 };
-export const getRoutesByAuditor = async () => {
-  const response = await axiosintance.get(`/auditor/routes`);
+export const getRoutesByAuditor = async (id) => {
+  const response = await axiosintance.get(`/auditor/routes/${id}`);
   return response.data;
 };

@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { Link, useNavigate } from "react-router-dom";
 import { BsArrowRight } from "react-icons/bs";
-import { getAllAudits, getAuditByAuditor } from "../../API/audits";
+import { assignAuditorsAudit, getAllAudits, getAuditByAuditor } from "../../API/audits";
 import { ScaleLoader } from "react-spinners";
 import { useAuth } from "../../context/AuthProvider";
 import { auditAssign } from "../../API/auditor";
 import toast from "react-hot-toast";
 import Loader from "../Loader";
+import { formatTime } from "../../utils/tool";
 
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -61,6 +62,15 @@ const Table = () => {
         toast.error(err.response?.data?.message);
       });
   };
+  const handleToAsignAuditor = () => {
+    assignAuditorsAudit()
+      .then((res) => {
+        toast.success(res.message);
+      })
+      .catch((err) => {
+        toast.error(err.response?.data?.message);
+      });
+  };
   const scheduleDays = [0, 1]; // Active days: Sunday to Wednesday
 
   // Find the next active day
@@ -97,7 +107,7 @@ const Table = () => {
 
       <div className="flex justify-between">
         <h2 className="text-2xl poppins-semibold">My Audit</h2>
-        {user && user.role === "super-admin" && audits.length < 0 && isScheduleDay ? (
+        {/* {user && user.role === "super-admin" && audits.length < 0 && isScheduleDay ? (
           <button
             className={`${
               !isScheduleDay ? "bg-red-400" : "bg-red-600"
@@ -113,7 +123,16 @@ const Table = () => {
               {daysToActive} day{daysToActive > 1 ? "s" : ""} to active
             </p>
           )
-        )}
+        )} */}
+        {filteredAudits.length === 0 && dayjs(filteredAudits[0]?.auditDate).isSame(selectedDate, "day") && <button
+            className={`${
+               "bg-red-600"
+            } text-white rounded-lg poppins-semibold py-1 px-3 flex items-center`}
+            // disabled={isScheduleDay}
+            onClick={handleToAsignAuditor}
+          >
+            Schedule
+          </button>}
       </div>
 
       {loading ? (
@@ -125,7 +144,7 @@ const Table = () => {
             {filteredAudits.length > 0 ? (
               filteredAudits.map((audit, index) => (
                 <div
-                  key={audit.id}
+                  key={audit._id}
                   className="border rounded-lg p-4 mb-4 shadow-md"
                 >
                   <div className="poppins-regular">
@@ -256,7 +275,14 @@ const Table = () => {
                               </div>
                             )}
                             <div>{audit.status}</div>
-                          </div>
+                              {user?.role === "super-admin" && (
+                                <div className="flex items-center gap-1 justify-center text-sm text-gray-700">
+                                  <span>{formatTime(audit.inTime) || "0:00"}</span>
+                                  <span>-</span>
+                                  <span>{formatTime(audit.outTime) || "0:00"}</span>
+                                </div>
+                              )}
+                            </div>
                         </td>
                         <td className="px-4 py-4 border-b poppins-regular border-gray-200 text-sm text-gray-700">
                           <div>{audit.shop.phone}</div>

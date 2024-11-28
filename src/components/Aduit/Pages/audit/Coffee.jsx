@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { getPrevious } from '../../../../API/audits';
 import { motion, AnimatePresence } from 'framer-motion';
 import Loader from '../../../Loader';
+import DateFormat from '../../../DateFormat';
 
 const Coffee = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -302,7 +303,7 @@ const Coffee = () => {
                     <XMarkIcon className="h-6 w-6" />
                   </button>
                   <h2 className="text-2xl font-semibold mb-6 text-red-600 border-b-2 border-red-600 pb-2">Audit Date</h2>
-                  <p className="text-gray-700 text-sm mb-6">{selectedDate}</p>
+                  <p className="text-gray-700 text-sm mb-6"><DateFormat date={selectedDate}/></p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {[
                       { label: 'Aroma', value: lastAudit?.aroma },

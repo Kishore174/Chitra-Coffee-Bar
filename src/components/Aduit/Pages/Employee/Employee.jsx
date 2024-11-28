@@ -91,7 +91,7 @@ const Employee = () => {
         setSelectedDate(data .auditDate);
         setDialogOpen(true);
         getEmployees(data._id).then(res => {
-          setLastAudit(res.data);
+          res.data && setLastAudit(res.data);
         });
       };
     
@@ -128,7 +128,7 @@ const Employee = () => {
                     <AnimatePresence>
             {isDialogOpen && (
               <motion.div
-                className="fixed inset-0 flex z-20 mr-2 justify-end h-screen bg-black bg-opacity-50"
+                className="fixed inset-0 flex z-50 mr-2 justify-end h-screen bg-black bg-opacity-50"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

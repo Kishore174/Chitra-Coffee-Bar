@@ -10,6 +10,7 @@ import { useAuth } from '../../context/AuthProvider';
 
 const AuditReport = () => {
   const [name, setName] = useState('');
+  const [comment, setComment] = useState('');
   const [signature, setSignature] = useState(null);
   const signatureRef = useRef({});
   const [auditData, setAuditData] = useState({});
@@ -28,6 +29,7 @@ const { user } = useAuth();
     getAudit(auditId).then(res => {
       setAuditData(res.data)
       setAudio(res.data?.audioRecord);
+      setComment(res.data?.comment)
       if(res.data?.audioRecord){
         setIsModalOpen(false)
       }
@@ -73,6 +75,7 @@ const { user } = useAuth();
     // formData.append('name', name);       // Add the name
     formData.append('signaturedBy', signatureType); // Add the signature type (Owner/Employee)
     formData.append('signaturedName',name)
+    formData.append('comment',comment)
     try {
       const response = await sendSignatureToBackend(auditId,formData);
       if (response) {
@@ -100,7 +103,7 @@ const { user } = useAuth();
   };
   return (
     <div className="p-4 bg-white text-gray-800 font-sans max-w-3xl mx-auto">
-         {isModalOpen && (
+         {user?.role !=="super-admin"&&isModalOpen && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
               <div className="bg-white p-6 rounded shadow-lg">
                 {/* <h2 className="text-lg font-semibold">Confirm Submission</h2> */}
@@ -236,8 +239,21 @@ const { user } = useAuth();
       <section className="border border-red-200 rounded-lg overflow-hidden">
         <h2 className="bg-red-100 text-red-600 text-md poppins-bold p-2">Summary</h2>
         <div className="p-2 flex flex-wrap gap-4">
-          {/* <InfoRow label="Total Items Checked" value={auditData?.total_items_checked} />
-          <InfoRow label="Comments" value={auditData?.comment} /> */}
+          {/* <InfoRow label="Total Items Checked" value={auditData?.total_items_checked} /> */}
+         {
+          user?.role !== "super-admin" && comment ==="" ? 
+          <div>
+            <label htmlFor="comment">Remark</label>
+            <input
+                type="text"
+                placeholder="Enter your Remark"
+                value={name}
+                onChange={(e) => setComment(e.target.value)}
+                className="border border-gray-300 rounded p-2 mb-4 w-full"
+          />
+          </div> :
+          <InfoRow label="Comments" value={auditData?.comment} />
+         }
           <InfoRow label="Overall Rating" value={`${auditData?.rating}/5`} />
         </div>
       </section>
@@ -274,6 +290,7 @@ const { user } = useAuth();
           {/* Render the signature input form only if there's no signature already available */}
           {!signature && user?.role!=="super-admin"  && (
             <>
+
               <input
                 type="text"
                 placeholder="Enter your name"
