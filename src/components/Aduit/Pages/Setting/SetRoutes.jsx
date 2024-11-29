@@ -95,7 +95,7 @@ const SetRoutes = () => {
 
   return (
     <div className="w-full">
-      <div className="relative w-3/6 p-6">
+      <div className="relative md:w-3/6 w-full p-6">
         <h2 className="text-lg poppins-semibold mb-4">Select Routes</h2>
 
         <div

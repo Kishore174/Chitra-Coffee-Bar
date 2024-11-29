@@ -7,6 +7,7 @@ import { getAudit } from '../../API/audits';
 import { sendSignatureToBackend, uploadAudioToBackend } from '../../API/Api';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthProvider';
+import Loader from '../Loader';
 
 const AuditReport = () => {
   const [name, setName] = useState('');
@@ -18,6 +19,7 @@ const AuditReport = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audio, setAudio] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(true); // Modal state
+  const [loading, setLoading] = useState(false); // Loading state
 
   const [signatureType, setSignatureType] = useState(''); 
   const [currentAudio, setCurrentAudio] = useState(null);
@@ -25,8 +27,10 @@ const AuditReport = () => {
 const { user } = useAuth();
 
   useEffect(() => {
+    setLoading(true)
     // Fetch audit data when the component is mounted
     getAudit(auditId).then(res => {
+
       setAuditData(res.data)
       setAudio(res.data?.audioRecord);
       setComment(res.data?.comment)
@@ -34,6 +38,8 @@ const { user } = useAuth();
         setIsModalOpen(false)
       }
       setSignature(res.data?.signature)
+      setLoading(false)
+
     });
   }, [auditId]);
 
@@ -102,255 +108,261 @@ const { user } = useAuth();
     return new File([u8arr], filename, { type: mime });
   };
   return (
-    <div className="p-4 bg-white text-gray-800 font-sans max-w-3xl mx-auto">
-         {user?.role !=="super-admin"&&isModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
-              <div className="bg-white p-6 rounded shadow-lg">
-                {/* <h2 className="text-lg font-semibold">Confirm Submission</h2> */}
-                <p className="mt-2 text-md">Once you start the audio, you won't be able to go back. <br/>Ensure you're ready before proceeding</p>
-                <div className="flex justify-end mt-4 space-x-2">
-                  <button
-                    onClick={()=>{
-                      setIsModalOpen(false)
-                      navigate(-1)
-                    }}
-                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={()=>{
-                      setIsRecording(true)
-                      setIsModalOpen(false)
-                    }}
-                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                  >
-                    Confirm
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-      {/* Report Title */}
-      <div className="flex items-center justify-between text-center mb-6 border-b border-gray-300 pb-4">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-          <h1 className="text-2xl font-bold text-red-600">Audit Report</h1>
-          <p className="text-gray-500 text-sm">
-            {new Date(auditData?.auditDate).toLocaleDateString()}
-          </p>
-        </div>
-        {!audio && user?.role!== "super-admin" && <div className={`flex items-center ${isRecording ? 'fixed right-4 top-4' : ''}`}>
-          <RecordingControls 
-            setIsRecording={setIsRecording} // Pass down the state setter
-          />
-        </div>}
-      </div>
+  <>
+  {
+    loading?<Loader/>:(
+      <div className="p-4 bg-white text-gray-800 font-sans max-w-3xl mx-auto">
+      {user?.role !=="super-admin"&&isModalOpen && (
+         <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
+           <div className="bg-white p-6 rounded shadow-lg">
+             {/* <h2 className="text-lg font-semibold">Confirm Submission</h2> */}
+             <p className="mt-2 text-md">Once you start the audio, you won't be able to go back. <br/>Ensure you're ready before proceeding</p>
+             <div className="flex justify-end mt-4 space-x-2">
+               <button
+                 onClick={()=>{
+                   setIsModalOpen(false)
+                   navigate(-1)
+                 }}
+                 className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+               >
+                 Cancel
+               </button>
+               <button
+                 onClick={()=>{
+                   setIsRecording(true)
+                   setIsModalOpen(false)
+                 }}
+                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+               >
+                 Confirm
+               </button>
+             </div>
+           </div>
+         </div>
+       )}
+   {/* Report Title */}
+   <div className="flex items-center justify-between text-center mb-6 border-b border-gray-300 pb-4">
+     <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+       <h1 className="text-2xl font-bold text-red-600">Audit Report</h1>
+       <p className="text-gray-500 text-sm">
+         {new Date(auditData?.auditDate).toLocaleDateString()}
+       </p>
+     </div>
+     {!audio && user?.role!== "super-admin" && <div className={`flex items-center ${isRecording ? 'fixed right-4 top-4' : ''}`}>
+       <RecordingControls 
+         setIsRecording={setIsRecording} // Pass down the state setter
+       />
+     </div>}
+   </div>
 
-      {/* General Information Sections */}
-      <div className="flex flex-col space-y-4">
-      <AuditSection
-          title="Shop Information"
-          data={auditData?.shop}
-          fields={['shopName', 'ownerName', 'phone', 'email', 'address', 'location']}
-        />
-        <AuditSection
-          title="Tea Audit"
-          data={auditData?.teaAudit}
-          fields={['quality', 'color', 'sugarLevel', 'temperature', 'aroma', 'taste', 'remark', 'rating']}
-        />
-        <AuditSection
-          title="Coffee Audit"
-          data={auditData?.coffeeAudit}
-          fields={['quality', 'color', 'sugarLevel', 'temperature', 'aroma', 'taste', 'remark', 'rating']}
-        />
-        {/* Live Snacks Section */}
-        <LiveSnacksSection
-          snacks={auditData?.liveSnacks?.snacks}
-          remark={auditData?.liveSnacks?.remark}
-          rating={auditData?.liveSnacks?.rating}
-          captureImages={auditData?.liveSnacks?.captureImages}
-        />
-        {/* Bakery Products Section */}
-        {auditData?.bakeryProducts && auditData.bakeryProducts.length > 0 && (
-          <BakeryProductsSection products={auditData.bakeryProducts} />
-        )}
-        {/* Additional Sections could go here */}
-        <AuditSection
-          title="Inside Shop"
-          data={auditData?.insideShop}
-          fields={['dining', 'liveSnackDisplay', 'teaCounter', 'dustbin', 'frontView', 'handWash', 'hotCounter', 'iceCreamCounter', 'juiceBar', 'normalCounter', 'snackCounter']}
-        />
-        <AuditSection
-          title="Inside Kitchen"
-          data={auditData?.insideKitchen}
-          fields={['exhaustFan', 'grinder', 'kitchenFloor', 'kitchenLight', 'milkFreezer', 'sink', 'snackMaking', 'workTable']}
-        />
-        <AuditSection
-          title="Outside Shop"
-          data={auditData?.outsideKitchen}
-          fields={['lollipopStandArea', 'shopBoard']}
-        />
-        <AuditSection
-          title="Wall Branding"
-          data={auditData?.wallBranding}
-          fields={['map', 'menuBrand', 'bunzoSection', 'bakshanamSection', 'pillarBranding']}
-        />
-         
-        
-        <AuditSection
-          title="Interior"
-          data={auditData?.painting}
-          fields={['fan', 'light', 'celling',  'wallPainting',
-            "floorTail",
-            "remark",
-            "rating",]}
-        />
-        <AuditSection
-          title="Dress Code "
-          data={auditData?.uniformSection}
-          fields={['cap', 'cort', 'gloves', 'apron']}
-        />
-      </div>
+   {/* General Information Sections */}
+   <div className="flex flex-col space-y-4">
+   <AuditSection
+       title="Shop Information"
+       data={auditData?.shop}
+       fields={['shopName', 'ownerName', 'phone', 'email', 'address', 'location']}
+     />
+     <AuditSection
+       title="Tea Audit"
+       data={auditData?.teaAudit}
+       fields={['quality', 'color', 'sugarLevel', 'temperature', 'aroma', 'taste', 'remark', 'rating']}
+     />
+     <AuditSection
+       title="Coffee Audit"
+       data={auditData?.coffeeAudit}
+       fields={['quality', 'color', 'sugarLevel', 'temperature', 'aroma', 'taste', 'remark', 'rating']}
+     />
+     {/* Live Snacks Section */}
+     <LiveSnacksSection
+       snacks={auditData?.liveSnacks?.snacks}
+       remark={auditData?.liveSnacks?.remark}
+       rating={auditData?.liveSnacks?.rating}
+       captureImages={auditData?.liveSnacks?.captureImages}
+     />
+     {/* Bakery Products Section */}
+     {auditData?.bakeryProducts && auditData.bakeryProducts.length > 0 && (
+       <BakeryProductsSection products={auditData.bakeryProducts} />
+     )}
+     {/* Additional Sections could go here */}
+     <AuditSection
+       title="Inside Shop"
+       data={auditData?.insideShop}
+       fields={['dining', 'liveSnackDisplay', 'teaCounter', 'dustbin', 'frontView', 'handWash', 'hotCounter', 'iceCreamCounter', 'juiceBar', 'normalCounter', 'snackCounter']}
+     />
+     <AuditSection
+       title="Inside Kitchen"
+       data={auditData?.insideKitchen}
+       fields={['exhaustFan', 'grinder', 'kitchenFloor', 'kitchenLight', 'milkFreezer', 'sink', 'snackMaking', 'workTable']}
+     />
+     <AuditSection
+       title="Outside Shop"
+       data={auditData?.outsideKitchen}
+       fields={['lollipopStandArea', 'shopBoard']}
+     />
+     <AuditSection
+       title="Wall Branding"
+       data={auditData?.wallBranding}
+       fields={['map', 'menuBrand', 'bunzoSection', 'bakshanamSection', 'pillarBranding']}
+     />
+      
+     
+     <AuditSection
+       title="Interior"
+       data={auditData?.painting}
+       fields={['fan', 'light', 'celling',  'wallPainting',
+         "floorTail",
+         "remark",
+         "rating",]}
+     />
+     <AuditSection
+       title="Dress Code "
+       data={auditData?.uniformSection}
+       fields={['cap', 'cort', 'gloves', 'apron']}
+     />
+   </div>
 
-      {/* Stock Section */}
-      <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
-        <h2 className="bg-red-100 text-red-600 text-md poppins-bold p-2">Stock</h2>
-        <div className="p-2 flex flex-wrap gap-4">
-          {auditData?.stock?.captureImages?.map((image, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <img src={image.imageUrl} alt={`Stock Image ${index + 1}`} className="w-32 h-32 object-cover border border-gray-300 mb-2" />
-            </div>
-          ))}
-          <InfoRow label="Remark" value={auditData?.stock?.remark} />
-        </div>
-      </section>
+   {/* Stock Section */}
+   <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
+     <h2 className="bg-red-100 text-red-600 text-md poppins-bold p-2">Stock</h2>
+     <div className="p-2 flex flex-wrap gap-4">
+       {auditData?.stock?.captureImages?.map((image, index) => (
+         <div key={index} className="flex flex-col items-center">
+           <img src={image.imageUrl} alt={`Stock Image ${index + 1}`} className="w-32 h-32 object-cover border border-gray-300 mb-2" />
+         </div>
+       ))}
+       <InfoRow label="Remark" value={auditData?.stock?.remark} />
+     </div>
+   </section>
 
-      {/* Employees Section */}
-      <section className="mb-4 border border-red-200 rounded-lg overflow-hidden">
-        <h2 className="bg-red-100 text-red-600 text-md poppins-bold p-2">Employees</h2>
-        <div className="p-2 flex flex-wrap gap-4">
-          {auditData?.employees?.map((employee, index) => (
-            <InfoRow key={index} label={`Area: ${employee.area}`} value={`Count: ${employee.count}, Names: ${employee.names}`} />
-          ))}
-        </div>
-      </section>
+   {/* Employees Section */}
+   <section className="mb-4 border border-red-200 rounded-lg overflow-hidden">
+     <h2 className="bg-red-100 text-red-600 text-md poppins-bold p-2">Employees</h2>
+     <div className="p-2 flex flex-wrap gap-4">
+       {auditData?.employees?.map((employee, index) => (
+         <InfoRow key={index} label={`Area: ${employee.area}`} value={`Count: ${employee.count}, Names: ${employee.names}`} />
+       ))}
+     </div>
+   </section>
 
-      {/* Summary Section */}
-      <section className="border border-red-200 rounded-lg overflow-hidden">
-        <h2 className="bg-red-100 text-red-600 text-md poppins-bold p-2">Summary</h2>
-        <div className="p-2 flex flex-wrap gap-4">
-          {/* <InfoRow label="Total Items Checked" value={auditData?.total_items_checked} /> */}
-         {
-          user?.role !== "super-admin" && comment ==="" ? 
-          <div>
-            <label htmlFor="comment">Remark</label>
-            <input
-                type="text"
-                placeholder="Enter your Remark"
-                value={name}
-                onChange={(e) => setComment(e.target.value)}
-                className="border border-gray-300 rounded p-2 mb-4 w-full"
-          />
-          </div> :
-          <InfoRow label="Comments" value={auditData?.comment} />
-         }
-          <InfoRow label="Overall Rating" value={`${auditData?.rating}/5`} />
-        </div>
-      </section>
-      {audio && (
-        <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
-          <h2 className="bg-red-100 text-red-600 text-md poppins-semibold p-2">Previous Audio Report</h2>
-          <div className="p-2">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-gray-800">
-                Audio Recorded On: {new Date(audio.date).toLocaleDateString()}
-              </p>
-              <div className="flex space-x-2">
-                {/* <button
-                  onClick={() => handlePlayAudio(audio.recordUrl)}
-                  className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
-                >
-                  Play Audio
-                </button> */}
-             { audio &&  <audio className="rounded-md" controls>
-              <source src={audio.recordUrl} type="audio/wav" />
-              Your browser does not support the audio element.
-            </audio>}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-      {/* Signature Section */}
-      {/* Signature Section */}
-      <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
-        <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Signature</h2>
-        <div className="p-2 flex flex-col items-center">
-          
-          {/* Render the signature input form only if there's no signature already available */}
-          {!signature && user?.role!=="super-admin"  && (
-            <>
+   {/* Summary Section */}
+   <section className="border border-red-200 rounded-lg overflow-hidden">
+     <h2 className="bg-red-100 text-red-600 text-md poppins-bold p-2">Summary</h2>
+     <div className="p-2 flex flex-wrap gap-4">
+       {/* <InfoRow label="Total Items Checked" value={auditData?.total_items_checked} /> */}
+      {
+       user?.role !== "super-admin" && comment ==="" ? 
+       <div>
+         <label htmlFor="comment">Remark</label>
+         <input
+             type="text"
+             placeholder="Enter your Remark"
+             value={name}
+             onChange={(e) => setComment(e.target.value)}
+             className="border border-gray-300 rounded p-2 mb-4 w-full"
+       />
+       </div> :
+       <InfoRow label="Comments" value={auditData?.comment} />
+      }
+       <InfoRow label="Overall Rating" value={`${auditData?.rating}/5`} />
+     </div>
+   </section>
+   {audio && (
+     <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
+       <h2 className="bg-red-100 text-red-600 text-md poppins-semibold p-2">Previous Audio Report</h2>
+       <div className="p-2">
+         <div className="flex items-center justify-between mb-4">
+           <p className="text-gray-800">
+             Audio Recorded On: {new Date(audio.date).toLocaleDateString()}
+           </p>
+           <div className="flex space-x-2">
+             {/* <button
+               onClick={() => handlePlayAudio(audio.recordUrl)}
+               className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+             >
+               Play Audio
+             </button> */}
+          { audio &&  <audio className="rounded-md" controls>
+           <source src={audio.recordUrl} type="audio/wav" />
+           Your browser does not support the audio element.
+         </audio>}
+           </div>
+         </div>
+       </div>
+     </section>
+   )}
+   {/* Signature Section */}
+   {/* Signature Section */}
+   <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
+     <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Signature</h2>
+     <div className="p-2 flex flex-col items-center">
+       
+       {/* Render the signature input form only if there's no signature already available */}
+       {!signature && user?.role!=="super-admin"  && (
+         <>
 
-              <input
-                type="text"
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="border border-gray-300 rounded p-2 mb-4 w-full"
-              />
+           <input
+             type="text"
+             placeholder="Enter your name"
+             value={name}
+             onChange={(e) => setName(e.target.value)}
+             className="border border-gray-300 rounded p-2 mb-4 w-full"
+           />
 
-              {/* Dropdown for Signature Type (Owner/Employee) */}
-              <select
-                value={signatureType}
-                onChange={(e) => setSignatureType(e.target.value)}
-                className="border border-gray-300 rounded p-2 mb-4 w-full"
-              >
-                <option value="">--Select who signatured--</option>
-                <option value="owner">Owner</option>
-                <option value="employee">Employee</option>
-              </select>
+           {/* Dropdown for Signature Type (Owner/Employee) */}
+           <select
+             value={signatureType}
+             onChange={(e) => setSignatureType(e.target.value)}
+             className="border border-gray-300 rounded p-2 mb-4 w-full"
+           >
+             <option value="">--Select who signatured--</option>
+             <option value="owner">Owner</option>
+             <option value="employee">Employee</option>
+           </select>
 
-              {/* Signature Canvas */}
-              <SignatureCanvas
-                ref={signatureRef}
-                penColor="black"
-                canvasProps={{ className: 'border border-gray-300 w-full h-32' }}
-              />
+           {/* Signature Canvas */}
+           <SignatureCanvas
+             ref={signatureRef}
+             penColor="black"
+             canvasProps={{ className: 'border border-gray-300 w-full h-32' }}
+           />
 
-              {/* Buttons to clear or save the signature */}
-              <div className="flex justify-between space-x-4 mt-4">
-                <button
-                  onClick={handleClearSignature}
-                  className="bg-gray-400 text-white p-2 rounded hover:bg-gray-500"
-                >
-                  Clear
-                </button>
-                <button
-                  onClick={handleSaveSignature}
-                  className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
-                >
-                  Save Signature
-                </button>
-              </div>
-            </>
-          )}
+           {/* Buttons to clear or save the signature */}
+           <div className="flex justify-between space-x-4 mt-4">
+             <button
+               onClick={handleClearSignature}
+               className="bg-gray-400 text-white p-2 rounded hover:bg-gray-500"
+             >
+               Clear
+             </button>
+             <button
+               onClick={handleSaveSignature}
+               className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
+             >
+               Save Signature
+             </button>
+           </div>
+         </>
+       )}
 
-          {/* If signature is available (either in local state or audit data), show the saved signature */}
-          {signature && (
-            <div className="mt-4 p-4">
-              <h3 className="font-semibold">Signature Name : {`${auditData?.signaturedName}(${auditData?.signaturedBy})`||""}</h3>
-              <h3 className="font-semibold">Your Signature:</h3>
-              <img
-                src={signature}
-                alt="Signature"
-                className="border border-gray-300 mt-2"
-              />
-            </div>
-          )}
-        </div>
-      </section>
+       {/* If signature is available (either in local state or audit data), show the saved signature */}
+       {signature && (
+         <div className="mt-4 p-4">
+           <h3 className="font-semibold">Signature Name : {`${auditData?.signaturedName}(${auditData?.signaturedBy})`||""}</h3>
+           <h3 className="font-semibold">Your Signature:</h3>
+           <img
+             src={signature}
+             alt="Signature"
+             className="border border-gray-300 mt-2"
+           />
+         </div>
+       )}
+     </div>
+   </section>
 
-    </div>
+ </div>
+    )
+  }
+  </>
   );
 };
 
@@ -457,7 +469,7 @@ const RecordingControls = ({ setIsRecording }) => {
         {isRecordingComplete && (
           <button
             onClick={uploadAudio}
-            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+            className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
           >
             Submit Recording
           </button>

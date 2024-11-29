@@ -65,7 +65,7 @@ const InsideShop = () => {
   const validateForm = () => {
     for (const itemType of itemTypes) {
       const itemData = insideShopData[itemType];
-      if (itemData) {
+      if (itemData && itemData!=="juiceBar") {
         
         if (!itemData.hygiene) {
           toast.error(`Please provide hygiene information for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);

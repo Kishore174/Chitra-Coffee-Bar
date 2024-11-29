@@ -8,7 +8,7 @@ import axios from "axios";
 // })
 export const axiosintance = axios.create({
     // baseURL: process.env.REACT_APP_API_URL,
-    baseURL:"https://ccb-backend.vercel.app/api/v1" ,
+    baseURL:"https://ccb-api-c0enefg8g8fqamf4.centralindia-01.azurewebsites.net/api/v1" ,
    
     // headers: {
     //   Authorization: `Bearer ${Cookie.get('token')}`

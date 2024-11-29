@@ -44,7 +44,7 @@ const Employee = () => {
 
         createEmployees(auditId, employeeData).then(res => {
             toast.success(res.message);
-            navigate(-1);
+         setIsModalOpen(false)
     setLoading(false); // Set loading to true when submission starts
 
         });

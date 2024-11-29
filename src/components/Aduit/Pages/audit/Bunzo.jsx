@@ -482,7 +482,7 @@ const Bunzo = () => {
         }}
               className="px-4 py-2 bg-red-500 text-white rounded shadow-lg hover:bg-red-600 focus:outline-none"
             >
-              Add Product
+              Submit
             </button>
             {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
