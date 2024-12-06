@@ -108,6 +108,7 @@ const BrandingReuse = ({ title, itemType, onUpdate, data }) => {
           ))}
         </div>
       </div>
+    { available !== "no" &&  <>
       {itemType === "pillarBranding" && (
         <div> 
           <label className="text-sm font-medium text-gray-500 mb-2 block">pillar Branding</label>
@@ -120,21 +121,7 @@ const BrandingReuse = ({ title, itemType, onUpdate, data }) => {
           />
         </div>
       )}
-    {/* <div>
-      <label className="text-sm font-medium text-gray-500 mb-2 block">Hygiene</label>
-      <div className="flex space-x-4 mb-4">
-        {['good', 'bad'].map((remark) => (
-          <div
-            key={remark}
-            onClick={() => setHygiene(remark)}
-            className={`cursor-pointer capitalize px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
-              hover:bg-red-600 hover:text-white ${hygiene === remark ? 'bg-red-600 text-white' : 'bg-white text-gray-700 border-gray-300'}`}
-          >
-            {remark}
-          </div>
-        ))}
-      </div>
-    </div> */}
+   
     
     <div>
       <label className="text-sm font-medium text-gray-500 mb-2 block">Rating</label>
@@ -205,6 +192,7 @@ const BrandingReuse = ({ title, itemType, onUpdate, data }) => {
         </div>
       </div>
     )}
+     </>}
   </div>
   )
 }

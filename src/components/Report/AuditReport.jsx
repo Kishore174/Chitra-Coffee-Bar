@@ -150,6 +150,7 @@ const { user } = useAuth();
      </div>
      {!audio && user?.role!== "super-admin" && <div className={`flex items-center ${isRecording ? 'fixed right-4 top-4' : ''}`}>
        <RecordingControls 
+        isRecording={isRecording}
          setIsRecording={setIsRecording} // Pass down the state setter
        />
      </div>}
@@ -250,13 +251,13 @@ const { user } = useAuth();
      <div className="p-2 flex flex-wrap gap-4">
        {/* <InfoRow label="Total Items Checked" value={auditData?.total_items_checked} /> */}
       {
-       user?.role !== "super-admin" && comment ==="" ? 
+       user?.role !== "super-admin" && auditData && auditData.comment=="" ? 
        <div>
          <label htmlFor="comment">Remark</label>
          <input
              type="text"
              placeholder="Enter your Remark"
-             value={name}
+             value={ comment}
              onChange={(e) => setComment(e.target.value)}
              className="border border-gray-300 rounded p-2 mb-4 w-full"
        />
@@ -366,7 +367,7 @@ const { user } = useAuth();
   );
 };
 
-const RecordingControls = ({ setIsRecording }) => {
+const RecordingControls = ({ setIsRecording,isRecording }) => {
   const { user } = useAuth();
   const { auditId } = useParams();
   const [status, setStatus] = useState('idle');  // idle, recording, stopped
@@ -429,16 +430,21 @@ const RecordingControls = ({ setIsRecording }) => {
       });
     }
   };
-
+  useEffect(()=>{
+    if(isRecording && !isRecordingComplete){
+      console.log("work")
+      handleStartRecording()
+    }
+  },[isRecordingComplete,isRecording])
   return (
-    <div className="flex justify-center items-center fixed top-20 right-20 z-50">
+    <div className={`flex justify-center items-center ${isRecordingComplete?"fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50" :"fixed top-20 right-20 z-50"}`}>
       {/* Quick access floating action buttons */}
       <div className="relative flex flex-col items-center">
         <div className="absolute flex flex-col gap-4">
           {/* Recording Button */}
           <button
             onClick={handleStartRecording}
-            className={`w-16 h-16 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg transition-all duration-300 ${status === 'recording' ? 'opacity-50' : ''}`}
+            className={`w-16 h-16 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg transition-all duration-300 ${status === 'recording' ? 'opacity-50' : ''} ${isRecordingComplete&&"hidden"}`}
             disabled={status === 'recording'}
           >
             <BsFillMicFill size={30} />
@@ -469,7 +475,7 @@ const RecordingControls = ({ setIsRecording }) => {
         {isRecordingComplete && (
           <button
             onClick={uploadAudio}
-            className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+            className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-400"
           >
             Submit Recording
           </button>

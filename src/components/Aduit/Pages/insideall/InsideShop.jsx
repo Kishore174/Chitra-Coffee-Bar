@@ -65,7 +65,11 @@ const InsideShop = () => {
   const validateForm = () => {
     for (const itemType of itemTypes) {
       const itemData = insideShopData[itemType];
-      if (itemData && itemData!=="juiceBar") {
+      // Skip validation if Juice Bar is not available
+    if (itemType === "juiceBar") {
+      continue;
+    }
+      if (itemData) {
         
         if (!itemData.hygiene) {
           toast.error(`Please provide hygiene information for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);

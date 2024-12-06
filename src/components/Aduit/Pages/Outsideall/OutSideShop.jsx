@@ -57,7 +57,7 @@ const OutSideShop = () => {
     const validateForm = () => {
       for (const itemType of itemTypes) {
         const itemData = outsideShopData[itemType];
-        if (itemData) {
+        if (itemData && itemData.available === "yes") {
           // Check required fields for each item type
           if (!itemData.hygiene) {
             toast.error(`Please provide hygiene information for ${itemType}.`);

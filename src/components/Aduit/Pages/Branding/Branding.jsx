@@ -61,7 +61,7 @@ const Branding = () => {
   const validateForm = () => {
     for (const itemType of itemTypes) {
       const itemData = brandingData[itemType];
-      if (itemData) {
+      if (itemData&& itemData.available === "yes") {
         // Check required fields for each item type
         if (!itemData.available) {
           toast.error(`Please specify availability for ${itemType}.`);
