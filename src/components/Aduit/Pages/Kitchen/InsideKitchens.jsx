@@ -21,6 +21,7 @@ const InsideKitchens = () => {
   const [fetchData, setFetchData] = useState(null);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [isInsideKitchenSubmitted, setInsideKitchenSubmitted] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleItemUpdate = (itemType, data) => {
     const { captureImages, ...otherData } = data;  
@@ -37,7 +38,7 @@ const InsideKitchens = () => {
     if (!validateForm()) return;
     setLoading(true);
 
-    createInsideKitchen(auditId, kitchenData)
+    createInsideKitchen(auditId, kitchenData,setUploadProgress)
       .then((res) => {
         toast.success(res.message);
         navigate(-1);
@@ -137,7 +138,7 @@ const InsideKitchens = () => {
   return (
   <>
   {
-    loading? <Loader/>:(
+    loading? <Loader time={uploadProgress}/>:(
       <>
       <div className="flex items-center justify-between mx-auto p-4  max-w-4xl">
        <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">

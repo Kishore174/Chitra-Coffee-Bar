@@ -22,6 +22,7 @@ const InsideShop = () => {
   const [loading, setLoading] = useState(false); // Loading state
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
   const [isInsideShopSubmitted, setInsideShopSubmitted] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleItemUpdate = (itemType, data) => {
     const { captureImages, ...otherData } = data;
@@ -37,7 +38,7 @@ const InsideShop = () => {
   const handleOverallSubmit = () => {
     if (!validateForm()) return;
     setLoading(true);
-    createInsideshop(auditId, insideShopData)
+    createInsideshop(auditId, insideShopData,setUploadProgress)
       .then((res) => {
         toast.success(res.message);
         navigate(-1);
@@ -145,7 +146,7 @@ const InsideShop = () => {
 
   return (
     <>
-      {loading ? <Loader /> : (
+      {loading ? <Loader time={uploadProgress}/> : (
         <>
           <div className="flex items-center justify-between md:ml-24 mx-4 mb-2 max-w-7xl">
             <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">

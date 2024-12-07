@@ -15,7 +15,7 @@ export const getAllAudits = async () => {
     const response = await axiosintance.get(`/audit/${id}/insideShopAudit`);
     return response.data;
   };
-export const createInsideshop = async (id,data) => {
+export const createInsideshop = async (id,data,setUploadProgress) => {
   const formData = new FormData();
   for (const key in data) {
     if (Array.isArray(data[key])) {
@@ -43,14 +43,19 @@ export const createInsideshop = async (id,data) => {
     }
   }
 
-    const response = await axiosintance.post(`/audit/${id}/insideShopAudit`,formData);
+    const response = await axiosintance.post(`/audit/${id}/insideShopAudit`,formData,{
+      onUploadProgress: (progressEvent) => {
+        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        setUploadProgress(progress); // Update the upload progress
+      }
+    });
     return response.data;
 };
 export const getInsideKitchen = async (id) => {
   const response = await axiosintance.get(`/audit/${id}/insideKitchenAudit`);
   return response.data;
 };
-export const createInsideKitchen = async (id,data) => {
+export const createInsideKitchen = async (id,data,setUploadProgress) => {
   const formData = new FormData();
   for (const key in data) {
     if (Array.isArray(data[key])) {
@@ -78,7 +83,12 @@ export const createInsideKitchen = async (id,data) => {
     }
   }
 
-    const response = await axiosintance.post(`/audit/${id}/insideKitchenAudit`,formData);
+    const response = await axiosintance.post(`/audit/${id}/insideKitchenAudit`,formData,{
+      onUploadProgress: (progressEvent) => {
+        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        setUploadProgress(progress); // Update the upload progress
+      }
+    });
     return response.data;
 };
 export const getOutsideKitchen = async (id) => {
