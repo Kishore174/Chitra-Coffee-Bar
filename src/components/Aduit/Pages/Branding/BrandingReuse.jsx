@@ -67,7 +67,7 @@ const BrandingReuse = ({ title, itemType, onUpdate, data }) => {
   
     useEffect(() => {
       handleUpdate();
-    }, [pillarCount, remark, imagePreview, rating]);
+    }, [pillarCount, remark, imagePreview, rating,available]);
   
     const handleImageClick = (image) => {
       setPreviewImage(image);

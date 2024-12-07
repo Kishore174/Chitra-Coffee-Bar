@@ -38,7 +38,7 @@ const OutSideShop = () => {
     const handleOverallSubmit = () => {
       if (!validateForm()) return; 
     setLoading(true)
-
+     
       createOutsideKitchen(auditId, outsideShopData)
         .then((res) => {
           toast.success(res.message);
@@ -57,16 +57,20 @@ const OutSideShop = () => {
     const validateForm = () => {
       for (const itemType of itemTypes) {
         const itemData = outsideShopData[itemType];
-        if (itemData && itemData.available === "yes") {
+        if(itemData.available === "no"){
+          continue;
+        }
+        if (itemData) {
           // Check required fields for each item type
-          if (!itemData.hygiene) {
-            toast.error(`Please provide hygiene information for ${itemType}.`);
-            return false;
-          }
           if (!itemData.available) {
             toast.error(`Please specify availability for ${itemType}.`);
             return false;
           }
+          if (!itemData.hygiene) {
+            toast.error(`Please provide hygiene information for ${itemType}.`);
+            return false;
+          }
+         
           if (!itemData.rating) {
             toast.error(`Please provide a rating for ${itemType}.`);
             return false;

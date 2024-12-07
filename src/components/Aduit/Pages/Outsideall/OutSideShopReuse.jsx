@@ -66,7 +66,7 @@ const OutSideShopReuse = ({ title, itemType, onUpdate, data }) => {
   
     useEffect(() => {
       handleUpdate();
-    }, [hygiene, remark, imagePreview, rating]);
+    }, [hygiene, remark, imagePreview, rating,available]);
   
     const handleImageClick = (image) => {
       setPreviewImage(image);
@@ -85,6 +85,7 @@ const OutSideShopReuse = ({ title, itemType, onUpdate, data }) => {
         setAvailable(data.available);
       }
     }, [data]);
+  
   return (
     <div className="border rounded-lg shadow-md p-4  h-auto w-full sm:w-2/5 md:w-[250px] justify-between flex flex-col">
     <h2 className="text-xl capitalize font-semibold mb-2">{title}</h2>

@@ -65,7 +65,7 @@ const InsideShopReuse = ({ title, itemType, onUpdate, data }) => {
 
   useEffect(() => {
     handleUpdate();
-  }, [hygiene, remark, imagePreview, rating]);
+  }, [hygiene, remark, imagePreview, rating,available]);
 
   const handleImageClick = (image) => {
     setPreviewImage(image);

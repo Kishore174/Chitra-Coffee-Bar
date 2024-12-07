@@ -66,8 +66,12 @@ const InsideShop = () => {
     for (const itemType of itemTypes) {
       const itemData = insideShopData[itemType];
       // Skip validation if Juice Bar is not available
-    if (itemType === "juiceBar") {
+    if (itemType === "juiceBar" && insideShopData["juiceBar"].available === "no") {
       continue;
+    } 
+    if (itemType === "juiceBar" && !itemData.available) {
+      toast.error(`Please provide available information for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+      return false;
     }
       if (itemData) {
         
