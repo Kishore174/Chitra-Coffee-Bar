@@ -249,7 +249,7 @@ const Table = () => {
                         <td className="px-4 py-4 border-b border-gray-200 text-sm text-gray-700">
                           {index + 1}
                         </td>
-                        <td className="px-4 py-4 border-b border-gray-200 text-sm text-gray-700">
+                        <td className="px-4 py-4 border-b capitalize border-gray-200 text-sm text-gray-700">
                           <div className="poppins-regular overflow-hidden">
                             <div>{audit.shop?.shopName}</div>
                             <div>{audit.shop?.ownerName}</div>

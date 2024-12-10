@@ -11,11 +11,11 @@ const Loader = ({time}) => {
         
         <div className="animate-zoom flex  flex-col items-center justify-center    rounded-full h-16 w-16">
           <img src={logo} alt="logo" className="h-12 w-12" />
-          {time &&  <span className="text-white poppins-bold text-2xl">{time}%</span>}
+          {time &&  <span className="text-white poppins-bold text-xl">{time}%</span>}
         </div>
       </div>
     </div>
   );
-};
+}; 
 
 export default Loader;

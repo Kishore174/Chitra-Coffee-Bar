@@ -85,7 +85,7 @@ const { user } = useAuth();
     try {
       const response = await sendSignatureToBackend(auditId,formData);
       if (response) {
-        navigate('/auditors')
+        navigate('/audit')
         toast.success(response.message);
       } else {
         toast.error('Failed to save signature');

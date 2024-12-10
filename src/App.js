@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import "./App.css"; // Ensure this includes your flex layout sty
 import MyShop from "./components/Shps/MyShop";
@@ -49,9 +49,12 @@ function App() {
       img.setAttribute("loading", "lazy");
     });
   }, []);
+
   return (
     <AuthProvider>
       <BrowserRouter>
+      <ScrollToTop /> 
+
         {/* <div className="flex    min-h-screen">
         <SideMenu />
         <div className="flex-1 flex flex-col">
@@ -138,3 +141,13 @@ function App() {
 }
 
 export default App;
+const ScrollToTop = () => {
+   const location = useLocation();
+ 
+   useEffect(() => {
+     // Scroll to top whenever the route changes
+     window.scrollTo(0, 0);
+   }, [location]);
+ 
+   return null;
+ };
