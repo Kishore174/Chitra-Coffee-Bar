@@ -439,7 +439,7 @@ const RecordingControls = ({ setIsRecording,isRecording }) => {
   return (
     <div className={`flex justify-center items-center ${isRecordingComplete?"fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50" :"fixed top-20 right-20 z-50"}`}>
       {/* Quick access floating action buttons */}
-      <div className="relative flex flex-col items-center">
+      {!isRecordingComplete && <div className="relative flex flex-col items-center">
         <div className="absolute flex flex-col gap-4">
           {/* Recording Button */}
           <button
@@ -480,7 +480,7 @@ const RecordingControls = ({ setIsRecording,isRecording }) => {
             Submit Recording
           </button>
         )}
-      </div>
+      </div>}
     </div>
   );
 };
