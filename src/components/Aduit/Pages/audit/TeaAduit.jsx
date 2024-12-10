@@ -546,8 +546,8 @@ const TeaAudit = () => {
               </div>
               <input
                 type="file"
-                accept="image/*"
-                ref={handWashFileInputRef}
+                // accept="image/*"
+                ref={fileInputRef}
                 onChange={handleTeaPhotoCapture}
                 className="hidden"
                 multiple
