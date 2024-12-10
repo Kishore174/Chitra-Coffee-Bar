@@ -253,7 +253,7 @@ setIsTeaSubmitted(true)
                       onClick={handleCloseDialog}
                     >
                       <motion.div
-                        className="relative bg-white rounded-lg p-8 w-2/5 shadow-2xl overflow-auto transition-all duration-300 transform hover:scale-105"
+                        className="relative bg-white rounded-lg p-8 w-3/5 shadow-2xl overflow-auto transition-all duration-300 transform hover:scale-105"
                         initial={{ y: 50, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         exit={{ y: 50, opacity: 0 }}
@@ -467,15 +467,15 @@ setIsTeaSubmitted(true)
                       </div>
                     ))}
                     <div
-                      onClick={triggerFanFileInput}
+              onClick={() => fileInputRef.current.click()}
                       className="h-12 w-12 border rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-200"
                     >
                       <PlusIcon className="w-8 h-8 text-gray-600" />
                     </div>
                     <input
                       type="file"
-                      accept="image/*"
-                      ref={handWashFileInputRef}
+                      // accept="image/*"
+                      ref={fileInputRef}
                       onChange={handleTeaPhotoCapture}
                       className="hidden"
                       multiple />

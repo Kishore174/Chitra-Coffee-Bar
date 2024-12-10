@@ -228,7 +228,7 @@ const AddShop = () => {
           <input
             id="shopPhoto"
             type="file"
-            accept=".jpg,.png,.jpeg"
+            // accept=".jpg,.png,.jpeg"
             onChange={handleFileChange}
             disabled={isView}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"

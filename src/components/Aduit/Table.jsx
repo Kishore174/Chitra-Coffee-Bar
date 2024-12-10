@@ -66,6 +66,22 @@ const Table = () => {
     assignAuditorsAudit()
       .then((res) => {
         toast.success(res.message);
+        setLoading(true)
+        if (user) {
+          if (user.role === "super-admin") {
+            getAllAudits()
+              .then((res) => setAudits(res.data))
+              .finally(() => {
+                setLoading(false);
+              });
+          } else {
+            getAuditByAuditor(user._id)
+              .then((res) => setAudits(res.data))
+              .finally(() => {
+                setLoading(false);
+              });
+          }
+        }
       })
       .catch((err) => {
         toast.error(err.response?.data?.message);

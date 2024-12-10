@@ -472,7 +472,7 @@ const Bunzo = () => {
                 ref={fileInputRef}
 
                 onChange={handleLiveSnackPhotoCapture}
-                accept="image/*"
+                // accept="image/*"
                 multiple
                 className="hidden"
               />
