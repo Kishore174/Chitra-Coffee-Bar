@@ -19,6 +19,8 @@ const LiveSnacks = () => {
   const [previewLiveSnackImage, setPreviewLiveSnackImage] = useState(null);
   const [isLiveSnackSubmitted, setIsLiveSnackSubmitted] = useState(false);
   const liveSnackFileInputRef = useRef(null);
+  const fileInputRef = useRef(null);
+
   const navigate = useNavigate();
   const [rating, setRating] = useState(0);
   const [location, setLocation] = useState("");
@@ -248,7 +250,7 @@ const LiveSnacks = () => {
                 onClick={handleCloseDialog}
               >
                 <motion.div
-                  className="relative bg-white rounded-lg p-8 w-2/5 overflow-auto  first-letter: shadow-2xl transition-all duration-300 transform hover:scale-105"
+                  className="relative bg-white rounded-lg p-8 w-3/5 overflow-auto  first-letter: shadow-2xl transition-all duration-300 transform hover:scale-105"
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: 50, opacity: 0 }}
@@ -402,15 +404,15 @@ const LiveSnacks = () => {
               !isLiveSnackSubmitted &&
               <>
                <div
-                onClick={() => liveSnackFileInputRef.current.click()}
+                 onClick={() => fileInputRef.current.click()}
                 className="h-12 w-12 border rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-200"
               >
                 <PlusIcon className="w-8 h-8 text-gray-600" />
               </div>
               <input
                 type="file"
-                accept="image/*"
-                ref={liveSnackFileInputRef}
+                // accept="image/*"
+                ref={fileInputRef}
                 onChange={handleLiveSnackPhotoCapture}
                 className="hidden"
                 multiple

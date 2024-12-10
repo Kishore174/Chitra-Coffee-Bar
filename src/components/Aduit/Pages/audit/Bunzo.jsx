@@ -17,6 +17,8 @@ const Bunzo = () => {
   const [liveSnackImagePreview, setLiveSnackImagePreview] = useState([]);
   const [previewLiveSnackImage, setPreviewLiveSnackImage] = useState(null);
   const liveSnackFileInputRef = useRef(null);
+  const fileInputRef = useRef(null);
+
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [brands, setBrands] = useState([]);
   const [products, setProducts] = useState([]);
@@ -246,7 +248,7 @@ const Bunzo = () => {
       onClick={handleCloseDialog}
     >
       <motion.div
-        className="relative bg-white rounded-lg p-6 sm:p-8  w-2/5  overflow-auto shadow-2xl transition-all duration-300 transform hover:scale-105"
+        className="relative bg-white rounded-lg p-6 sm:p-8  w-3/5  overflow-auto shadow-2xl transition-all duration-300 transform hover:scale-105"
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 50, opacity: 0 }}
@@ -461,13 +463,14 @@ const Bunzo = () => {
               ))}
               <div
                 className="flex items-center justify-center h-16 w-16 gap-2 mt-2 border rounded-md cursor-pointer bg-gray-100 hover:bg-gray-200"
-                onClick={triggerLiveSnackFileInput}
+                onClick={() => fileInputRef.current.click()}
               >
                 <PlusIcon className="w-6 h-6 text-gray-500" />
               </div>
               <input
                 type="file"
-                ref={liveSnackFileInputRef}
+                ref={fileInputRef}
+
                 onChange={handleLiveSnackPhotoCapture}
                 accept="image/*"
                 multiple
