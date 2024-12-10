@@ -539,7 +539,7 @@ const TeaAudit = () => {
                 </div>
               ))}
               <div
-                onClick={triggerTeaFileInput}
+               onClick={() => fileInputRef.current.click()}
                 className="h-12 w-12 border rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-200"
               >
                 <PlusIcon className="w-8 h-8 text-gray-600" />
