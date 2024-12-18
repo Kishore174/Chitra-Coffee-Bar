@@ -20,7 +20,7 @@ const LiveSnacks = () => {
   const [isLiveSnackSubmitted, setIsLiveSnackSubmitted] = useState(false);
   const liveSnackFileInputRef = useRef(null);
   const fileInputRef = useRef(null);
-
+  const [uploadProgress, setUploadProgress] = useState( );
   const navigate = useNavigate();
   const [rating, setRating] = useState(0);
   const [location, setLocation] = useState("");
@@ -176,7 +176,7 @@ const LiveSnacks = () => {
         date,
       };
 
-      const res = await createLiveSnacks(auditId, formData);
+      const res = await createLiveSnacks(auditId, formData,setUploadProgress);
       toast.success(res.message);
       setLoading(false)
       navigate(-1);
@@ -223,7 +223,7 @@ const LiveSnacks = () => {
 
   return (
    <>{
-    loading ?<Loader/>:(
+    loading ?<Loader time={uploadProgress}/>:(
       <>
       <div className="flex items-center justify-between mx-auto p-4 max-w-4xl">
         <button

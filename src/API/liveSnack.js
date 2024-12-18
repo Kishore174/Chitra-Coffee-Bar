@@ -1,6 +1,6 @@
 import { axiosintance } from "./Api";
 
-export const createLiveSnacks = async (id, data) => {
+export const createLiveSnacks = async (id, data,setUploadProgress) => {
   const formData = new FormData();
 
   // Append other fields in data to formData
@@ -34,6 +34,10 @@ export const createLiveSnacks = async (id, data) => {
   const response = await axiosintance.post(`/audit/${id}/liveSnacksAudit`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
+    },
+    onUploadProgress: (progressEvent) => {
+      const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+      setUploadProgress(progress); // Update the upload progress
     }
   });
   return response.data;

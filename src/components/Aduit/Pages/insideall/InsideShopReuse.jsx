@@ -88,8 +88,8 @@ const InsideShopReuse = ({ title, itemType, onUpdate, data }) => {
   return (
     <div className="border rounded-lg shadow-md  p-4 w-full sm:w-[200px] md:w-[250px] justify-between flex flex-col">
       <h2 className="text-xl poppins-semibold  capitalize  mb-2">{title}</h2>
-      {itemType === "juiceBar" &&  (
-        <div className='mb-4'>
+      {/* {itemType === "juiceBar" &&  ( */}
+        <div className='mb-4 bottom-0'>
           <label className="text-sm font-medium text-gray-500 mb-2 block">Available</label>
           <div className="flex space-x-3 mb-2">
             {['yes', 'no'].map((option) => (
@@ -106,7 +106,7 @@ const InsideShopReuse = ({ title, itemType, onUpdate, data }) => {
             ))}
           </div>
         </div>
-      )}
+      {/* )} */}
     { available !== "no" &&  <> <div>
         <label className="text-sm font-medium text-gray-500 mb-2 block">Hygiene</label>
         <div className="flex space-x-4 mb-4">

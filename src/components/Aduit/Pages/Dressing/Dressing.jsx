@@ -412,7 +412,7 @@ const Dressing = () => {
       </div>
     </div>
   )}
-</div>;
+</div>
 
     </>
     )

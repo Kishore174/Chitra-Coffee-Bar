@@ -22,7 +22,7 @@ const InsideShop = () => {
   const [loading, setLoading] = useState(false); // Loading state
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
   const [isInsideShopSubmitted, setInsideShopSubmitted] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadProgress, setUploadProgress] = useState( );
 
   const handleItemUpdate = (itemType, data) => {
     const { captureImages, ...otherData } = data;
@@ -67,9 +67,9 @@ const InsideShop = () => {
     for (const itemType of itemTypes) {
       const itemData = insideShopData[itemType];
       // Skip validation if Juice Bar is not available
-    if (itemType === "juiceBar" && insideShopData["juiceBar"].available === "no") {
+    if (insideShopData[itemType].available === "no") {
       continue;
-    } 
+    }                 
     if (itemType === "juiceBar" && !itemData.available) {
       toast.error(`Please provide available information for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
       return false;

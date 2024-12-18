@@ -24,6 +24,7 @@ const Branding = () => {
   const [loading, setLoading] = useState(false); 
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [isBrandingSubmitted, setBrandingSubmitted] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState();
 
   const handleItemUpdate = (itemType, data) => {
     const { captureImages, ...otherData } = data;
@@ -40,7 +41,7 @@ const Branding = () => {
     if (!validateForm()) return; 
     setLoading(true)
 
-    createWallBranding(auditId, brandingData)
+    createWallBranding(auditId, brandingData,setUploadProgress)
       .then((res) => {
         toast.success(res.message);
         navigate(-1);
@@ -134,7 +135,7 @@ const Branding = () => {
   return (
   <>
   {
-    loading?<Loader/>:(
+    loading? <Loader time={uploadProgress}/>:(
       <>
       <div className="flex items-center justify-between md:ml-24 mx-4 mb-2 max-w-7xl">
        <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">

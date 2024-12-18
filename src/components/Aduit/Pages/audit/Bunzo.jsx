@@ -34,6 +34,7 @@ const Bunzo = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { auditId } = useParams();
   const [lastAudit, setLastAudit] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState( );
 
   const initializeProductDetails = () => {
     return { productName: '', quantity: 0, expirationDate: '' };
@@ -171,7 +172,7 @@ const Bunzo = () => {
   }else{
     data={product:details.productName,quantity:details.quantity,expiryDate:details.expirationDate,captureImages,location,date}
   }
-  createSnackAudit(auditId,data).then(res=>{
+  createSnackAudit(auditId,data,setUploadProgress).then(res=>{
     setLoading(false)
     toast.success(res.message)
   }).catch(err=>console.log(err.message))
@@ -223,7 +224,7 @@ const Bunzo = () => {
   return (
   <>
   {
-    loading ?<Loader/>:(
+    loading ?<Loader time={uploadProgress}/>:(
       <>
       <div className="flex items-center justify-between mx-auto p-4 max-w-4xl">
         <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">

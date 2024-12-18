@@ -42,7 +42,7 @@ export const WallPainting = () => {
   const [teaImagePreview, setTeaImagePreview] = useState([]);
   const [isTesSubmitted, setIsTeaSubmitted] = useState(false);
   const [previewTeaImage, setPreviewHandWashImage] = useState(null);
-
+  const [uploadProgress, setUploadProgress] = useState( );
 
 
   const navigate = useNavigate()
@@ -65,7 +65,7 @@ export const WallPainting = () => {
         captureImages,
 
       };
-      const res = await createPainting(auditId, auditData);
+      const res = await createPainting(auditId, auditData,setUploadProgress);
       toast.success(res.message);
       navigate(-1)
       handleTeaSubmit()
@@ -227,7 +227,7 @@ setIsTeaSubmitted(true)
   return (
     <>
       {
-        loading ? <Loader /> : (
+        loading ? <Loader time={uploadProgress}/> : (
           <>
             <div className="flex items-center justify-between mx-auto   max-w-4xl">
               <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">

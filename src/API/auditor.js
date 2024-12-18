@@ -32,7 +32,16 @@ export const upDateAuditor = async (id, data) => {
 
   // Append all fields to the formData object
   for (const key in data) {
-    formData.append(key, data[key]);
+    if (key !== 'routes') {
+      formData.append(key, data[key]);
+    }
+  }
+
+  // Ensure shopdata.routes is an array and append it separately
+  if (Array.isArray(data.routes)) {
+    data.routes.forEach((route) => {
+      formData.append('routes', route); // Append each route as a separate entry
+    });
   }
   const response = await axiosintance.put(`/auditor/${id}`, formData);
   return response.data;

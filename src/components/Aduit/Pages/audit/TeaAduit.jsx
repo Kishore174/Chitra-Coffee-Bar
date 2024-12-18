@@ -42,7 +42,7 @@ const TeaAudit = () => {
   const handleTasteClick = (taste) => setSelectedTaste(taste);
   const handleRemarkChange = (e) => setRemark(e.target.value);
   const handleRatingClick = (rate) => setRating(rate);
-
+ const [uploadProgress, setUploadProgress] = useState( );
   const navigate = useNavigate();
   const validateForm = () => {
     if (!selectedTea) {
@@ -107,7 +107,7 @@ const TeaAudit = () => {
         rating,
         captureImages: capturedPhoto,
       };
-      const res = await createTea(auditId, auditData);
+      const res = await createTea(auditId, auditData,setUploadProgress);
       toast.success(res.message);
       navigate(-1);
       handleTeaSubmit();
@@ -254,7 +254,7 @@ const TeaAudit = () => {
 
   return (
    <>{
-    loading ? <Loader/> :
+    loading ? <Loader time={uploadProgress}/>:
     (
       <>
       <div className="flex items-center justify-between mx-auto p-4 max-w-4xl">

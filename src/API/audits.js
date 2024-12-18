@@ -95,7 +95,7 @@ export const getOutsideKitchen = async (id) => {
   const response = await axiosintance.get(`/audit/${id}/outsideKitchenAudit`);
   return response.data;
 };
-export const createOutsideKitchen = async (id,data) => {
+export const createOutsideKitchen = async (id,data,setUploadProgress) => {
   const formData = new FormData();
   for (const key in data) {
     if (Array.isArray(data[key])) {
@@ -123,14 +123,19 @@ export const createOutsideKitchen = async (id,data) => {
     }
   }
 
-    const response = await axiosintance.post(`/audit/${id}/outsideKitchenAudit`,formData);
+    const response = await axiosintance.post(`/audit/${id}/outsideKitchenAudit`,formData,{
+      onUploadProgress: (progressEvent) => {
+        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        setUploadProgress(progress); // Update the upload progress
+      }
+    });
     return response.data;
 };
 export const getWallBranding = async (id) => {
   const response = await axiosintance.get(`/audit/${id}/wallBrandingAudit`);
   return response.data;
 };
-export const createWallBranding = async (id,data) => {
+export const createWallBranding = async (id,data,setUploadProgress) => {
   const formData = new FormData();
   for (const key in data) {
     if (Array.isArray(data[key])) {
@@ -158,7 +163,16 @@ export const createWallBranding = async (id,data) => {
     }
   }
 
-    const response = await axiosintance.post(`/audit/${id}/wallBrandingAudit`,formData);
+    const response = await axiosintance.post(`/audit/${id}/wallBrandingAudit`,formData,
+
+      {
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(progress); // Update the upload progress
+        }
+
+      }
+    );
     return response.data;
 };
 export const createStock = async (id, data) => {
@@ -211,7 +225,7 @@ export  const createEmployees =async(id ,data)=>{
         const response =await axiosintance.post(`/audit/${id}/lastAudits`)   
         return response.data
         }
-    export const createPainting = async (id, data) => {
+    export const createPainting = async (id, data,setUploadProgress) => {
       const formData = new FormData();
     
       // Append other fields in data to formData
@@ -229,6 +243,10 @@ export  const createEmployees =async(id ,data)=>{
       const response = await axiosintance.post(`/audit/${id}/paintingAudit`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
+        },
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(progress); // Update the upload progress
         }
       });
       return response.data;

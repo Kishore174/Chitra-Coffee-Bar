@@ -36,7 +36,7 @@ const Coffee = () => {
   const [lastAudits, setLastAudits] = useState([]);
   const coffeeFileInputRef = useRef(null);
   const [loading, setLoading] = useState(false); // Loading state
-
+const [uploadProgress, setUploadProgress] = useState( );
   const handleCoffeeClick = (option) => setSelectedCoffe(option);
   const handleSugarClick = (level) => setSelectedSugar(level);
   const handleTemperatureClick = (temperature) => setSelectedTemperature(temperature);
@@ -122,7 +122,7 @@ const Coffee = () => {
         rating,
         captureImages: capturedPhoto,
       };
-      const res = await createCoffee(auditId, auditData);
+      const res = await createCoffee(auditId, auditData,setUploadProgress);
       toast.success(res.message);
       navigate(-1);
       handleCoffeeSubmit();
@@ -266,7 +266,7 @@ const Coffee = () => {
   return (
     <>
     {
-      loading ?<Loader/>:(
+      loading ?<Loader time={uploadProgress}/>:(
         <>
       <div className="flex items-center justify-between mx-auto p-4 max-w-4xl">
         <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">

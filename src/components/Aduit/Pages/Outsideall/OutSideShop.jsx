@@ -23,7 +23,7 @@ const OutSideShop = () => {
   const [loading, setLoading] = useState(false); // Loading state
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
   const [isOutsideShopSubmitted, setOutsideShopSubmitted] = useState(false);
-
+  const [uploadProgress, setUploadProgress] = useState(0);
   const handleItemUpdate = (itemType, data) => {
       const { captureImages, ...otherData } = data;
       setOutsideShopData((prevData) => ({
@@ -39,7 +39,7 @@ const OutSideShop = () => {
       if (!validateForm()) return; 
     setLoading(true)
      
-      createOutsideKitchen(auditId, outsideShopData)
+      createOutsideKitchen(auditId, outsideShopData,setUploadProgress)
         .then((res) => {
           toast.success(res.message);
           navigate(-1);
@@ -133,7 +133,7 @@ const OutSideShop = () => {
   return (
     <>
     {
-      loading?<Loader/>:(
+      loading?<Loader time={uploadProgress}/>:(
         <>
        <div className="flex items-center justify-between md:ml-24 mx-4 mb-2 max-w-7xl">
        <button onClick={() => navigate(-1)} className="text-gray-700 flex space-x-1 hover:text-red-600 transition duration-200">

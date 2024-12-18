@@ -21,7 +21,7 @@ const InsideKitchens = () => {
   const [fetchData, setFetchData] = useState(null);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [isInsideKitchenSubmitted, setInsideKitchenSubmitted] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadProgress, setUploadProgress] = useState( );
 
   const handleItemUpdate = (itemType, data) => {
     const { captureImages, ...otherData } = data;  
