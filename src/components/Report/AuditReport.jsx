@@ -642,7 +642,7 @@ const InfoRow = ({ label, value }) => {
     <div className="w-full sm:w-1/2">
       <p className="text-sm poppins-semibold text-black">{label}</p>
       <p className="text-gray-600  poppins-regular  whitespace-nowrap">{value}</p> 
-    </div>
+    </div>  
   );
 };
 

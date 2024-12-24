@@ -44,18 +44,18 @@ const Bunzo = () => {
       toast.error("Please select or enter a product name.");
       return false;
     }
-    if (details.quantity <= 0) {
-      toast.error("Please enter a valid quantity.");
-      return false;
-    }
+    // if (details.quantity <= 0) {
+    //   toast.error("Please enter a valid quantity.");
+    //   return false;
+    // }
     if (activeTab !== 'Other Brands' && !details.expirationDate) {
       toast.error("Please select an expiration date.");
       return false;
     }
-    if (liveSnackImagePreview.length === 0) {
-      toast.error("Please upload at least one image.");
-      return false;
-    }
+    // if (liveSnackImagePreview.length === 0) {
+    //   toast.error("Please upload at least one image.");
+    //   return false;
+    // }
     return true;
   };
   useEffect(() => {
@@ -537,7 +537,7 @@ const Bunzo = () => {
                       {product.productPhoto ? (
                         <img src={product.productPhoto} alt="Product" className="h-5 w-5 object-cover rounded-md" />
                       ) : previewImage.length > 0 ? (
-                        previewImage[index].map((image)=>(
+                        previewImage[index]?.map((image)=>(
                         <img src={image.imageUrl} alt="Product" className="h-5 w-5 object-cover rounded-md" />
  
                         ))
