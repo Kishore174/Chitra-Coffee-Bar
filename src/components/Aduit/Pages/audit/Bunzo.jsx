@@ -175,14 +175,20 @@ const Bunzo = () => {
   createSnackAudit(auditId,data,setUploadProgress).then(res=>{
     setLoading(false)
     toast.success(res.message)
+    getSnackAudit(auditId).then(res=>{
+      setLoading(true)
+
+      if(res.data){
+        setSubmittedProducts(res.data)
+        setPreviewImage(res.data.map(i=>i.captureImages))
+      }
+      setLoading(false)
+
+    })
   }).catch(err=>console.log(err.message))
   
 
-    const productPhoto = liveSnackImagePreview.length > 0 ? liveSnackImagePreview[0] : null; // Get the first image for submission
-    setSubmittedProducts((prev) => [
-      ...prev,
-      { ...details, tab: activeTab, brandName: activeTab, productPhoto } 
-    ]);
+    const productPhoto = liveSnackImagePreview.length > 0 ? liveSnackImagePreview[0] : null; // Get the first image for submission    
     setIsModalOpen(false)
     setDetails(initializeProductDetails()); 
     setCaptureImages([])
@@ -532,7 +538,7 @@ const Bunzo = () => {
                     <td className="px-4 py-2 border-b">{products.find(p=>p._id===product?.product)?.brand.name||product.brandName}</td> {/* Added Brand Name */}
                     <td className="px-4 py-2 border-b">{products.find(p=>p._id===product?.product)?.name||products.find(p=>p._id===product.productName)?.name||product.productName}</td>
                     <td className="px-4 py-2 border-b">{product.quantity}</td>
-                    <td className="px-4 py-2 border-b">{product.expirationDate||<DateFormat date={product.expiryDate}/>}</td>
+                    <td className="px-4 py-2 border-b">{product.expirationDate||product.expiryDate ? <DateFormat date={product.expiryDate}/>:"-"}</td>
                     <td className="px-4 py-2 border-b flex flex-wrap gap-1">
                       {product.productPhoto ? (
                         <img src={product.productPhoto} alt="Product" className="h-5 w-5 object-cover rounded-md" />

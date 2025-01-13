@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { Link, useNavigate } from "react-router-dom";
 import { BsArrowRight } from "react-icons/bs";
-import { assignAuditorsAudit, getAllAudits, getAuditByAuditor } from "../../API/audits";
+import { assignAuditorsAudit, assignAuditRoute, getAllAudits, getAuditByAuditor } from "../../API/audits";
+import {getRoutesByAuditor } from "../../API/createRoute"
 import { ScaleLoader } from "react-spinners";
 import { useAuth } from "../../context/AuthProvider";
 import { auditAssign } from "../../API/auditor";
@@ -18,6 +19,8 @@ const Table = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const [selectedRoute,setSelectedRoute] = useState(null)
+  const [routes,setRoutes] = useState([])
 
   const currentWeekDates = Array(6)
     .fill()
@@ -53,6 +56,14 @@ const Table = () => {
     }
   }, []);
 
+  useEffect(()=>{
+    getRoutesByAuditor(user?._id).then(res=>{
+      setRoutes(res.data)
+    }).catch(err=>{
+      console.log(err)
+    })
+  },[user])
+
   const handleToAsign = () => {
     auditAssign()
       .then((res) => {
@@ -63,24 +74,39 @@ const Table = () => {
       });
   };
   const handleToAsignAuditor = () => {
-    assignAuditorsAudit()
+    // assignAuditorsAudit()
+    //   .then((res) => {
+    //     toast.success(res.message);
+    //     setLoading(true)
+    //     if (user) {
+    //       if (user.role === "super-admin") {
+    //         getAllAudits()
+    //           .then((res) => setAudits(res.data))
+    //           .finally(() => {
+    //             setLoading(false);
+    //           });
+    //       } else {
+    //         getAuditByAuditor(user._id)
+    //           .then((res) => setAudits(res.data))
+    //           .finally(() => {
+    //             setLoading(false);
+    //           });
+    //       }
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     toast.error(err.response?.data?.message);
+    //   });
+    assignAuditRoute(selectedRoute)
       .then((res) => {
         toast.success(res.message);
         setLoading(true)
         if (user) {
-          if (user.role === "super-admin") {
-            getAllAudits()
-              .then((res) => setAudits(res.data))
-              .finally(() => {
-                setLoading(false);
-              });
-          } else {
             getAuditByAuditor(user._id)
               .then((res) => setAudits(res.data))
               .finally(() => {
                 setLoading(false);
               });
-          }
         }
       })
       .catch((err) => {
@@ -140,7 +166,16 @@ const Table = () => {
             </p>
           )
         )} */}
-        {filteredAudits.length === 0 && dayjs(filteredAudits[0]?.auditDate).isSame(selectedDate, "day") && <button
+        {filteredAudits.length === 0 && dayjs(filteredAudits[0]?.auditDate).isSame(selectedDate, "day") && 
+        <div className=" flex gap-2">
+          <label htmlFor="route">Route</label>
+          <select onChange={(e)=>setSelectedRoute(e.target.value)} className=" border">
+            <option value=""> - </option>
+            {routes && routes.map(route=>(
+              <option value={route._id}>{route.name}</option>
+            ))}
+          </select>
+          {selectedRoute && <button
             className={`${
                "bg-red-600"
             } text-white rounded-lg poppins-semibold py-1 px-3 flex items-center`}
@@ -149,6 +184,8 @@ const Table = () => {
           >
             Schedule
           </button>}
+        </div>
+          }
       </div>
 
       {loading ? (

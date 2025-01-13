@@ -255,3 +255,7 @@ export  const createEmployees =async(id ,data)=>{
       const response =await axiosintance.post(`/audit-auditor`)   
       return response.data
       }
+export  const assignAuditRoute =async(id)=>{
+  const response =await axiosintance.post(`/audit-route/${id}`)   
+  return response.data
+}
