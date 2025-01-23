@@ -97,10 +97,11 @@ const Table = () => {
     //   .catch((err) => {
     //     toast.error(err.response?.data?.message);
     //   });
-    assignAuditRoute(selectedRoute)
+    assignAuditorsAudit(selectedRoute)
       .then((res) => {
         toast.success(res.message);
         setLoading(true)
+        setSelectedRoute(null)
         if (user) {
             getAuditByAuditor(user._id)
               .then((res) => setAudits(res.data))
@@ -166,7 +167,7 @@ const Table = () => {
             </p>
           )
         )} */}
-        {filteredAudits.length === 0 && dayjs(filteredAudits[0]?.auditDate).isSame(selectedDate, "day") && 
+      {filteredAudits.length === 0  && 
         <div className=" flex gap-2">
           <label htmlFor="route">Route</label>
           <select onChange={(e)=>setSelectedRoute(e.target.value)} className=" border">
@@ -185,7 +186,7 @@ const Table = () => {
             Schedule
           </button>}
         </div>
-          }
+      }
       </div>
 
       {loading ? (

@@ -251,8 +251,8 @@ export  const createEmployees =async(id ,data)=>{
       });
       return response.data;
     };
-    export  const assignAuditorsAudit =async()=>{
-      const response =await axiosintance.post(`/audit-auditor`)   
+    export  const assignAuditorsAudit =async(id)=>{
+      const response =await axiosintance.post(`/audit-auditor/${id}`)   
       return response.data
       }
 export  const assignAuditRoute =async(id)=>{
