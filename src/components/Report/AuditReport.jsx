@@ -8,6 +8,7 @@ import { sendSignatureToBackend, uploadAudioToBackend } from '../../API/Api';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthProvider';
 import Loader from '../Loader';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 
 const AuditReport = () => {
   const [name, setName] = useState('');
@@ -23,6 +24,8 @@ const AuditReport = () => {
 
   const [signatureType, setSignatureType] = useState(''); 
   const [currentAudio, setCurrentAudio] = useState(null);
+  const [selImage,setSelImage] = useState("")
+  const [previewImage,setPreviewImage] = useState(false)
   const navigate = useNavigate()
 const { user } = useAuth();
 
@@ -166,12 +169,16 @@ const { user } = useAuth();
      <AuditSection
        title="Tea Audit"
        data={auditData?.teaAudit}
-       fields={['quality', 'color', 'sugarLevel', 'temperature', 'aroma', 'taste', 'remark', 'rating']}
+       fields={['quality', 'color', 'sugarLevel', 'temperature', 'aroma', 'taste', 'remark', 'rating','captureImages']}
+       setPreview={setPreviewImage}
+       setSelImage={setSelImage}
      />
      <AuditSection
        title="Coffee Audit"
        data={auditData?.coffeeAudit}
-       fields={['quality', 'color', 'sugarLevel', 'temperature', 'aroma', 'taste', 'remark', 'rating']}
+       fields={['quality', 'color', 'sugarLevel', 'temperature', 'aroma', 'taste', 'remark', 'rating',"captureImages"]}
+       setPreview={setPreviewImage}
+       setSelImage={setSelImage}
      />
      {/* Live Snacks Section */}
      <LiveSnacksSection
@@ -179,31 +186,44 @@ const { user } = useAuth();
        remark={auditData?.liveSnacks?.remark}
        rating={auditData?.liveSnacks?.rating}
        captureImages={auditData?.liveSnacks?.captureImages}
+       setPreview={setPreviewImage}
+       setSelImage={setSelImage}
      />
      {/* Bakery Products Section */}
      {auditData?.bakeryProducts && auditData.bakeryProducts.length > 0 && (
-       <BakeryProductsSection products={auditData.bakeryProducts} />
+       <BakeryProductsSection products={auditData.bakeryProducts} 
+        setPreview={setPreviewImage}
+        setSelImage={setSelImage}
+       />
      )}
      {/* Additional Sections could go here */}
      <AuditSection
        title="Inside Shop"
        data={auditData?.insideShop}
        fields={['dining', 'liveSnackDisplay', 'teaCounter', 'dustbin', 'frontView', 'handWash', 'hotCounter', 'iceCreamCounter', 'juiceBar', 'normalCounter', 'snackCounter']}
+       setPreview={setPreviewImage}
+       setSelImage={setSelImage}
      />
      <AuditSection
        title="Inside Kitchen"
        data={auditData?.insideKitchen}
        fields={['exhaustFan', 'grinder', 'kitchenFloor', 'kitchenLight', 'milkFreezer', 'sink', 'snackMaking', 'workTable']}
+       setPreview={setPreviewImage}
+       setSelImage={setSelImage}
      />
      <AuditSection
        title="Outside Shop"
        data={auditData?.outsideKitchen}
        fields={['lollipopStandArea', 'shopBoard']}
+       setPreview={setPreviewImage}
+       setSelImage={setSelImage}
      />
      <AuditSection
        title="Wall Branding"
        data={auditData?.wallBranding}
        fields={['map', 'menuBrand', 'bunzoSection', 'bakshanamSection', 'pillarBranding']}
+       setPreview={setPreviewImage}
+       setSelImage={setSelImage}
      />
       
      
@@ -359,7 +379,9 @@ const { user } = useAuth();
        )}
      </div>
    </section>
-
+    {
+      previewImage && <PreviewImage image={selImage} setPreview={setPreviewImage}/>
+    }
  </div>
     )
   }
@@ -485,7 +507,7 @@ const RecordingControls = ({ setIsRecording,isRecording }) => {
   );
 };
 // Live Snacks Section Component
-const LiveSnacksSection = ({ snacks, remark, rating, captureImages }) => (
+const LiveSnacksSection = ({ snacks, remark, rating, captureImages,setPreview,setSelImage }) => (
   <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
     <h2 className="bg-red-100 text-red-600 text-md poppins-bold p-2">Live Snacks</h2>
     <div className="p-2 flex flex-wrap gap-3">
@@ -508,6 +530,10 @@ const LiveSnacksSection = ({ snacks, remark, rating, captureImages }) => (
                   src={image.imageUrl}
                   alt={`Snack Image ${idx + 1}`}
                   className="w-16 h-16 object-cover border border-gray-300"
+                  onClick={()=>{
+                    setSelImage(image.imageUrl)
+                    setPreview(true)
+                  }}
                 />
                 {/* <p className="absolute bottom-0 left-0 text-xs bg-black text-white px-1 py-0.5">{image.location}</p> */}
               </div>
@@ -518,7 +544,7 @@ const LiveSnacksSection = ({ snacks, remark, rating, captureImages }) => (
     </div>
   </section>
 );
-const BakeryProductsSection = ({ products }) => (
+const BakeryProductsSection = ({ products,setPreview,setSelImage }) => (
   <section className="my-4 border border-red-200 rounded-lg overflow-hidden">
     <h2 className="bg-red-100 text-red-600 text-md font-semibold p-2">Bakery Products</h2>
     <div className="p-2 flex flex-wrap">
@@ -538,6 +564,10 @@ const BakeryProductsSection = ({ products }) => (
                     src={image.imageUrl}
                     alt={`Bakery Product Image ${idx + 1}`}
                     className="w-16 h-16 object-cover border border-gray-300"
+                    onClick={()=>{
+                      setSelImage(image.imageUrl)
+                      setPreview(true)
+                    }}
                   />
                 ))}
               </div>
@@ -548,11 +578,11 @@ const BakeryProductsSection = ({ products }) => (
     </div>
   </section>
 );
-const AuditSection = ({ title, data, fields }) => {
+const AuditSection = ({ title, data, fields,setPreview,setSelImage }) => {
   return (
     <section className="mb-6 border border-red-200 rounded-lg overflow-hidden">
       {/* Section Title */}
-      <h2 className="bg-red-100 text-red-600 text-lg poppins-bold p-4">{title}</h2>
+      <h2 className="bg-red-100 text-red-600 text-lg poppins-bold p-4">{capitalizeFirstLetter(title)}</h2>
 
       {/* Content Wrapper */}
       <div className="p-4 flex flex-wrap gap-6">
@@ -565,21 +595,28 @@ const AuditSection = ({ title, data, fields }) => {
             if (Array.isArray(value)) {
               return (
                 <div key={index} className="flex-shrink-0  w-auto">
-                  <p className="text-sm poppins-semibold text-gray-600 mb-2">{capitalizeFirstLetter(field)}</p>
-                  <ul className="list-disc pl-5 text-gray-800">
-                    {value.map((item, idx) => (
-                      <li key={idx} className="mb-2">
-                        <pre className="bg-gray-50 p-2 rounded-lg overflow-x-auto text-sm">{JSON.stringify(item, null, 2)}</pre>
-                      </li>
+                  <p className="text-sm poppins-semibold text-gray-600 mb-2 capitalize">{field.replace(/([A-Z])/g, ' $1')}</p>
+                  <div className="flex gap-4">
+                    {value.map((image, imgIndex) => (
+                      <img
+                        key={imgIndex}
+                        src={image.imageUrl}
+                        alt={`Image ${imgIndex + 1}`}
+                        className="w-12 h-12 object-cover border border-gray-300 rounded-md shadow-sm"
+                        onClick={()=>{
+                          setPreview(true)
+                          setSelImage(image.imageUrl)
+                        }}
+                    />
                     ))}
-                  </ul>
+                  </div>
                 </div>
               );
             } else {
               // Handle nested objects
               return (
                 <div key={index} className="flex-shrink-0">
-                  <p className="text-sm poppins-bold text-black mb-2">{capitalizeFirstLetter(field)}</p>
+                  <p className="text-sm poppins-bold text-black mb-2 capitalize">{field=== "juiceBar"?"Juice Counter": field=== "snackCounter"?"Showcase Rack":field.replace(/([A-Z])/g, ' $1')}</p>
                   <div className="px-4 flex gap-10 text-gray-800">
                     {Object.keys(value).filter(i=>i!=="_id").map((nestedField, nestedIndex) => {
                       const nestedValue = value[nestedField];
@@ -596,6 +633,10 @@ const AuditSection = ({ title, data, fields }) => {
                                   src={image.imageUrl}
                                   alt={`Image ${imgIndex + 1}`}
                                   className="w-12 h-12 object-cover border border-gray-300 rounded-md shadow-sm"
+                                  onClick={()=>{
+                                    setPreview(true)
+                                    setSelImage(image.imageUrl)
+                                  }}
                                 />
                               ))}
                             </div>
@@ -652,4 +693,23 @@ const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
+const PreviewImage = ({image,setPreview}) => {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+      <div className="relative bg-white p-4 rounded-lg">
+        <img
+          src={image}
+          alt="Preview"
+          className=" h-[90vh] max-w-full rounded"
+        />
+        <button
+          onClick={()=>setPreview(false)}
+          className="absolute top-0 right-0 p-1 bg-red-500 border text-white border-gray-300 rounded-full shadow-md hover:bg-white hover:text-black transition-colors duration-200"
+        >
+          <XMarkIcon className="w-6 h-6" />
+        </button>
+      </div>
+    </div>
+  );
+};
 export default AuditReport;

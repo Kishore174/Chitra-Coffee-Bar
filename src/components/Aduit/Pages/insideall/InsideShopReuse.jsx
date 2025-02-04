@@ -87,7 +87,7 @@ const InsideShopReuse = ({ title, itemType, onUpdate, data }) => {
 
   return (
     <div className="border rounded-lg shadow-md  p-4 w-full sm:w-[200px] md:w-[250px] justify-between flex flex-col">
-      <h2 className="text-xl poppins-semibold  capitalize  mb-2">{title}</h2>
+      <h2 className="text-xl poppins-semibold  capitalize  mb-2">{itemType==="juiceBar"?"Juice Counter":itemType=== "snackCounter"?"Showcase Rack":title}</h2>
       {/* {itemType === "juiceBar" &&  ( */}
         <div className='mb-4 bottom-0'>
           <label className="text-sm font-medium text-gray-500 mb-2 block">Available</label>
