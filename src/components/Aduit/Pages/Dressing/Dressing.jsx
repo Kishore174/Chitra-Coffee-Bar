@@ -17,6 +17,8 @@ const Dressing = () => {
   const [cortWeared, setCortWeared] = useState(0);
   const [glovesWeared, setGlovesWeared] = useState(0);
   const [glovesNotWeared, setGlovesNotWeared] = useState(0);
+  const [tShirtWeared, setTShirtWeared] = useState(0);
+  const [tShirtNotWeared, setTShirtNotWeared] = useState(0);
   const [cortNotWeared, setCortNotWeared] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -32,7 +34,7 @@ const Dressing = () => {
     setRating(value);
   };
   const validateForm = () => {
-    if (capWeared < 0 && capNotWeared < 0 && apronWeared < 0 && apronNotWeared < 0 && cortWeared < 0 && glovesWeared < 0 && glovesNotWeared < 0) {
+    if (capWeared < 0 && capNotWeared < 0 && apronWeared < 0 && apronNotWeared < 0 && cortWeared < 0 && glovesWeared < 0 && glovesNotWeared < 0 && tShirtWeared<0 && tShirtNotWeared<0) {
       toast.error('Please enter valid numbers for all fields.');
       return false;
     }
@@ -55,6 +57,7 @@ const Dressing = () => {
       apron: { wear: apronWeared, notWear: apronNotWeared },
       gloves: { wear: glovesWeared, notWear: glovesNotWeared },
       cort: { wear: cortWeared, notWear: cortNotWeared },
+      tShirt: {wear:tShirtWeared,notWear:tShirtNotWeared},
       rating,
       remark: dressingRemark,
     };
@@ -109,6 +112,8 @@ const Dressing = () => {
           setGlovesNotWeared(gloves.notWear);
           setCortWeared(cort.wear);
           setCortNotWeared(cort.notWear);
+          setTShirtWeared(tShirt.wear);
+          setTShirtNotWeared(tShirt.wear);
           setRating(rating);
           setDressingRemark(remark);
           setSubmitted(true)
@@ -181,6 +186,8 @@ const Dressing = () => {
               { label: "Cort (Not Wear)", value: lastAudit.cort?.notWear },
               { label: "Gloves (Wear)", value: lastAudit.gloves?.wear },
               { label: "Gloves (Not Wear)", value: lastAudit.gloves?.notWear },
+              { label: "T-Shirt (Wear)", value: lastAudit.tShirt?.wear },
+              { label: "T-Shirt (Not Wear)", value: lastAudit.tShirt?.notWear },
               { label: "Remark", value: lastAudit.remark },
               { label: "Rating", value: lastAudit.rating },
             ].map((item, index) => (
@@ -341,6 +348,31 @@ const Dressing = () => {
             type="number"
             value={glovesNotWeared}
             onChange={(e) => setGlovesNotWeared(Number(e.target.value))}
+            placeholder="Enter number"
+            className="border rounded-md p-2 w-full"
+          />
+        </div>
+      </div>
+    </div>
+    <div className="flex-1">
+      <label className="text-sm font-medium text-gray-500 mb-2 block">T-Shirt</label>
+      <div className="flex space-x-4">
+        <div className="flex flex-col">
+          <label className="text-xs text-gray-500">Weared</label>
+          <input
+            type="number"
+            value={tShirtWeared}
+            onChange={(e) => setTShirtWeared(Number(e.target.value))}
+            placeholder="Enter number"
+            className="border rounded-md p-2 w-full"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="text-xs text-gray-500">Not Weared</label>
+          <input
+            type="number"
+            value={tShirtNotWeared}
+            onChange={(e) => setTShirtNotWeared(Number(e.target.value))}
             placeholder="Enter number"
             className="border rounded-md p-2 w-full"
           />
