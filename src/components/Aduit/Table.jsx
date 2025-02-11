@@ -138,7 +138,7 @@ const Table = () => {
           <button
             key={index}
             className={`day-btn px-8 w-12 ${
-              selectedDate.isSame(selectedDate, "day") || selectedDate.isSame(date.add(1, "day"), "day") ? "selected" : ""
+              selectedDate.isSame(date.add(1, "day"), "day") ? "selected" : ""
             }`}
             onClick={() => handleDateClick(date.add(1, "day"))}
           >
