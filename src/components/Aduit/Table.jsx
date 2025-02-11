@@ -281,8 +281,8 @@ const Table = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredAudits.length > 0 ? (
-                    filteredAudits.map((audit, index) => (
+                  {audits.length > 0 ? (
+                    audits.map((audit, index) => (
                       <tr key={audit.id}>
                         <td className="px-4 py-4 border-b border-gray-200 text-sm text-gray-700">
                           {index + 1}
