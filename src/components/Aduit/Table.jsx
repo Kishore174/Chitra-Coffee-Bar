@@ -138,9 +138,9 @@ const Table = () => {
           <button
             key={index}
             className={`day-btn px-8 w-12 ${
-              selectedDate.isSame(date, "day") ? "selected" : ""
+              selectedDate.isSame(date.add(1, "day"), "day") ? "selected" : ""
             }`}
-            onClick={() => handleDateClick(date)}
+            onClick={() => handleDateClick(date.add(1, "day"))}
           >
             <span className="day-name">{daysOfWeek[index]}</span>
             <span className="day-number">{date.format("D")}</span>
@@ -167,7 +167,7 @@ const Table = () => {
             </p>
           )
         )} */}
-      {filteredAudits.length === 0  && 
+      {audits.length === 0  && 
         <div className=" flex gap-2">
           <label htmlFor="route">Route</label>
           <select onChange={(e)=>setSelectedRoute(e.target.value)} className=" border">
@@ -195,8 +195,8 @@ const Table = () => {
         <>
           {/* Responsive Card View for Mobile */}
           <div className="block md:hidden mt-4">
-            {filteredAudits.length > 0 ? (
-              filteredAudits.map((audit, index) => (
+            {audits.length > 0 ? (
+              audits.map((audit, index) => (
                 <div
                   key={audit._id}
                   className="border rounded-lg p-4 mb-4 shadow-md"
