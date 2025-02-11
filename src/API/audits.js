@@ -1,14 +1,14 @@
 import { axiosintance } from "./Api";
-export const getAllAudits = async () => {
-    const response = await axiosintance.get(`/audits`);
+export const getAllAudits = async (data) => {
+    const response = await axiosintance.post(`/audits`,data);
     return response.data;
   };
   export const getAudit = async (id) => {
     const response = await axiosintance.get(`/audit/${id}`);
     return response.data;
   };
-  export const getAuditByAuditor = async (id) => {
-    const response = await axiosintance.get(`/audit/auditor/${id}`);
+  export const getAuditByAuditor = async (id,data) => {
+    const response = await axiosintance.post(`/audit/auditor/${id}`,data);
     return response.data;
   };
   export const getInsideShop = async (id) => {

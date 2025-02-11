@@ -41,20 +41,20 @@ const Table = () => {
   useEffect(() => {
     if (user) {
       if (user.role === "super-admin") {
-        getAllAudits()
+        getAllAudits({date : selectedDate})
           .then((res) => setAudits(res.data))
           .finally(() => {
             setLoading(false);
           });
       } else {
-        getAuditByAuditor(user._id)
+        getAuditByAuditor(user._id,{date : selectedDate})
           .then((res) => setAudits(res.data))
           .finally(() => {
             setLoading(false);
           });
       }
     }
-  }, []);
+  }, [selectedDate]);
 
   useEffect(()=>{
     getRoutesByAuditor(user?._id).then(res=>{
