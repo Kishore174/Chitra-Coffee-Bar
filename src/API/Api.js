@@ -1,6 +1,6 @@
 import axios from "axios";
  export const axiosintance =axios.create({
-    baseURL:"https://ccb-api-c0enefg8g8fqamf4.centralindia-01.azurewebsites.net/api/v1" ,
+    baseURL:"https://apiauditor.chitracoffeebar.com/api/v1" ,
     // headers: {
     //   Authorization: `Bearer ${Cookie.get('token')}`
     // },

@@ -103,7 +103,7 @@ const Dressing = () => {
       try {
         const res = await getDress(auditId);
         if (res.data) {
-          const { cap, apron, gloves, cort, rating, remark } = res.data;
+          const { cap, apron, gloves, cort, rating, remark,tShirt } = res.data;
           setCapWeared(cap.wear);
           setCapNotWeared(cap.notWear);
           setApronWeared(apron.wear);
@@ -112,8 +112,8 @@ const Dressing = () => {
           setGlovesNotWeared(gloves.notWear);
           setCortWeared(cort.wear);
           setCortNotWeared(cort.notWear);
-          setTShirtWeared(tShirt.wear);
-          setTShirtNotWeared(tShirt.wear);
+          setTShirtWeared(tShirt?.wear);
+          setTShirtNotWeared(tShirt?.wear);
           setRating(rating);
           setDressingRemark(remark);
           setSubmitted(true)
