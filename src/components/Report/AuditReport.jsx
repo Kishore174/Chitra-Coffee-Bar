@@ -553,7 +553,7 @@ const BakeryProductsSection = ({ products,setPreview,setSelImage }) => (
           <div className="font-semibold">{product.productName || product?.product?.name || 'No product name'}</div>
           <div className="text-sm">Brand Name: {product.brandName || ""}</div>
           <div className="text-sm">Quantity: {product.quantity}</div>
-          <div className="text-sm">Expiry Date: {new Date(product.expiryDate).toLocaleDateString()}</div>
+          {!product?.productName && <div className="text-sm">Expiry Date: {new Date(product.expiryDate).toLocaleDateString()}</div>}
           {product.captureImages && product.captureImages.length > 0 && (
             <div className="mx-auto">
               <p className="font-medium">Images:</p>
