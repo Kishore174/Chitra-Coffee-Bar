@@ -29,17 +29,17 @@ export const deleteAuditor = async (id) => {
 
 export const upDateAuditor = async (id, data) => {
   const formData = new FormData();
-
+  const {old_set,...rest} = data
   // Append all fields to the formData object
-  for (const key in data) {
+  for (const key in rest) {
     if (key !== 'routes') {
-      formData.append(key, data[key]);
+      formData.append(key, rest[key]);
     }
   }
 
   // Ensure shopdata.routes is an array and append it separately
-  if (Array.isArray(data.routes)) {
-    data.routes.forEach((route) => {
+  if (Array.isArray(rest.routes)) {
+    rest.routes.forEach((route) => {
       formData.append('routes', route); // Append each route as a separate entry
     });
   }
