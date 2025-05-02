@@ -10,6 +10,7 @@ const KitchenItem = ({ title, itemType, onUpdate, data }) => {
   const [previewImage, setPreviewImage] = useState(null);
   const fileInputRef = useRef(null);
   const [captureImages, setCaptureImages] = useState([]);
+  const [available,setAvailable] = useState("")
 
   const handlePhotoCapture = async (e) => {
     const files = Array.from(e.target.files);
@@ -67,6 +68,7 @@ const KitchenItem = ({ title, itemType, onUpdate, data }) => {
 
   const handleUpdate = () => {
     const data = {
+      available,
       title,
       hygiene,
       remark,
@@ -80,7 +82,7 @@ const KitchenItem = ({ title, itemType, onUpdate, data }) => {
 
   useEffect(() => {
     handleUpdate(); // Update the parent component whenever the local state changes
-  }, [ hygiene, remark, brandName, imagePreview, rating]); // Include brandName in the dependency array
+  }, [ available,hygiene, remark, brandName, imagePreview, rating]); // Include brandName in the dependency array
 
   const handleImageClick = (image) => {
     setPreviewImage(image); // Set the clicked image for preview
@@ -92,6 +94,7 @@ const KitchenItem = ({ title, itemType, onUpdate, data }) => {
 
   useEffect(() => {
     if (data) {
+      setAvailable(data.available)
       setHygiene(data.hygiene);
       setRemark(data.remark);
       setBrandName(data.brandName ); // Set brand name from data
@@ -104,7 +107,26 @@ const KitchenItem = ({ title, itemType, onUpdate, data }) => {
     <div className="border rounded-lg shadow-md p-4 w-full sm:w-2/5 md:w-[250px] justify-between flex flex-col">
 
       <h2 className="text-xl poppins-semibold  capitalize mb-2">{title.replace(/([A-Z])/g, " $1").trim()}</h2>
-      <div>
+      <div className='mb-4 bottom-0'>
+          <label className="text-sm font-medium text-gray-500 mb-2 block">Available</label>
+          <div className="flex space-x-3 mb-2">
+            {['yes', 'no'].map((option) => (
+              <div
+                key={option}
+                onClick={() => setAvailable(option)}
+                className={`cursor-pointer capitalize px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
+                  ${available === option 
+                    ? 'bg-green-600 text-white' 
+                    : 'text-gray-700 hover:bg-green-600 hover:text-white'}`}
+              >
+                {option}
+              </div>
+            ))}
+          </div>
+      </div>
+      {
+        available !=="no" && <>
+        <div>
         <label className="text-sm font-medium text-gray-500 mb-2 block">Hygiene</label>
         <div className="flex space-x-4 mb-4">
           {['good', 'bad'].map((remark) => (
@@ -201,6 +223,8 @@ const KitchenItem = ({ title, itemType, onUpdate, data }) => {
           </div>
         </div>
       )}
+        </>
+      }
     </div>
   );
 };

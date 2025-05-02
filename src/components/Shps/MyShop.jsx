@@ -146,7 +146,7 @@ const MyShop = () => {
               {shop.email.slice(0,16)}...
             </a>
           </td>
-          <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.franchiseType}</td>
+          <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.franchiseType==="own" ? "Properties" : shop.franchiseType}</td>
           <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{shop.propertyType}</td>
           <td className="px-2 py-4 border-b border-gray-200 space-x-2 text-xs whitespace-nowrap md:text-sm">
             {/* Eye Icon for "View" */}

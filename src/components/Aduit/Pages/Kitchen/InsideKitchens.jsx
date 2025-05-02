@@ -45,9 +45,13 @@ const InsideKitchens = () => {
     setInsideKitchenSubmitted(true)
 
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        setLoading(false)
+        toast.error("Something Went Wrong")
+        // console.log(error)
+      });
 
-    console.log("All Kitchen Data: ", kitchenData);
+    // console.log("All Kitchen Data: ", kitchenData);
   };
 
   const itemTypes = [
@@ -64,8 +68,16 @@ const InsideKitchens = () => {
   const validateForm = () => {
     for (const itemType of itemTypes) {
       const itemData = kitchenData[itemType];
+      if(itemData.available === "no"){
+        continue;
+      }
       if (itemData) {
         // Check required fields for each item type
+        if (!itemData.available) {
+          toast.error(`Please provide available information for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+          return false;
+        }
+
         if (!itemData.hygiene) {
           toast.error(`Please provide hygiene information for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
           return false;

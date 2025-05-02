@@ -283,8 +283,8 @@ const AddShop = () => {
             <option value="" disabled>
               Select Franchise type
             </option>
-            <option value="partnership">Partner Ship</option>
-            <option value="own">Own</option>
+            <option value="partnership">Partnership</option>
+            <option value="own">Properties</option>
           </select>
         </div>
 

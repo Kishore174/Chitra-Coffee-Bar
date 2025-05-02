@@ -1,20 +1,11 @@
 import axios from "axios";
  export const axiosintance =axios.create({
-    baseURL:"https://apiauditor.chitracoffeebar.com/api/v1" ,
+    baseURL: process.env.REACT_APP_BASEURL || "" ,
     // headers: {
     //   Authorization: `Bearer ${Cookie.get('token')}`
     // },
     withCredentials : true
 })
-// export const axiosintance = axios.create({
-//     // baseURL: process.env.REACT_APP_API_URL,
-//     baseURL:"https://ccb-api-c0enefg8g8fqamf4.centralindia-01.azurewebsites.net/api/v1" ,
-   
-//     // headers: {
-//     //   Authorization: `Bearer ${Cookie.get('token')}`
-//     // },
-//     withCredentials : true
-//   });
 export const signup = async (signupData) => {
     const response = await axiosintance.post('/register', signupData);
     return response.data;
@@ -39,7 +30,7 @@ export const uploadAudioToBackend = async (id,data) => {
         },
       });
       
-      console.log('Audio uploaded successfully:', response.data);
+      // console.log('Audio uploaded successfully:', response.data);
       return response.data
     } catch (error) {
       console.error('Error uploading audio:', error);
