@@ -126,7 +126,7 @@ const MyShop = () => {
           <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{(currentPage - 1) * itemsPerPage + index + 1}</td>
           <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">
             <div>
-              <p className='font-semibold'>{shop.shopName}</p>
+              <Link to={shop._id}><p className='font-semibold'>{shop.shopName}</p></Link>
               <p>{shop.ownerName}</p>
             </div>
           </td>

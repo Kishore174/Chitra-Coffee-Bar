@@ -41,6 +41,7 @@ import Branding from "./components/Aduit/Pages/Branding/Branding";
 import AuthProvider from "./context/AuthProvider";
 import Page404 from "./components/Page404";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ShopAudits from "./components/Aduit/ShopAduits";
 
 function App() {
   useEffect(() => {
@@ -86,6 +87,7 @@ function App() {
               <Route path="set-routes" element={<SetRoutes />} />
               <Route path="addshop" element={<AddShop />} />
               <Route path="myshop" element={<MyShop />} />
+              <Route path="myshop/:shopId" element={<ShopAudits />} />
 
               {/* <Route path="nextProcess" element={<Next01/>} /> */}
               {/* <Route path="Kitchenarea" element={<InsideKitichen />} /> */}
