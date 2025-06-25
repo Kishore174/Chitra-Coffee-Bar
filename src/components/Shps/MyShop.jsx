@@ -122,7 +122,7 @@ const MyShop = () => {
     </thead>
     <tbody>
       {paginatedShops.map((shop, index) => (
-        <tr key={shop._id} className="hover:bg-gray-100 poppins-regular capitalize">
+        <tr key={shop._id} className="hover:bg-gray-100 poppins-regular">
           <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">{(currentPage - 1) * itemsPerPage + index + 1}</td>
           <td className="px-2 py-4 border-b border-gray-200 text-xs md:text-sm">
             <div>

@@ -40,10 +40,10 @@ const ShopAudits = () => {
 
   return (
     <div className="p-4 md:p-6 min-h-screen">
-      <Link to='/myshop'><h2 className="text-xl poppins-semibold capitalize"><ArrowBack/> Back</h2></Link>
+      <Link to='/myshop'><h2 className="text-xl poppins-semibold "><ArrowBack/> Back</h2></Link>
       <br />
       <div className="flex justify-between">
-        <h2 className="text-2xl poppins-semibold capitalize">{selectedRoute} Audits</h2>
+        <h2 className="text-2xl poppins-semibold ">{selectedRoute} Audits</h2>
         {/* {user && user.role === "super-admin" && audits.length < 0 && isScheduleDay ? (
           <button
             className={`${
@@ -162,7 +162,7 @@ const ShopAudits = () => {
                         <td className="px-4 py-4 border-b border-gray-200 text-sm text-gray-700">
                           {index + 1}
                         </td>
-                        <td className="px-4 py-4 border-b capitalize border-gray-200 text-sm text-gray-700">
+                        <td className="px-4 py-4 border-b  border-gray-200 text-sm text-gray-700">
                           <div className="poppins-regular overflow-hidden">
                             <div>{audit.shop?.shopName}</div>
                             <div>{audit.shop?.ownerName}</div>
