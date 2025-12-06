@@ -61,7 +61,7 @@ const AddShop = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true)
-    console.log(formData);
+    // console.log(formData);
     try {
       let res;
 
@@ -71,7 +71,7 @@ const AddShop = () => {
         res = await createShop(formData);
       }
 
-      console.log(res);
+      // console.log(res);
       setFormData({
         shopName: "",
         shopPhoto: "",
@@ -148,12 +148,12 @@ const AddShop = () => {
           <div className="mb-4">
             <label
               className="block text-sm font-medium text-gray-700"
-              htmlFor="rentalAgreement"
+              htmlFor="rentalAgree"
             >
               Rental Agreement
             </label>
             <input
-              id="rentalAgreement"
+              id="rentalAgree"
               type="file"
               onChange={handleFileChange}
             disabled={isView}
