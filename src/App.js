@@ -42,6 +42,7 @@ import AuthProvider from "./context/AuthProvider";
 import Page404 from "./components/Page404";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ShopAudits from "./components/Aduit/ShopAduits";
+import Reports from "./components/Aduit/Reports";
 
 function App() {
   useEffect(() => {
@@ -83,7 +84,7 @@ function App() {
               <Route path="bunzo/:auditId" element={<Bunzo />} />
               <Route path="bakshanm" element={<Bakshanam />} />
               <Route path="insideshop/:auditId" element={<InsideShop />} />
-                   <Route path="routes" element={<Rotes />} />
+              <Route path="routes" element={<Rotes />} />
               <Route path="set-routes" element={<SetRoutes />} />
               <Route path="addshop" element={<AddShop />} />
               <Route path="myshop" element={<MyShop />} />
@@ -110,6 +111,7 @@ function App() {
               <Route path="setting" element={<Setting />} />
               <Route path="auditors" element={<Auditers />} />
               <Route path="add-auditors" element={<AddAuditer/>} />
+              <Route path="reports" element={<Reports />} />
               {/* <Route path="routes" element={<Rotes />} />
               <Route path="set-routes" element={<SetRoutes />} /> */}
               <Route path="backeryproducts" element={<BakerProducts />} />
