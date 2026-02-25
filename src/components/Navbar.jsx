@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaTachometerAlt, FaStore, FaClipboardCheck, FaUser , FaTools, FaRoute, FaBars, FaTimes, FaSignOutAlt, FaAngleDown, FaPhoneAlt } from 'react-icons/fa';
+import { FaTachometerAlt, FaStore, FaClipboardCheck, FaUser , FaTools, FaRoute, FaBars, FaTimes, FaSignOutAlt, FaAngleDown, FaPhoneAlt, FaFile } from 'react-icons/fa';
 import { AiOutlineAudit } from 'react-icons/ai';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from "../Assets/logo01.png";
@@ -49,6 +49,7 @@ const Navbar = () => {
     { name: 'My Shops', icon: FaStore, path: '/myshop' },
     { name: 'Audits', icon: FaClipboardCheck, path: '/audit' },
     { name: 'Auditor', icon: AiOutlineAudit, path: '/auditors' },
+    { name: 'Report', icon: FaFile, path: '/reports' },
     { name: 'Profile', icon: FaUser , path: '/profile' },
     { name: 'Settings', icon: FaTools, path: '/setting' },
     {

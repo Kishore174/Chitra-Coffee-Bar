@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { Link, useNavigate } from "react-router-dom";
-import { BsArrowRight } from "react-icons/bs";
+import { BsArrowRight, BsTrash } from "react-icons/bs";
 import { assignAuditorsAudit, assignAuditRoute, getAllAudits, getAuditByAuditor } from "../../API/audits";
 import {getRoutesByAuditor } from "../../API/createRoute"
 import { ScaleLoader } from "react-spinners";
 import { useAuth } from "../../context/AuthProvider";
-import { auditAssign } from "../../API/auditor";
+import { auditAssign, deleteAudit } from "../../API/auditor";
 import toast from "react-hot-toast";
 import Loader from "../Loader";
 import { formatTime } from "../../utils/tool";
 
-const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const daysOfWeek = ["Sun","Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const Table = () => {
   const [selectedDate, setSelectedDate] = useState(dayjs()); // Set to current date
@@ -22,12 +22,12 @@ const Table = () => {
   const [selectedRoute,setSelectedRoute] = useState(null)
   const [routes,setRoutes] = useState([])
 
-  const currentWeekDates = Array(6)
+  const currentWeekDates = Array(7)
     .fill()
     .map((_, index) => {
       return dayjs()
         .startOf("week")
-        .add(index + 1, "day");
+        .add(index , "day");
     });
 
   const filteredAudits = audits.filter((audit) => {
@@ -73,6 +73,19 @@ const Table = () => {
         toast.error(err.response?.data?.message);
       });
   };
+
+  const handleToDelete = (id) => {
+    const isConfirm = window.confirm("Are sure to delete this audit")
+    if(!isConfirm) return;
+    deleteAudit(id)
+      .then((res) => {
+        toast.success(res.message);
+      })
+      .catch((err) => {
+        toast.error(err.response?.data?.message);
+      });
+  };
+
   const handleToAsignAuditor = () => {
     // assignAuditorsAudit()
     //   .then((res) => {
@@ -360,6 +373,12 @@ const Table = () => {
                               </button>
                             </Link>
                           )}
+                          {
+                            user?.role === "super-admin"  &&
+                            <button className="ml-4 rounded-md p-2 border border-red-600 text-red-600" onClick={()=>handleToDelete(audit?._id)}>
+                              <BsTrash/>
+                            </button>
+                          }
                         </td>
                       </tr>
                     ))

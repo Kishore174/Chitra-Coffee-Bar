@@ -59,3 +59,8 @@ export const updateProfile = async(id)=>{
   const response = await axiosintance.patch(`/auditor/${id}/profile`);
   return response.data;
 }
+
+export const deleteAudit = async(auditId)=>{
+  const response = await axiosintance.delete(`/audit/${auditId}`);
+  return response.data;
+}

@@ -114,7 +114,8 @@ const { user } = useAuth();
   <>
   {
     loading?<Loader/>:(
-      <div className="p-4 bg-white text-gray-800 font-sans max-w-3xl mx-auto">
+      <div className="p-4 bg-white text-gray-800 font-sans max-w-3xl mx-auto relative">
+      <button className=' bg-red-600 text-white p-3 py-1 rounded-md absolute -left-32' onClick={()=>navigate(-1)}>Back</button>
       {user?.role !=="super-admin"&&isModalOpen && (
          <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
            <div className="bg-white p-6 rounded shadow-lg">
