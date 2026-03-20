@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
-const KitchenItem = ({ title, itemType, onUpdate, data }) => {
+const KitchenItem = ({ title, itemType, onUpdate, data, onSubmit, isSubmitted }) => {
   const [ hygiene, setHygiene] = useState('');
   const [remark, setRemark] = useState('');
   const [brandName, setBrandName] = useState(''); // State for the brand name
@@ -225,6 +225,19 @@ const KitchenItem = ({ title, itemType, onUpdate, data }) => {
       )}
         </>
       }
+      {!isSubmitted && (
+        <button
+          onClick={onSubmit}
+          className="bg-red-500 text-white w-full py-2 mt-4 rounded-md hover:bg-red-600 transition-colors duration-200"
+        >
+          Submit
+        </button>
+      )}
+      {isSubmitted && (
+        <div className="text-green-600 font-semibold text-center mt-4">
+          Submitted ✓
+        </div>
+      )}
     </div>
   );
 };

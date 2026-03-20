@@ -16,12 +16,11 @@ const InsideKitchens = () => {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [lastAudit, setLastAudit] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
   const [loading, setLoading] = useState(false);
   const [fetchData, setFetchData] = useState(null);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
-  const [isInsideKitchenSubmitted, setInsideKitchenSubmitted] = useState(false);
   const [uploadProgress, setUploadProgress] = useState( );
+  const [submittedItems, setSubmittedItems] = useState({});
 
   const handleItemUpdate = (itemType, data) => {
     const { captureImages, ...otherData } = data;  
@@ -34,24 +33,51 @@ const InsideKitchens = () => {
     }));
   };
 
-  const handleOverallSubmit = () => {
-    if (!validateForm()) return;
-    setLoading(true);
+  const handleIndividualSubmit = (itemType) => {
+    const itemData = kitchenData[itemType];
 
-    createInsideKitchen(auditId, kitchenData,setUploadProgress)
+    if (!itemData) {
+      toast.error(`No data found for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+      return;
+    }
+
+    if (kitchenData[itemType]?.available !== "no") {
+      if (!itemData.hygiene) {
+        toast.error(`Please provide hygiene information for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+        return;
+      }
+      if (!itemData.rating) {
+        toast.error(`Please provide a rating for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+        return;
+      }
+      if (!itemData.remark) {
+        toast.error(`Please provide a remark for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+        return;
+      }
+      if (!kitchenData[`${itemType}Images`] || kitchenData[`${itemType}Images`].length === 0) {
+        toast.error(`Please upload at least one image for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
+        return;
+      }
+    }
+
+    const submitData = {
+      [itemType]: itemData,
+      [`${itemType}Images`]: kitchenData[`${itemType}Images`],
+      location: "unknown",
+      date: "date",
+    };
+
+    setLoading(true);
+    createInsideKitchen(auditId, submitData, setUploadProgress)
       .then((res) => {
         toast.success(res.message);
-        navigate(-1);
-    setInsideKitchenSubmitted(true)
-
+        setSubmittedItems((prev) => ({ ...prev, [itemType]: true }));
+        setLoading(false);
       })
       .catch((error) => {
-        setLoading(false)
-        toast.error("Something Went Wrong")
-        // console.log(error)
+        setLoading(false);
+        toast.error("Something Went Wrong");
       });
-
-    // console.log("All Kitchen Data: ", kitchenData);
   };
 
   const itemTypes = [
@@ -65,45 +91,6 @@ const InsideKitchens = () => {
     "kitchenLight",
 
   ];
-  const validateForm = () => {
-    for (const itemType of itemTypes) {
-      const itemData = kitchenData[itemType];
-      if(itemData.available === "no"){
-        continue;
-      }
-      if (itemData) {
-        // Check required fields for each item type
-        if (!itemData.available) {
-          toast.error(`Please provide available information for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
-          return false;
-        }
-
-        if (!itemData.hygiene) {
-          toast.error(`Please provide hygiene information for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
-          return false;
-        }
-        // if (!itemData.brandName) {
-        //   toast.error(`Please provide a brand name for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
-        //   return false;
-        // }
-        if (!itemData.rating) {
-          toast.error(`Please provide a rating for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
-          return false;
-        }
-        if (!itemData.remark) {
-          toast.error(`Please provide a remark for ${itemType.replace(/([A-Z])/g, " $1").trim()}}.`);
-          return false;
-        }
-        // Check if images are provided
-        if (!kitchenData[`${itemType}Images`] || kitchenData[`${itemType}Images`].length === 0) {
-          toast.error(`Please upload at least one image for ${itemType.replace(/([A-Z])/g, " $1").trim()}.`);
-          return false;
-        }
-      }
-    }
-    return true;
-  };
-
   useEffect(() => {
     setLoading(true);
 
@@ -111,10 +98,6 @@ const InsideKitchens = () => {
       setFetchData(res.data);
 
       setLoading(false);
-      if(res.data&&Object.keys(res.data).length>0){
-        setInsideKitchenSubmitted(true)
-          }
-      
     });
   }, [auditId]);
   const togglePopup = () => {
@@ -134,18 +117,6 @@ const InsideKitchens = () => {
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setSelectedDate(null);
-  };
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const confirmSubmit = () => {
-    handleOverallSubmit(); // Proceed with the submission
-    setIsModalOpen(false); // Close the modal after submission
   };
   return (
   <>
@@ -263,43 +234,16 @@ const InsideKitchens = () => {
         {itemTypes.map((itemType) => (
           <KitchenItem
             key={itemType}
-            title={itemType.charAt(0).toUpperCase() + itemType.slice(1)} // Capitalize the first letter
+            title={itemType.charAt(0).toUpperCase() + itemType.slice(1)}
             itemType={itemType}
             onUpdate={handleItemUpdate}
             data={fetchData && fetchData[itemType]}
+            onSubmit={() => handleIndividualSubmit(itemType)}
+            isSubmitted={submittedItems[itemType] || (fetchData && fetchData[itemType])}
           />
         ))}
       </div>
-      { !isInsideKitchenSubmitted && <button
-        onClick={openModal}
-        
-        className='bg-red-500 text-white w-full sm:w-5/6 py-2 mx-auto flex items-center text-center mt-12 rounded-md hover:bg-red-600'
-      >
-        <span className='text-center mx-auto'>Submit All Data</span>
-      </button>}
     </div>
-    {isModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
-              <div className="bg-white p-6 rounded shadow-lg">
-                <h2 className="text-lg font-semibold">Confirm Submission</h2>
-                <p className="mt-2 text-md">Once submitted, you won’t be able to edit. Are you sure?</p>
-                <div className="flex justify-end mt-4 space-x-2">
-                  <button
-                    onClick={closeModal}
-                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={confirmSubmit}
-                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                  >
-                    Confirm
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
     </>
     )
   }

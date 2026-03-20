@@ -41,13 +41,13 @@ const Table = () => {
   useEffect(() => {
     if (user) {
       if (user.role === "super-admin") {
-        getAllAudits({date : selectedDate})
+        getAllAudits({date : selectedDate.format("YYYY-MM-DD")})
           .then((res) => setAudits(res.data))
           .finally(() => {
             setLoading(false);
           });
       } else {
-        getAuditByAuditor(user._id,{date : selectedDate})
+        getAuditByAuditor(user._id,{date : selectedDate.format("YYYY-MM-DD")})
           .then((res) => setAudits(res.data))
           .finally(() => {
             setLoading(false);
@@ -151,11 +151,11 @@ const Table = () => {
           <button
             key={index}
             className={`day-btn px-8 w-12 ${
-              selectedDate.isSame(date.add(1, "day"), "day") ? "selected" : ""
+              selectedDate.isSame(date, "day") ? "selected" : ""
             }`}
-            onClick={() => handleDateClick(date.add(1, "day"))}
+            onClick={() => handleDateClick(date)}
           >
-            <span className="day-name">{daysOfWeek[index]}</span>
+            <span className="day-name">{daysOfWeek[date.day()]}</span>
             <span className="day-number">{date.format("D")}</span>
           </button>
         ))}
