@@ -546,11 +546,11 @@ const TeaAudit = () => {
               </div>
               <input
                 type="file"
-                // accept="image/*"
+                accept="image/*"
+                capture="environment"
                 ref={fileInputRef}
                 onChange={handleTeaPhotoCapture}
                 className="hidden"
-                multiple
               />
             </div>
           </div>

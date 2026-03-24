@@ -103,7 +103,14 @@ const MenuBrandSection = () => {
           {['Yes', 'No'].map((option) => (
             <div
               key={option}
-              onClick={() => setIsMenuAvailable(option)}
+              onClick={() => {
+                setIsMenuAvailable(option);
+                if (option === 'No') {
+                  setRating(0);
+                  setRemark('');
+                  setMenuImagePreview([]);
+                }
+              }}
               className={`cursor-pointer px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
                 hover:bg-red-600 hover:text-white ${isMenuAvailable === option ? 'bg-red-600 text-white' : 'bg-white text-gray-700 border-gray-300'}`}
             >
@@ -165,10 +172,10 @@ const MenuBrandSection = () => {
         <input
           type="file"
           accept="image/*"
+          capture="environment"
           ref={menuFileInputRef}
           onChange={handleMenuPhotoCapture}
           className="hidden"
-          multiple
         />
       </div>
 

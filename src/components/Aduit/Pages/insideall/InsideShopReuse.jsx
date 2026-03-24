@@ -95,10 +95,19 @@ const InsideShopReuse = ({ title, itemType, onUpdate, data, onSubmit, isSubmitte
             {['yes', 'no'].map((option) => (
               <div
                 key={option}
-                onClick={() => setAvailable(option)}
-                className={`cursor-pointer capitalize px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
-                  ${available === option 
-                    ? 'bg-green-600 text-white' 
+                onClick={() => {
+                  setAvailable(option);
+                  if (option === 'no') {
+                    setHygiene('');
+                    setRating(0);
+                    setRemark('');
+                    setImagePreview([]);
+                    setCaptureImages([]);
+                  }
+                }}
+                className={`cursor-pointer capitalize px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200
+                  ${available === option
+                    ? 'bg-green-600 text-white'
                     : 'text-gray-700 hover:bg-green-600 hover:text-white'}`}
               >
                 {option}
@@ -181,10 +190,11 @@ const InsideShopReuse = ({ title, itemType, onUpdate, data, onSubmit, isSubmitte
         </div>
         <input
           type="file"
+          accept="image/*"
+          capture="environment"
           ref={fileInputRef}
           onChange={handlePhotoCapture}
           className="hidden"
-          multiple
         />
       </div>
       {previewImage && (

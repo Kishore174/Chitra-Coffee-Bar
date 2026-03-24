@@ -452,7 +452,7 @@ const AddShop = () => {
           <input
             id="onBoardingDate"
             type="date"
-            value={formData.onBoardingDate.slice(0, 10)}
+            value={(formData.onBoardingDate || "").slice(0, 10)}
             disabled={isView}
 
             onChange={handleChange}
@@ -492,7 +492,7 @@ const AddShop = () => {
             id="fssiRenewalDate"
             type="date"
             disabled={isView}
-            value={formData.fssiRenewalDate.slice(0, 10)}
+            value={(formData.fssiRenewalDate || "").slice(0, 10)}
              
 
             onChange={handleChange}
@@ -539,7 +539,7 @@ const AddShop = () => {
             type="date"
             disabled={isView}
 
-            value={formData.renewalDate.slice(0, 10)}
+            value={(formData.renewalDate || "").slice(0, 10)}
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
           />

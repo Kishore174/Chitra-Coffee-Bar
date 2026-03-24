@@ -522,11 +522,12 @@ const [uploadProgress, setUploadProgress] = useState( );
               </div>
               <input
                 type="file"
-                // accept="image/*"
+                accept="image/*"
+                capture="environment"
                 ref={fileInputRef}
                 onChange={handleCoffeePhotoCapture}
                 className="hidden"
-                multiple
+
               />
             </div>
           </div>

@@ -102,7 +102,14 @@ const BakshanamSection = () => {
           {['Yes', 'No'].map((option) => (
             <div
               key={option}
-              onClick={() => setIsBakshanamAvailable(option)}
+              onClick={() => {
+                setIsBakshanamAvailable(option);
+                if (option === 'No') {
+                  setRating(0);
+                  setRemark('');
+                  setBakshanamImagePreview([]);
+                }
+              }}
               className={`cursor-pointer px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
                 hover:bg-red-600 hover:text-white ${isBakshanamAvailable === option ? 'bg-red-600 text-white' : 'bg-white text-gray-700 border-gray-300'}`}
             >
@@ -164,10 +171,10 @@ const BakshanamSection = () => {
         <input
           type="file"
           accept="image/*"
+          capture="environment"
           ref={bakshanamFileInputRef}
           onChange={handleBakshanamPhotoCapture}
           className="hidden"
-          multiple
         />
       </div>
 

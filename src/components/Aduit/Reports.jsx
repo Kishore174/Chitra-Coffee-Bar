@@ -8,19 +8,31 @@ import { getProducts } from "../../API/settings";
 import { getAllShops } from "../../API/shop";
 import { getAllAuditors } from "../../API/auditor";
 
+const STORAGE_KEY = "reports_filters";
+
+const getSavedFilters = () => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : {};
+  } catch {
+    return {};
+  }
+};
+
 const Reports = () => {
+  const saved = getSavedFilters();
   const [filteredAudits, setFilteredAudits] = useState([]);
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [shopFilter, setShopFilter] = useState("");
-  const [auditorFilter, setAuditorFilter] = useState("");
-  const [districtFilter, setdistrictFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [minRating, setMinRating] = useState("");
-  const [maxRating, setMaxRating] = useState("");
+  const [fromDate, setFromDate] = useState(saved.fromDate || "");
+  const [toDate, setToDate] = useState(saved.toDate || "");
+  const [shopFilter, setShopFilter] = useState(saved.shopFilter || "");
+  const [auditorFilter, setAuditorFilter] = useState(saved.auditorFilter || "");
+  const [districtFilter, setdistrictFilter] = useState(saved.districtFilter || "");
+  const [statusFilter, setStatusFilter] = useState(saved.statusFilter || "");
+  const [minRating, setMinRating] = useState(saved.minRating || "");
+  const [maxRating, setMaxRating] = useState(saved.maxRating || "");
   const [filterLoading, setFilterLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(saved.currentPage || 1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const itemsPerPage = 10;
@@ -29,6 +41,12 @@ const Reports = () => {
   const [allAuditors, setAllAuditors] = useState([]);
 
   const { user } = useAuth();
+
+  // Save filters to localStorage whenever they change
+  useEffect(() => {
+    const filters = { fromDate, toDate, shopFilter, auditorFilter, districtFilter, statusFilter, minRating, maxRating, currentPage };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(filters));
+  }, [fromDate, toDate, shopFilter, auditorFilter, districtFilter, statusFilter, minRating, maxRating, currentPage]);
 
   // Fetch shops and auditors on mount
   useEffect(() => {
@@ -83,6 +101,7 @@ const Reports = () => {
     setMinRating("");
     setMaxRating("");
     setCurrentPage(1);
+    localStorage.removeItem(STORAGE_KEY);
     // Pass empty overrides to avoid stale state
     applyBackendFilter({
       startDate: undefined,

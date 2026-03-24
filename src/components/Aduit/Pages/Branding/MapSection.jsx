@@ -100,7 +100,14 @@ const  MapSection = () => {
           {['Yes', 'No'].map((option) => (
             <div
               key={option}
-              onClick={() => setIsMapAvailable(option)}
+              onClick={() => {
+                setIsMapAvailable(option);
+                if (option === 'No') {
+                  setRating(0);
+                  setRemark('');
+                  setMapImagePreview([]);
+                }
+              }}
               className={`cursor-pointer px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
                 hover:bg-red-600 hover:text-white ${isMapAvailable === option ? 'bg-red-600 text-white' : 'bg-white text-gray-700 border-gray-300'}`}
             >
@@ -162,10 +169,10 @@ const  MapSection = () => {
         <input
           type="file"
           accept="image/*"
+          capture="environment"
           ref={menuFileInputRef}
           onChange={handleMapPhotoCapture}
           className="hidden"
-          multiple
         />
       </div>
 

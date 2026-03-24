@@ -173,10 +173,10 @@ const SnackCounterSection = () => {
         <input
           type="file"
           accept="image/*"
+          capture="environment"
           ref={snackFileInputRef}
           onChange={handleSnackPhotoCapture}
           className="hidden"
-          multiple
         />
       </div>
 

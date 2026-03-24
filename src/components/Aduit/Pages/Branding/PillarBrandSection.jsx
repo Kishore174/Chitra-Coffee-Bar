@@ -83,7 +83,15 @@ const PillarBrandSection = () => {
           {['Yes', 'No'].map((option) => (
             <div
               key={option}
-              onClick={() => setIsAvailable(option)}
+              onClick={() => {
+                setIsAvailable(option);
+                if (option === 'No') {
+                  setRating(0);
+                  setRemark('');
+                  setPillarCount('');
+                  setImagePreview([]);
+                }
+              }}
               className={`cursor-pointer px-4 py-2 rounded-full border flex items-center justify-center transition-colors duration-200 
                 hover:bg-blue-600 hover:text-white ${isAvailable === option ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 border-gray-300'}`}
             >
@@ -151,10 +159,10 @@ const PillarBrandSection = () => {
         <input
           type="file"
           accept="image/*"
+          capture="environment"
           ref={fileInputRef}
           onChange={handleImageCapture}
           className="hidden"
-          multiple
         />
       </div>
 

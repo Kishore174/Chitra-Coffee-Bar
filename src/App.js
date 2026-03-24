@@ -43,6 +43,10 @@ import Page404 from "./components/Page404";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ShopAudits from "./components/Aduit/ShopAduits";
 import Reports from "./components/Aduit/Reports";
+import Attendance from "./components/Attendance/Attendance";
+import AttendanceManagement from "./components/Attendance/AttendanceManagement";
+import LeaveRequest from "./components/Leave/LeaveRequest";
+import LeaveManagement from "./components/Leave/LeaveManagement";
 
 function App() {
   useEffect(() => {
@@ -104,6 +108,12 @@ function App() {
               <Route path="kitchen/:auditId" element={<InsideKitchens />} />
             </Route>
           </Route>
+          <Route element={<ProtectedRoute allowedRoles={["auditor"]} />}>
+            <Route path="/" element={<Main />}>
+              <Route path="attendance" element={<Attendance />} />
+              <Route path="leave-request" element={<LeaveRequest />} />
+            </Route>
+          </Route>
           <Route element={<ProtectedRoute allowedRoles={["super-admin"]} />}>
             <Route path="/" element={<Main />}>
               {/* <Route path="myshop" element={<MyShop />} /> */}
@@ -117,6 +127,8 @@ function App() {
               <Route path="backeryproducts" element={<BakerProducts />} />
               <Route path="brandName" element={<BrandName />} />
               <Route path="livesnackname" element={<LiveSnacksName />} />
+              <Route path="attendance-management" element={<AttendanceManagement />} />
+              <Route path="leave-management" element={<LeaveManagement />} />
             </Route>
           </Route>
           {/* <Route path="/login" */}

@@ -476,11 +476,11 @@ const Bunzo = () => {
               </div>
               <input
                 type="file"
+                accept="image/*"
+                capture="environment"
                 ref={fileInputRef}
-
                 onChange={handleLiveSnackPhotoCapture}
-                // accept="image/*"
-                multiple
+
                 className="hidden"
               />
             </div>

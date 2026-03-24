@@ -210,10 +210,11 @@ const [loading, setLoading] = useState(false);
                 <input
                   type="file"
                   accept="image/*"
+                  capture="environment"
                   ref={bakshanamFileInputRef}
                   onChange={handleBakshanamPhotoCapture}
                   className="hidden"
-                  multiple />
+                />
 
                 {/* Uploaded Image Previews with Remove Button */}
                 <div className="flex flex-wrap gap-2 mb-4">

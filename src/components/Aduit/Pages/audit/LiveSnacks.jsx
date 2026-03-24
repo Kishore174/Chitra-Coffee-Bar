@@ -411,11 +411,12 @@ const LiveSnacks = () => {
               </div>
               <input
                 type="file"
-                // accept="image/*"
+                accept="image/*"
+                capture="environment"
                 ref={fileInputRef}
                 onChange={handleLiveSnackPhotoCapture}
                 className="hidden"
-                multiple
+
               />
               </>
              }

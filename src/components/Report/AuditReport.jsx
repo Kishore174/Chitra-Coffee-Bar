@@ -2,8 +2,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useReactMediaRecorder } from "react-media-recorder";
 import { BsFillMicFill, BsStopFill } from 'react-icons/bs';
 import SignatureCanvas from 'react-signature-canvas';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import { getAudit } from '../../API/audits';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { getAudit, getPrevious } from '../../API/audits';
 import { sendSignatureToBackend, uploadAudioToBackend } from '../../API/Api';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthProvider';
@@ -26,6 +26,9 @@ const AuditReport = () => {
   const [currentAudio, setCurrentAudio] = useState(null);
   const [selImage,setSelImage] = useState("")
   const [previewImage,setPreviewImage] = useState(false)
+  const [previousAudits, setPreviousAudits] = useState([]);
+  const [showPrevious, setShowPrevious] = useState(false);
+  const [previousLoading, setPreviousLoading] = useState(false);
   const navigate = useNavigate()
 const { user } = useAuth();
 
@@ -45,6 +48,24 @@ const { user } = useAuth();
 
     });
   }, [auditId]);
+
+  const handleShowPrevious = async () => {
+    if (previousAudits.length > 0) {
+      setShowPrevious(!showPrevious);
+      return;
+    }
+    setPreviousLoading(true);
+    try {
+      const res = await getPrevious(auditId);
+      const audits = (res.data || []).slice(0, 5);
+      setPreviousAudits(audits);
+      setShowPrevious(true);
+    } catch (err) {
+      console.error("Error fetching previous audits:", err);
+    } finally {
+      setPreviousLoading(false);
+    }
+  };
 
   const handleClearSignature = () => {
     signatureRef.current.clear();
@@ -159,6 +180,67 @@ const { user } = useAuth();
        />
      </div>}
    </div>
+
+   {/* Previous Audits Section */}
+   <section className="mb-4 border border-red-200 rounded-lg overflow-hidden">
+     <button
+       onClick={handleShowPrevious}
+       className="w-full bg-red-100 text-red-600 text-md poppins-bold p-2 flex items-center justify-between"
+     >
+       <span>Previous Audits (Last 5)</span>
+       <span className="text-sm">
+         {previousLoading ? "Loading..." : showPrevious ? "Hide" : "Show"}
+       </span>
+     </button>
+     {showPrevious && previousAudits.length > 0 && (
+       <div className="p-3 space-y-3">
+         {previousAudits.filter((prev) => prev._id !== auditId).map((prev, idx) => (
+           <div key={prev._id || idx} className="border border-gray-200 rounded-lg p-3 hover:bg-gray-50">
+             <div className="flex items-center justify-between">
+               <div>
+                 <p className="poppins-semibold text-gray-800">
+                   {new Date(prev.auditDate).toLocaleDateString("en-GB")}
+                 </p>
+                 <p className="text-sm text-gray-500">
+                   Auditor: {prev.auditor?.name || "N/A"}
+                 </p>
+               </div>
+               <div className="flex items-center gap-3">
+                 {prev.status === "completed" && (
+                   <span className="poppins-semibold text-yellow-500 text-lg">
+                     {prev.rating}/5
+                   </span>
+                 )}
+                 <span
+                   className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                     prev.status === "completed"
+                       ? "bg-green-100 text-green-700"
+                       : prev.status === "in progress"
+                       ? "bg-yellow-100 text-yellow-700"
+                       : "bg-red-100 text-red-700"
+                   }`}
+                 >
+                   {prev.status}
+                 </span>
+               </div>
+             </div>
+             {prev.comment && (
+               <p className="text-sm text-gray-600 mt-1">Remark: {prev.comment}</p>
+             )}
+             <Link
+               to={`/report/${prev._id}`}
+               className="text-blue-500 hover:text-blue-700 text-xs mt-1 inline-block"
+             >
+               View Full Report
+             </Link>
+           </div>
+         ))}
+       </div>
+     )}
+     {showPrevious && previousAudits.filter((prev) => prev._id !== auditId).length === 0 && !previousLoading && (
+       <p className="p-3 text-gray-500 text-sm">No previous audits found for this shop.</p>
+     )}
+   </section>
 
    {/* General Information Sections */}
    <div className="flex flex-col space-y-4">
