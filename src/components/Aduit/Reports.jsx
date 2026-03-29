@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { filterAudits } from "../../API/audits";
 import { useAuth } from "../../context/AuthProvider";
 import Loader from "../Loader";
-import { formatTime } from "../../utils/tool";
+import { formatTime, calculateDuration, formatDuration } from "../../utils/tool";
 import { getProducts } from "../../API/settings";
 import { getAllShops } from "../../API/shop";
 import { getAllAuditors } from "../../API/auditor";
@@ -164,7 +164,8 @@ const Reports = () => {
           "Auditor Phone",
           "Auditor Email",
           "In Time",
-          "Out Time"
+          "Out Time",
+          "Duration"
         );
       }
 
@@ -224,7 +225,8 @@ const Reports = () => {
             audit.auditor?.phone || "N/A",
             audit.auditor?.email || "N/A",
             formatTime(audit.inTime) || "N/A",
-            formatTime(audit.outTime) || "N/A"
+            formatTime(audit.outTime) || "N/A",
+            formatDuration(calculateDuration(audit.inTime, audit.outTime)) || "N/A"
           );
         }
 
@@ -531,9 +533,12 @@ const Reports = () => {
 
                     {user?.role === "super-admin" && (
                       <div className="flex items-center gap-1 text-xs text-gray-400 mt-1">
-                        <span>{formatTime(audit.inTime) || "0:00"}</span>
+                        <span>{formatTime(audit.inTime) || "N/A"}</span>
                         <span>-</span>
-                        <span>{formatTime(audit.outTime) || "0:00"}</span>
+                        <span>{formatTime(audit.outTime) || "N/A"}</span>
+                        <span className="ml-2 text-blue-500">
+                          {formatDuration(calculateDuration(audit.inTime, audit.outTime))}
+                        </span>
                       </div>
                     )}
 
@@ -656,9 +661,12 @@ const Reports = () => {
                             </span>
                             {user?.role === "super-admin" && (
                               <div className="flex items-center gap-1 justify-center text-xs text-gray-400 mt-1">
-                                <span>{formatTime(audit.inTime) || "0:00"}</span>
+                                <span>{formatTime(audit.inTime) || "N/A"}</span>
                                 <span>-</span>
-                                <span>{formatTime(audit.outTime) || "0:00"}</span>
+                                <span>{formatTime(audit.outTime) || "N/A"}</span>
+                                <span className="ml-2 text-blue-500">
+                                  {formatDuration(calculateDuration(audit.inTime, audit.outTime))}
+                                </span>
                               </div>
                             )}
                           </div>
@@ -693,7 +701,7 @@ const Reports = () => {
                   ) : (
                     <tr>
                       <td
-                        colSpan={user?.role === "super-admin" ? 6 : 5}
+                        colSpan={user?.role === "super-admin" ? 7 : 5}
                         className="text-center py-12 text-gray-400 poppins-regular"
                       >
                         No audits found

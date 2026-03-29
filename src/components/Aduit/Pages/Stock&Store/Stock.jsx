@@ -13,6 +13,8 @@ const Stock = () => {
   const [captureImages, setCaptureImages] = useState([]);
   const { auditId } = useParams();
   const [remark, setRemark] = useState('');
+  const [fifoFollowed, setFifoFollowed] = useState('');
+  const [criticalDeviation, setCriticalDeviation] = useState('');
   const bakshanamFileInputRef = useRef(null);
   const navigate = useNavigate();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -54,7 +56,7 @@ const [loading, setLoading] = useState(false);
   const handleSubmit = () => {
     setLoading(true)
 
-    createStock(auditId, { remark, captureImages, location: "unknown", date: "unknown" })
+    createStock(auditId, { remark, fifoFollowed, criticalDeviation, captureImages, location: "unknown", date: "unknown" })
       .then(res => {
         toast.success(res.message);
         navigate(-1);
@@ -66,6 +68,8 @@ const [loading, setLoading] = useState(false);
 
     getStock(auditId).then(res => {
       setRemark(res.data?.remark);
+      setFifoFollowed(res.data?.fifoFollowed || '');
+      setCriticalDeviation(res.data?.criticalDeviation || '');
       setBakshanamImagePreview(res.data?.captureImages?.map(i => i.imageUrl)
     );
     setLoading(false)
@@ -242,6 +246,60 @@ const [loading, setLoading] = useState(false);
                   value={remark}
                   onChange={(e) => setRemark(e.target.value)}
                   className="mt-2 w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200" />
+
+                {/* FIFO Followed */}
+                <h3 className="font-semibold mt-4">FIFO - Followed or not</h3>
+                <div className="mt-2 flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="fifoFollowed"
+                      value="Yes"
+                      checked={fifoFollowed === "Yes"}
+                      onChange={(e) => setFifoFollowed(e.target.value)}
+                      className="w-4 h-4 text-red-500 focus:ring-red-500"
+                    />
+                    <span>Yes</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="fifoFollowed"
+                      value="No"
+                      checked={fifoFollowed === "No"}
+                      onChange={(e) => setFifoFollowed(e.target.value)}
+                      className="w-4 h-4 text-red-500 focus:ring-red-500"
+                    />
+                    <span>No</span>
+                  </label>
+                </div>
+
+                {/* Critical Deviation */}
+                <h3 className="font-semibold mt-4">Critical Deviation - Yes/No</h3>
+                <div className="mt-2 flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="criticalDeviation"
+                      value="Yes"
+                      checked={criticalDeviation === "Yes"}
+                      onChange={(e) => setCriticalDeviation(e.target.value)}
+                      className="w-4 h-4 text-red-500 focus:ring-red-500"
+                    />
+                    <span>Yes</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="criticalDeviation"
+                      value="No"
+                      checked={criticalDeviation === "No"}
+                      onChange={(e) => setCriticalDeviation(e.target.value)}
+                      className="w-4 h-4 text-red-500 focus:ring-red-500"
+                    />
+                    <span>No</span>
+                  </label>
+                </div>
 
                 {/* Submit Button */}
                 <button

@@ -9,7 +9,7 @@ import { useAuth } from "../../context/AuthProvider";
 import { auditAssign, deleteAudit } from "../../API/auditor";
 import toast from "react-hot-toast";
 import Loader from "../Loader";
-import { formatTime } from "../../utils/tool";
+import { formatTime, calculateDuration, formatDuration } from "../../utils/tool";
 
 const daysOfWeek = ["Sun","Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -344,9 +344,12 @@ const Table = () => {
                             <div>{audit.status}</div>
                               {user?.role === "super-admin" && (
                                 <div className="flex items-center gap-1 justify-center text-sm text-gray-700">
-                                  <span>{formatTime(audit.inTime) || "0:00"}</span>
+                                  <span>{formatTime(audit.inTime) || "N/A"}</span>
                                   <span>-</span>
-                                  <span>{formatTime(audit.outTime) || "0:00"}</span>
+                                  <span>{formatTime(audit.outTime) || "N/A"}</span>
+                                  <span className="ml-2 text-blue-600">
+                                    {formatDuration(calculateDuration(audit.inTime, audit.outTime))}
+                                  </span>
                                 </div>
                               )}
                             </div>

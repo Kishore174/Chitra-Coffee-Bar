@@ -12,7 +12,7 @@ import { getPrevious } from '../../../../API/audits';
 
 const Bunzo = () => {
   const [activeTab, setActiveTab] = useState('');
-  const [details, setDetails] = useState({ productName: '', quantity: 0, expirationDate: '' });
+  const [details, setDetails] = useState({ productName: '', quantity: 0, expirationDate: '',reason:'' });
   const [submittedProducts, setSubmittedProducts] = useState([]);
   const [liveSnackImagePreview, setLiveSnackImagePreview] = useState([]);
   const [previewLiveSnackImage, setPreviewLiveSnackImage] = useState(null);
@@ -37,7 +37,7 @@ const Bunzo = () => {
   const [uploadProgress, setUploadProgress] = useState( );
 
   const initializeProductDetails = () => {
-    return { productName: '', quantity: 0, expirationDate: '' };
+    return { productName: '', quantity: 0, expirationDate: '',reason:'' };
   };
   const validateForm = () => {
     if (!details.productName) {
@@ -168,7 +168,7 @@ const Bunzo = () => {
 
   let data;
   if(activeTab === "Other Brands"){
-   data= {productName:details.productName,quantity:details.quantity,expiryDate:details.expirationDate,captureImages,location,date,brandName:"other brand"}
+   data= {productName:details.productName,quantity:details.quantity,expiryDate:details.expirationDate,captureImages,location,date,brandName:"other brand",reason:details.reason}
   }else{
     data={product:details.productName,quantity:details.quantity,expiryDate:details.expirationDate,captureImages,location,date}
   }
@@ -430,6 +430,20 @@ const Bunzo = () => {
                   />
                 </div>
               )}
+              {activeTab === 'Other Brands' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700" htmlFor="Reason">
+                    Reason
+                  </label>
+                  <input
+                    id="reason"
+                    name="reason"
+                    value={details.reason}
+                    onChange={handleChange}
+                    className="mt-1 p-2 border rounded"
+                  />
+                </div>
+              )}
             </div>
 
             <div className="flex flex-wrap gap-2 mb-4">
@@ -535,7 +549,7 @@ const Bunzo = () => {
               <tbody>
                 {submittedProducts.map((product, index) => (
                   <tr key={index}>
-                    <td className="px-4 py-2 border-b">{products.find(p=>p._id===product?.product)?.brand.name||product.brandName}</td> {/* Added Brand Name */}
+                    <td className="px-4 py-2 border-b">{products.find(p=>p._id===product?.product)?.brand.name||product.brandName} <br /> {product.reason || ""}</td> {/* Added Brand Name */}
                     <td className="px-4 py-2 border-b">{products.find(p=>p._id===product?.product)?.name||products.find(p=>p._id===product.productName)?.name||product.productName}</td>
                     <td className="px-4 py-2 border-b">{product.quantity}</td>
                     <td className="px-4 py-2 border-b">{product.expirationDate||product.expiryDate ? <DateFormat date={product.expiryDate}/>:"-"}</td>
