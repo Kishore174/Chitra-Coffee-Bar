@@ -180,7 +180,6 @@ const Table = () => {
             </p>
           )
         )} */}
-      {audits.length === 0  && 
         <div className=" flex gap-2">
           <label htmlFor="route">Route</label>
           <select onChange={(e)=>setSelectedRoute(e.target.value)} className=" border">
@@ -196,10 +195,9 @@ const Table = () => {
             // disabled={isScheduleDay}
             onClick={handleToAsignAuditor}
           >
-            Schedule
+           {audits.length === 0 ? "Schedule": "Re-schedule"}
           </button>}
         </div>
-      }
       </div>
 
       {loading ? (
