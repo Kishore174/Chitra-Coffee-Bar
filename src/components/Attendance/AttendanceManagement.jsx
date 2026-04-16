@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { getAllAttendance } from "../../API/attendance";
-import { getAllAuditors } from "../../API/auditor";
+import { getAllEmployees } from "../../API/employee";
 import { getLeavesByDate } from "../../API/leaveRequest";
 import dayjs from "dayjs";
 import {
@@ -17,7 +17,7 @@ import {
 
 const AttendanceManagement = () => {
   const [attendance, setAttendance] = useState([]);
-  const [auditors, setAuditors] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [leaves, setLeaves] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
@@ -28,15 +28,15 @@ const AttendanceManagement = () => {
     try {
       const [attRes, audRes, leaveRes] = await Promise.allSettled([
         getAllAttendance(selectedDate),
-        getAllAuditors(),
+        getAllEmployees(),
         getLeavesByDate(selectedDate),
       ]);
       if (attRes.status === "rejected") console.error("Attendance API failed:", attRes.reason);
-      if (audRes.status === "rejected") console.error("Auditors API failed:", audRes.reason);
+      if (audRes.status === "rejected") console.error("Employees API failed:", audRes.reason);
       if (leaveRes.status === "rejected") console.error("Leaves API failed:", leaveRes.reason);
 
       setAttendance(attRes.status === "fulfilled" ? attRes.value.data || [] : []);
-      setAuditors(
+      setEmployees(
         audRes.status === "fulfilled" ? audRes.value.data || [] : []
       );
       setLeaves(leaveRes.status === "fulfilled" ? leaveRes.value.data || [] : []);
@@ -71,11 +71,11 @@ const AttendanceManagement = () => {
     if (id) leaveMap[id] = leave;
   });
 
-  // Merge auditors with attendance + leave data
-  const mergedData = auditors.map((auditor) => ({
-    auditor,
-    record: attendanceMap[String(auditor._id)] || null,
-    leave: leaveMap[String(auditor._id)] || null,
+  // Merge employees with attendance + leave data
+  const mergedData = employees.map((employee) => ({
+    employee,
+    record: attendanceMap[String(employee._id)] || null,
+    leave: leaveMap[String(employee._id)] || null,
   }));
 
   const getStatusInfo = (record, leave) => {
@@ -180,7 +180,7 @@ const AttendanceManagement = () => {
       {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
         <div className="bg-white rounded-xl shadow-sm border p-4 text-center">
-          <p className="text-2xl poppins-semibold text-gray-800">{auditors.length}</p>
+          <p className="text-2xl poppins-semibold text-gray-800">{employees.length}</p>
           <p className="text-xs text-gray-500 poppins-medium">Total</p>
         </div>
         <div className="bg-white rounded-xl shadow-sm border p-4 text-center">
@@ -207,32 +207,32 @@ const AttendanceManagement = () => {
           <p className="text-center py-12 text-gray-500">Loading...</p>
         ) : mergedData.length > 0 ? (
           <div className="divide-y">
-            {mergedData.map(({ auditor, record, leave }) => {
+            {mergedData.map(({ employee, record, leave }) => {
               const status = getStatusInfo(record, leave);
               return (
-                <div key={auditor._id} className="p-4 hover:bg-gray-50/50 transition">
-                  {/* Row: Auditor Info + Status */}
+                <div key={employee._id} className="p-4 hover:bg-gray-50/50 transition">
+                  {/* Row: Employee Info + Status */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 poppins-semibold text-sm shrink-0 overflow-hidden">
-                        {auditor.profile ? (
+                        {employee.profile ? (
                           <img
-                            src={auditor.profile}
+                            src={employee.profile}
                             alt=""
                             className="w-10 h-10 rounded-full object-cover"
                             onError={(e) => {
                               e.target.style.display = "none";
                               e.target.parentElement.textContent =
-                                auditor.name?.charAt(0)?.toUpperCase() || "?";
+                                employee.name?.charAt(0)?.toUpperCase() || "?";
                             }}
                           />
                         ) : (
-                          auditor.name?.charAt(0)?.toUpperCase() || "?"
+                          employee.name?.charAt(0)?.toUpperCase() || "?"
                         )}
                       </div>
                       <div>
-                        <p className="poppins-semibold text-gray-800">{auditor.name}</p>
-                        <p className="text-xs text-gray-400">{auditor.phone}</p>
+                        <p className="poppins-semibold text-gray-800">{employee.name}</p>
+                        <p className="text-xs text-gray-400">{employee.phone}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -412,7 +412,7 @@ const AttendanceManagement = () => {
             })}
           </div>
         ) : (
-          <p className="text-center py-12 text-gray-500">No auditors found</p>
+          <p className="text-center py-12 text-gray-500">No employees found</p>
         )}
       </div>
 

@@ -121,7 +121,7 @@ const Dashboard = () => {
               )}
             </Link>
 
-            <Link to="/auditors">
+            <Link to="/employees">
               {isLoading ? (
                 <SkeletonCard />
               ) : (
@@ -129,7 +129,7 @@ const Dashboard = () => {
                   <BuildingStorefrontIcon className="text-white h-12 w-12" />
                   <div>
                     <h2 className="text-2xl font-bold text-center text-white">{auditorsCount}</h2>
-                    <p className="text-white whitespace-nowrap">Number of Auditors</p>
+                    <p className="text-white whitespace-nowrap">Number of Employees</p>
                   </div>
                 </div>
               )}

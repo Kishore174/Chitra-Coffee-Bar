@@ -19,8 +19,8 @@ import Bakshanam from "./components/Aduit/Form/Bakshanam";
 // import InsideKitichen from "./components/Aduit/Pages/InsideKitichen";
 // import OutSideShop from './components/Aduit/Pages/OutSideShop';
 // import Brandings from './components/Aduit/Pages/Brandings';
-import Auditers from "./components/Aduit/Pages/Auditers/Auditers";
-import AddAuditer from "./components/Aduit/Pages/Auditers/AddAuditer";
+import Employees from "./components/Aduit/Pages/Employees/Employees";
+import AddEmployee from "./components/Aduit/Pages/Employees/AddEmployee";
 import Setting from "./components/Aduit/Pages/Setting/Setting";
 import Rotes from "./components/Aduit/Pages/Setting/Rotes";
 import SetRoutes from "./components/Aduit/Pages/Setting/SetRoutes";
@@ -119,8 +119,8 @@ function App() {
               {/* <Route path="myshop" element={<MyShop />} /> */}
               {/* <Route path="addshop" element={<AddShop />} /> */}
               <Route path="setting" element={<Setting />} />
-              <Route path="auditors" element={<Auditers />} />
-              <Route path="add-auditors" element={<AddAuditer/>} />
+              <Route path="employees" element={<Employees />} />
+              <Route path="add-employees" element={<AddEmployee/>} />
               <Route path="reports" element={<Reports />} />
               {/* <Route path="routes" element={<Rotes />} />
               <Route path="set-routes" element={<SetRoutes />} /> */}

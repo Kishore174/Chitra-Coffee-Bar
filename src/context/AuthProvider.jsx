@@ -8,14 +8,18 @@ const AuthProvider = ({children}) => {
   const [user,setUser] = useState(null)
 
   useEffect(()=>{
-    getAuditorBytoken().then((res)=>{
-      setUser(res.data)
-      setLogin(true)
-    }).catch((err)=>{
-      console.log(err.message)
-      setUser(null)
-      setLogin(false)
-    })
+    const token = localStorage.getItem('token');
+    if (token) {
+      getAuditorBytoken().then((res)=>{
+        setUser(res.data)
+        setLogin(true)
+      }).catch((err)=>{
+        console.log(err.message)
+        localStorage.removeItem('token')
+        setUser(null)
+        setLogin(false)
+      })
+    }
   },[])
   return ( 
     <AuthContext.Provider value={{isLogin,setLogin,user,setUser}}>

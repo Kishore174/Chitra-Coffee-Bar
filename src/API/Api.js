@@ -6,6 +6,17 @@ import axios from "axios";
     // },
     withCredentials : true
 })
+
+axiosintance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 export const signup = async (signupData) => {
     const response = await axiosintance.post('/register', signupData);
     return response.data;

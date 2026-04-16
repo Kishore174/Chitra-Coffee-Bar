@@ -57,6 +57,7 @@ const Login = () => {
     login(loginData)
       .then((res) => {
         const data = res.data;
+        localStorage.setItem('token', data.token);
         if (data.isFirstLogin) {
           setForgotPasswordStep(3);
         } else {

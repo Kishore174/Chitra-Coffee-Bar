@@ -6,7 +6,7 @@ import Loader from "../Loader";
 import { formatTime, calculateDuration, formatDuration } from "../../utils/tool";
 import { getProducts } from "../../API/settings";
 import { getAllShops } from "../../API/shop";
-import { getAllAuditors } from "../../API/auditor";
+import { getAllEmployees } from "../../API/employee";
 
 const STORAGE_KEY = "reports_filters";
 
@@ -25,7 +25,7 @@ const Reports = () => {
   const [fromDate, setFromDate] = useState(saved.fromDate || "");
   const [toDate, setToDate] = useState(saved.toDate || "");
   const [shopFilter, setShopFilter] = useState(saved.shopFilter || "");
-  const [auditorFilter, setAuditorFilter] = useState(saved.auditorFilter || "");
+  const [employeeFilter, setEmployeeFilter] = useState(saved.employeeFilter || "");
   const [districtFilter, setdistrictFilter] = useState(saved.districtFilter || "");
   const [statusFilter, setStatusFilter] = useState(saved.statusFilter || "");
   const [minRating, setMinRating] = useState(saved.minRating || "");
@@ -38,20 +38,20 @@ const Reports = () => {
   const itemsPerPage = 10;
 
   const [allShops, setAllShops] = useState([]);
-  const [allAuditors, setAllAuditors] = useState([]);
+  const [allEmployees, setAllEmployees] = useState([]);
 
   const { user } = useAuth();
 
   // Save filters to localStorage whenever they change
   useEffect(() => {
-    const filters = { fromDate, toDate, shopFilter, auditorFilter, districtFilter, statusFilter, minRating, maxRating, currentPage };
+    const filters = { fromDate, toDate, shopFilter, employeeFilter, districtFilter, statusFilter, minRating, maxRating, currentPage };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(filters));
-  }, [fromDate, toDate, shopFilter, auditorFilter, districtFilter, statusFilter, minRating, maxRating, currentPage]);
+  }, [fromDate, toDate, shopFilter, employeeFilter, districtFilter, statusFilter, minRating, maxRating, currentPage]);
 
-  // Fetch shops and auditors on mount
+  // Fetch shops and employees on mount
   useEffect(() => {
     getAllShops().then((res) => setAllShops(res.data || [])).catch(() => {});
-    getAllAuditors().then((res) => setAllAuditors(res.data || [])).catch(() => {});
+    getAllEmployees().then((res) => setAllEmployees(res.data || [])).catch(() => {});
     applyBackendFilter();
   }, []);
 
@@ -61,7 +61,7 @@ const Reports = () => {
       const filterData = {
         startDate: fromDate || undefined,
         endDate: toDate || undefined,
-        auditor: auditorFilter || undefined,
+        auditor: employeeFilter || undefined,
         shop: shopFilter || undefined,
         status: statusFilter || undefined,
         minRating: minRating || undefined,
@@ -89,13 +89,13 @@ const Reports = () => {
     } finally {
       setFilterLoading(false);
     }
-  }, [fromDate, toDate, auditorFilter, shopFilter, statusFilter, minRating, maxRating, districtFilter, currentPage]);
+  }, [fromDate, toDate, employeeFilter, shopFilter, statusFilter, minRating, maxRating, districtFilter, currentPage]);
 
   const resetFilters = () => {
     setFromDate("");
     setToDate("");
     setShopFilter("");
-    setAuditorFilter("");
+    setEmployeeFilter("");
     setdistrictFilter("");
     setStatusFilter("");
     setMinRating("");
@@ -127,7 +127,7 @@ const Reports = () => {
       const filterData = {
         startDate: fromDate || undefined,
         endDate: toDate || undefined,
-        auditor: auditorFilter || undefined,
+        auditor: employeeFilter || undefined,
         shop: shopFilter || undefined,
         status: statusFilter || undefined,
         minRating: minRating || undefined,
@@ -335,20 +335,20 @@ const Reports = () => {
             />
           </div>
 
-          {/* Auditor Filter */}
+          {/* Employee Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">
-              Auditor
+              Employee
             </label>
             <select
               className="border border-gray-300 p-2.5 w-full rounded-lg focus:ring-2 focus:ring-red-200 focus:border-red-400 outline-none transition bg-white"
-              value={auditorFilter}
-              onChange={(e) => setAuditorFilter(e.target.value)}
+              value={employeeFilter}
+              onChange={(e) => setEmployeeFilter(e.target.value)}
             >
-              <option value="">All Auditors</option>
-              {allAuditors.map((auditor) => (
-                <option key={auditor._id} value={auditor._id}>
-                  {auditor.name}
+              <option value="">All Employees</option>
+              {allEmployees.map((employee) => (
+                <option key={employee._id} value={employee._id}>
+                  {employee.name}
                 </option>
               ))}
             </select>

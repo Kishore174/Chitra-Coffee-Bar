@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { CiEdit } from "react-icons/ci";
-import{getProfile} from '../API/auditor'
+import{getProfile} from '../API/employee'
 import { useAuth } from "../context/AuthProvider";
 import Loader from "./Loader";
 const Profile = () => {

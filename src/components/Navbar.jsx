@@ -48,7 +48,7 @@ const Navbar = () => {
     { name: 'Dashboard', icon: FaTachometerAlt, path: '/dashboard' },
     { name: 'My Shops', icon: FaStore, path: '/myshop' },
     { name: 'Audits', icon: FaClipboardCheck, path: '/audit' },
-    { name: 'Auditor', icon: AiOutlineAudit, path: '/auditors' },
+    { name: 'Employee', icon: AiOutlineAudit, path: '/employees' },
     { name: 'Attendance', icon: FaFingerprint, path: '/attendance-management' },
     { name: 'Leave Mgmt', icon: FaCalendarMinus, path: '/leave-management' },
     { name: 'Report', icon: FaFile, path: '/reports' },

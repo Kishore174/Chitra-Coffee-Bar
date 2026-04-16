@@ -6,7 +6,7 @@ import { assignAuditorsAudit, assignAuditRoute, getAllAudits, getAuditByAuditor 
 import {getRoutesByAuditor } from "../../API/createRoute"
 import { ScaleLoader } from "react-spinners";
 import { useAuth } from "../../context/AuthProvider";
-import { auditAssign, deleteAudit } from "../../API/auditor";
+import { auditAssign, deleteAudit } from "../../API/employee";
 import toast from "react-hot-toast";
 import Loader from "../Loader";
 import { formatTime, calculateDuration, formatDuration } from "../../utils/tool";

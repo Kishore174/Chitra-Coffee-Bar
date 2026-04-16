@@ -22,7 +22,7 @@ const SideMenu = () => {
         { name: 'Dashboard', icon: FaTachometerAlt, path: '/dashboard' },
         { name: 'My Shops', icon: FaStore, path: '/myshop' },
         { name: 'Audits', icon:FaClipboardCheck, path: '/audit' },
-        { name: 'Auditor', icon:AiOutlineAudit , path: '/auditors' },
+        { name: 'Employee', icon:AiOutlineAudit , path: '/employees' },
     
         { name: 'Profile', icon: FaUser, path: '/profile' },
         { name: 'Attendance', icon: FaFingerprint, path: '/attendance-management' },
@@ -78,6 +78,7 @@ const SideMenu = () => {
   }, []);
   const handleLogout = () => {
     logout().then(res=>{
+      localStorage.removeItem('token');
       navigate("/"); 
       setLogin(false)
       toast.success(res.message)
