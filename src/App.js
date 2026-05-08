@@ -47,6 +47,7 @@ import Attendance from "./components/Attendance/Attendance";
 import AttendanceManagement from "./components/Attendance/AttendanceManagement";
 import LeaveRequest from "./components/Leave/LeaveRequest";
 import LeaveManagement from "./components/Leave/LeaveManagement";
+import DeviceManagement from "./components/Devices/DeviceManagement";
 
 function App() {
   useEffect(() => {
@@ -129,6 +130,7 @@ function App() {
               <Route path="livesnackname" element={<LiveSnacksName />} />
               <Route path="attendance-management" element={<AttendanceManagement />} />
               <Route path="leave-management" element={<LeaveManagement />} />
+              <Route path="devices" element={<DeviceManagement />} />
             </Route>
           </Route>
           {/* <Route path="/login" */}
