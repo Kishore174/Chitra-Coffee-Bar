@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { Link, useNavigate } from "react-router-dom";
 import { BsArrowRight, BsTrash } from "react-icons/bs";
 import { assignAuditorsAudit, assignAuditRoute, getAllAudits, getAuditByAuditor } from "../../API/audits";
+import { getAuditDataV2, getAuditByAuditorV2 } from "../../API/auditV2";
 import {getRoutesByAuditor } from "../../API/createRoute"
 import { ScaleLoader } from "react-spinners";
 import { useAuth } from "../../context/AuthProvider";
@@ -21,6 +22,7 @@ const Table = () => {
   const { user } = useAuth();
   const [selectedRoute,setSelectedRoute] = useState(null)
   const [routes,setRoutes] = useState([])
+  const [showOldAudits, setShowOldAudits] = useState(false);
 
   const currentWeekDates = Array(7)
     .fill()
@@ -40,21 +42,30 @@ const Table = () => {
 
   useEffect(() => {
     if (user) {
-      if (user.role === "super-admin") {
-        getAllAudits({date : selectedDate.format("YYYY-MM-DD")})
-          .then((res) => setAudits(res.data))
-          .finally(() => {
-            setLoading(false);
-          });
+      setLoading(true);
+      if (showOldAudits) {
+        if (user.role === "super-admin") {
+          getAllAudits({date : selectedDate.format("YYYY-MM-DD")})
+            .then((res) => setAudits(res.data))
+            .finally(() => setLoading(false));
+        } else {
+          getAuditByAuditor(user._id,{date : selectedDate.format("YYYY-MM-DD")})
+            .then((res) => setAudits(res.data))
+            .finally(() => setLoading(false));
+        }
       } else {
-        getAuditByAuditor(user._id,{date : selectedDate.format("YYYY-MM-DD")})
-          .then((res) => setAudits(res.data))
-          .finally(() => {
-            setLoading(false);
-          });
+        if (user.role === "super-admin") {
+          getAuditDataV2({date : selectedDate.format("YYYY-MM-DD")})
+            .then((res) => setAudits(res.data))
+            .finally(() => setLoading(false));
+        } else {
+          getAuditByAuditorV2(user._id,{date : selectedDate.format("YYYY-MM-DD")})
+            .then((res) => setAudits(res.data))
+            .finally(() => setLoading(false));
+        }
       }
     }
-  }, [selectedDate]);
+  }, [selectedDate, showOldAudits, user]);
 
   useEffect(()=>{
     getRoutesByAuditor(user?._id).then(res=>{
@@ -161,8 +172,16 @@ const Table = () => {
         ))}
       </div>
 
-      <div className="flex justify-between">
-        <h2 className="text-2xl poppins-semibold">My Audit</h2>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-4">
+          <h2 className="text-2xl poppins-semibold">{showOldAudits ? "Old Audits" : "My Audit V2"}</h2>
+          <button
+            className="bg-gray-100 text-gray-800 rounded poppins-semibold py-1 px-3 border border-gray-300 text-sm hover:bg-gray-200"
+            onClick={() => setShowOldAudits(!showOldAudits)}
+          >
+            {showOldAudits ? "Show V2" : "Show Old"}
+          </button>
+        </div>
         {/* {user && user.role === "super-admin" && audits.length < 0 && isScheduleDay ? (
           <button
             className={`${
@@ -242,11 +261,11 @@ const Table = () => {
                     </a>
                     <div className="mt-2">
                       {audit.status !== "completed" ? (
-                        <Link to={`/add-audit/${audit._id}`}>
+                        <Link to={showOldAudits ? `/add-audit/${audit._id}` : `/perform-audit/${audit._id}`}>
                           <BsArrowRight className="text-red-600 text-2xl" />
                         </Link>
                       ) : (
-                        <Link to={`/report/${audit._id}`}>
+                        <Link to={showOldAudits ? `/report/${audit._id}` : `/report-v2/${audit._id}`}>
                           <button className="text-blue-500 poppins-regular">
                             View
                           </button>
@@ -364,11 +383,11 @@ const Table = () => {
                         <td className="px-4 py-4 border-b poppins-regular border-gray-200 text-sm">
                           {audit.status !== "completed" &&
                           user?.role !== "super-admin" ? (
-                            <Link to={`/add-audit/${audit._id}`}>
+                            <Link to={showOldAudits ? `/add-audit/${audit._id}` : `/perform-audit/${audit._id}`}>
                               <BsArrowRight className="text-red-600 text-2xl" />
                             </Link>
                           ) : (
-                            <Link to={`/report/${audit?._id}`}>
+                            <Link to={showOldAudits ? `/report/${audit?._id}` : `/report-v2/${audit?._id}`}>
                               <button className="text-blue poppins-regular">
                                 View
                               </button>

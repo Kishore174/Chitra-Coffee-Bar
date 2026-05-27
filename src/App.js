@@ -11,6 +11,7 @@ import Login from "./components/Login";
 // import Signup from "./components/Signup";
 import AddAduit from "./components/Aduit/Pages/AddAduit";
 import TeaAduit from "./components/Aduit/Pages/audit/TeaAduit";
+import PerformAuditV2 from "./components/Aduit/Pages/audit/PerformAuditV2";
 import Coffee from "./components/Aduit/Pages/audit/Coffee";
 import LiveSnacks from "./components/Aduit/Pages/audit/LiveSnacks";
 import Bunzo from "./components/Aduit/Pages/audit/Bunzo";
@@ -29,9 +30,11 @@ import Stock from "./components/Aduit/Pages/Stock&Store/Stock";
 import { WallPainting } from "./components/Aduit/Pages/WallPanting/WallPanting";
 import Recording from "./components/Aduit/Pages/Recording/Recording";
 import AuditReport from "./components/Report/AuditReport";
+import AuditReportV2 from "./components/Report/AuditReportV2";
 import BakerProducts from "./components/Aduit/Pages/Setting/BakerProducts";
 import Dressing from "./components/Aduit/Pages/Dressing/Dressing";
 import BrandName from "./components/Aduit/Pages/Setting/BrandName";
+import AuditConfigBuilder from "./components/Aduit/Pages/Setting/AuditConfigBuilder";
 import { Toaster } from "react-hot-toast";
 import InsideKitchens from "./components/Aduit/Pages/Kitchen/InsideKitchens";
 import LiveSnacksName from "./components/Aduit/Pages/Setting/LiveSnacksName";
@@ -82,6 +85,7 @@ function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="audit" element={<Table />} />
               <Route path="add-audit/:id" element={<AddAduit />} />
+              <Route path="perform-audit/:auditId" element={<PerformAuditV2 />} />
               <Route path="profile" element={<Profile />} />
               <Route path="tea/:auditId" element={<TeaAduit />} />
               <Route path="coffee/:auditId" element={<Coffee />} />
@@ -104,6 +108,7 @@ function App() {
               <Route path="wallpanting/:auditId" element={<WallPainting />} />
               <Route path="recording" element={<Recording />} />
               <Route path="report/:auditId" element={<AuditReport />} />
+              <Route path="report-v2/:auditId" element={<AuditReportV2 />} />
               <Route path="dressing/:auditId" element={<Dressing />} />
               <Route path="outsideshop/:auditId" element={<OutSideShop />} />
               <Route path="kitchen/:auditId" element={<InsideKitchens />} />
@@ -127,6 +132,7 @@ function App() {
               <Route path="set-routes" element={<SetRoutes />} /> */}
               <Route path="backeryproducts" element={<BakerProducts />} />
               <Route path="brandName" element={<BrandName />} />
+              <Route path="audit-config" element={<AuditConfigBuilder />} />
               <Route path="livesnackname" element={<LiveSnacksName />} />
               <Route path="attendance-management" element={<AttendanceManagement />} />
               <Route path="leave-management" element={<LeaveManagement />} />

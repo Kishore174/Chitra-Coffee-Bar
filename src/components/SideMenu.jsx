@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaTachometerAlt, FaStore, FaClipboardCheck, FaUser, FaSignOutAlt, FaTools, FaAngleDown, FaRoute, FaPhoneAlt, FaFile, FaFingerprint, FaCalendarMinus, FaMobileAlt } from 'react-icons/fa';
+import { FaTachometerAlt, FaStore, FaClipboardCheck, FaUser, FaSignOutAlt, FaTools, FaAngleDown, FaRoute, FaPhoneAlt, FaFile, FaFingerprint, FaCalendarMinus, FaMobileAlt, FaSlidersH } from 'react-icons/fa';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from "../Assets/logo01.png";
 import { AiOutlineAudit } from "react-icons/ai";
@@ -30,6 +30,7 @@ const SideMenu = () => {
         { name: 'Report', icon: FaFile, path: '/reports' },
         { name: 'Devices', icon: FaMobileAlt, path: '/devices' },
         { name: 'Settings', icon: FaTools, path: '/setting' },
+        { name: 'Audit Config', icon: FaSlidersH, path: '/audit-config' },
         {
           name: 'Routes',
           icon: FaRoute,
