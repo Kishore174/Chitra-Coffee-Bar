@@ -26,7 +26,7 @@ function diffStatus(field, cur, prv) {
   return 'changed';
 }
 
-const ROW_BG   = { same: '', better: 'bg-green-50', worse: 'bg-red-50',   changed: 'bg-amber-50', neutral: '' };
+const ROW_BG = { same: '', better: 'bg-green-50', worse: 'bg-red-50', changed: 'bg-amber-50', neutral: '' };
 const BADGE_CL = { better: 'bg-green-100 text-green-700', worse: 'bg-red-100 text-red-700', changed: 'bg-amber-100 text-amber-700' };
 const BADGE_TX = { better: '↑ Better', worse: '↓ Worse', changed: 'Changed' };
 const L_BORDER = { better: 'border-l-4 border-green-400', worse: 'border-l-4 border-red-400', changed: 'border-l-4 border-amber-400', same: 'border-l-4 border-transparent', neutral: 'border-l-4 border-transparent' };
@@ -58,9 +58,8 @@ const CompareField = ({ label, curVal, prvVal, hasPrev }) => {
       </td>
       <td className="py-3 px-4">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className={`text-sm font-medium ${
-            status === 'better' ? 'text-green-700' : status === 'worse' ? 'text-red-700' : 'text-slate-800'
-          }`}>{cur}</span>
+          <span className={`text-sm font-medium ${status === 'better' ? 'text-green-700' : status === 'worse' ? 'text-red-700' : 'text-slate-800'
+            }`}>{cur}</span>
           {status !== 'same' && status !== 'neutral' && (
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${BADGE_CL[status]}`}>
               {BADGE_TX[status]}
@@ -137,8 +136,8 @@ const ImageStrip = ({ images, setPreview, setSelImage }) => {
 /* ─── Generic AuditSection ────────────────────────────────── */
 const AuditSection = ({ title, data, prevData, fields, hasPrev, setPreview, setSelImage }) => {
   // Separate flat fields from nested-object fields from image-array fields
-  const flatFields   = fields.filter(f => { const v = data?.[f]; return !Array.isArray(v) && (typeof v !== 'object' || v === null); });
-  const imgFields    = fields.filter(f => Array.isArray(data?.[f]));
+  const flatFields = fields.filter(f => { const v = data?.[f]; return !Array.isArray(v) && (typeof v !== 'object' || v === null); });
+  const imgFields = fields.filter(f => Array.isArray(data?.[f]));
   const nestedFields = fields.filter(f => { const v = data?.[f]; return typeof v === 'object' && v !== null && !Array.isArray(v); });
 
   const changes = hasPrev ? countChanges(flatFields, data, prevData) : 0;
@@ -159,11 +158,11 @@ const AuditSection = ({ title, data, prevData, fields, hasPrev, setPreview, setS
 
       {/* Nested object fields */}
       {nestedFields.map(f => {
-        const cur  = data?.[f]    ?? {};
-        const prv  = prevData?.[f] ?? {};
-        const sub  = Object.keys(cur).filter(k => k !== '_id' && k !== 'captureImages');
+        const cur = data?.[f] ?? {};
+        const prv = prevData?.[f] ?? {};
+        const sub = Object.keys(cur).filter(k => k !== '_id' && k !== 'captureImages');
         const imgs = cur.captureImages || [];
-        const nc   = hasPrev ? countChanges(sub, cur, prv) : 0;
+        const nc = hasPrev ? countChanges(sub, cur, prv) : 0;
         return (
           <div key={f} className="border-t border-slate-100">
             <div className="px-4 py-2 bg-slate-50 flex items-center justify-between">
@@ -358,27 +357,27 @@ const PreviewImage = ({ image, setPreview }) => (
    MAIN COMPONENT
 ═══════════════════════════════════════════════════════════ */
 const AuditReport = () => {
-  const [name, setName]               = useState('');
-  const [comment, setComment]         = useState('');
-  const [signature, setSignature]     = useState(null);
-  const signatureRef                  = useRef({});
-  const [auditData, setAuditData]     = useState({});
-  const [prevAudit, setPrevAudit]     = useState(null);
-  const [prevList, setPrevList]       = useState([]);
+  const [name, setName] = useState('');
+  const [comment, setComment] = useState('');
+  const [signature, setSignature] = useState(null);
+  const signatureRef = useRef({});
+  const [auditData, setAuditData] = useState({});
+  const [prevAudit, setPrevAudit] = useState(null);
+  const [prevList, setPrevList] = useState([]);
   const [selectedPrevId, setSelectedPrevId] = useState('');
-  const { auditId }                   = useParams();
+  const { auditId } = useParams();
   const [isRecording, setIsRecording] = useState(false);
-  const [audio, setAudio]             = useState(null);
+  const [audio, setAudio] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(true);
-  const [loading, setLoading]         = useState(false);
+  const [loading, setLoading] = useState(false);
   const [loadingPrev, setLoadingPrev] = useState(false);
   const [signatureType, setSignatureType] = useState('');
-  const [selImage, setSelImage]       = useState('');
+  const [selImage, setSelImage] = useState('');
   const [previewImage, setPreviewImage] = useState(false);
   const [showPrevList, setShowPrevList] = useState(false);
-  const navigate                      = useNavigate();
-  const { user }                      = useAuth();
-  const isSuperAdmin                  = user?.role === 'super-admin';
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'super-admin';
 
   /* Load current audit + previous list */
   useEffect(() => {
@@ -413,7 +412,7 @@ const AuditReport = () => {
   const handleSaveSignature = async () => {
     const blob = signatureRef.current.getTrimmedCanvas().toDataURL('image/png');
     const file = dataURLtoFile(blob, `${name}_signature.png`);
-    const fd   = new FormData();
+    const fd = new FormData();
     fd.append('signatureFile', file);
     fd.append('signaturedBy', signatureType);
     fd.append('signaturedName', name);
@@ -554,11 +553,10 @@ const AuditReport = () => {
                   </div>
                   <div className="flex flex-col items-end gap-1.5">
                     {prev.status === 'completed' && <span className="text-sm font-bold text-amber-600">⭐ {prev.rating}/5</span>}
-                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide ${
-                      prev.status === 'completed'   ? 'bg-green-100 text-green-700' :
-                      prev.status === 'in progress' ? 'bg-amber-100 text-amber-700' :
-                      'bg-red-100 text-red-700'
-                    }`}>{prev.status}</span>
+                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide ${prev.status === 'completed' ? 'bg-green-100 text-green-700' :
+                        prev.status === 'in progress' ? 'bg-amber-100 text-amber-700' :
+                          'bg-red-100 text-red-700'
+                      }`}>{prev.status}</span>
                   </div>
                 </div>
               ))}
@@ -626,9 +624,9 @@ const AuditReport = () => {
           <table className="w-full">
             <TableHead hasPrev={hasPrev} />
             <tbody className="divide-y divide-slate-100">
-              <CompareField label="Remark"             curVal={auditData?.stock?.remark}            prvVal={prevAudit?.stock?.remark}            hasPrev={hasPrev} />
-              <CompareField label="FIFO Followed"      curVal={auditData?.stock?.fifoFollowed}       prvVal={prevAudit?.stock?.fifoFollowed}       hasPrev={hasPrev} />
-              <CompareField label="Critical Deviation" curVal={auditData?.stock?.criticalDeviation}  prvVal={prevAudit?.stock?.criticalDeviation}  hasPrev={hasPrev} />
+              <CompareField label="Remark" curVal={auditData?.stock?.remark} prvVal={prevAudit?.stock?.remark} hasPrev={hasPrev} />
+              <CompareField label="FIFO Followed" curVal={auditData?.stock?.fifoFollowed} prvVal={prevAudit?.stock?.fifoFollowed} hasPrev={hasPrev} />
+              <CompareField label="Critical Deviation" curVal={auditData?.stock?.criticalDeviation} prvVal={prevAudit?.stock?.criticalDeviation} hasPrev={hasPrev} />
             </tbody>
           </table>
         </SectionCard>

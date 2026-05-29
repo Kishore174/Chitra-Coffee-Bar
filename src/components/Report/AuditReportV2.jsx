@@ -17,7 +17,16 @@ const cap = (s) =>
 /* ─── extract scalar value ───────────────────────────────── */
 const extractVal = (v) => {
   if (v === null || v === undefined || v === '') return '—';
-  if (Array.isArray(v)) return `${v.length} image(s)`;
+  if (Array.isArray(v)) {
+    const isImageArray = v.length > 0 && v.every(item => typeof item === 'string' && (item.startsWith('http') || item.startsWith('/') || item.startsWith('file://')));
+    if (isImageArray) return `${v.length} image(s)`;
+    return v.map(item => {
+      const valStr = String(item || '');
+      const otherPrefixes = ['other brand - ', 'others - ', 'other - '];
+      let matchedPrefix = otherPrefixes.find(p => valStr.toLowerCase().startsWith(p));
+      return matchedPrefix ? `${item.slice(0, matchedPrefix.length - 3)} - ${item.slice(matchedPrefix.length)}` : item;
+    }).filter(Boolean).join(', ');
+  }
   if (typeof v === 'boolean') return v ? 'Yes' : 'No';
   if (typeof v === 'object') {
     if (v.status != null) return String(v.status);
@@ -25,7 +34,11 @@ const extractVal = (v) => {
     const first = Object.entries(v).find(([k, val]) => k !== '_id' && k !== 'captureImages' && typeof val !== 'object');
     return first ? String(first[1]) : '—';
   }
-  return String(v);
+
+  const valStr = String(v);
+  const otherPrefixes = ['other brand - ', 'others - ', 'other - '];
+  let matchedPrefix = otherPrefixes.find(p => valStr.toLowerCase().startsWith(p));
+  return matchedPrefix ? `${v.slice(0, matchedPrefix.length - 3)} - ${v.slice(matchedPrefix.length)}` : valStr;
 };
 
 /* ─── Field Row ───────────────────────────────────── */
@@ -49,9 +62,9 @@ const FieldRow = ({ field }) => {
             {cur}
           </span>
           {isScored && !isUnavailable && (
-             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-               {obtainedPoints} / {maxPoints} pts
-             </span>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+              {obtainedPoints} / {maxPoints} pts
+            </span>
           )}
         </div>
         {field.remarks && (
@@ -199,22 +212,22 @@ const PreviewImage = ({ image, setPreview }) => (
    MAIN COMPONENT
 ═══════════════════════════════════════════════════════════ */
 const AuditReportV2 = () => {
-  const [name, setName]               = useState('');
-  const [comment, setComment]         = useState('');
-  const [signature, setSignature]     = useState(null);
-  const signatureRef                  = useRef({});
-  const [auditData, setAuditData]     = useState({});
-  const { auditId }                   = useParams();
+  const [name, setName] = useState('');
+  const [comment, setComment] = useState('');
+  const [signature, setSignature] = useState(null);
+  const signatureRef = useRef({});
+  const [auditData, setAuditData] = useState({});
+  const { auditId } = useParams();
   const [isRecording, setIsRecording] = useState(false);
-  const [audio, setAudio]             = useState(null);
+  const [audio, setAudio] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(true);
-  const [loading, setLoading]         = useState(false);
+  const [loading, setLoading] = useState(false);
   const [signatureType, setSignatureType] = useState('');
-  const [selImage, setSelImage]       = useState('');
+  const [selImage, setSelImage] = useState('');
   const [previewImage, setPreviewImage] = useState(false);
-  const navigate                      = useNavigate();
-  const { user }                      = useAuth();
-  const isSuperAdmin                  = user?.role === 'super-admin';
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'super-admin';
 
   /* Load current audit */
   useEffect(() => {
@@ -242,7 +255,7 @@ const AuditReportV2 = () => {
   const handleSaveSignature = async () => {
     const blob = signatureRef.current.getTrimmedCanvas().toDataURL('image/png');
     const file = dataURLtoFile(blob, `${name}_signature.png`);
-    const fd   = new FormData();
+    const fd = new FormData();
     fd.append('signatureFile', file);
     fd.append('signaturedBy', signatureType);
     fd.append('signaturedName', name);
@@ -286,7 +299,7 @@ const AuditReportV2 = () => {
           </button>
           <h1 className="text-lg font-bold text-slate-800 flex-1">Audit Report (V2)</h1>
           <span className="text-sm text-slate-400 bg-slate-100 px-3 py-1.5 rounded-lg hidden sm:block">{fmt(auditData?.auditDate)}</span>
-          
+
           {auditData?.status === "completed" && (
             <span className="text-sm font-bold text-green-700 bg-green-100 px-3 py-1.5 rounded-lg">Completed</span>
           )}
@@ -315,7 +328,7 @@ const AuditReportV2 = () => {
                 {auditData?.finalPercentage?.toFixed(2)}%
               </p>
             </div>
-            
+
             <div className="flex flex-col justify-center bg-slate-50 border-2 border-slate-200 rounded-xl p-5">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Audit Details</p>
               <p className="text-sm text-slate-700 mt-2"><b>Shop:</b> {auditData?.shop?.shopName}</p>
@@ -403,13 +416,55 @@ const AuditReportV2 = () => {
 
         {/* ── Dynamic V2 Sections ── */}
         {auditData?.sections?.map((sec, idx) => {
+          if (sec.isRepeatable && sec.rows && sec.rows.length > 0) {
+            return (
+              <SectionCard key={idx} title={`${sec.sectionName} (Repeatable - ${sec.rows.length} Items)`} defaultOpen={true}>
+                <div className="flex flex-col gap-4 p-4">
+                  {sec.rows.map((row, rIdx) => {
+                    const rowScalarFields = (row.fields || []).filter(f => !['single_image', 'multi_image'].includes(f.type) || f.isAvailable === 'no');
+                    const rowImgFields = (row.fields || []).filter(f => ['single_image', 'multi_image'].includes(f.type) && f.pictures?.length > 0);
+
+                    return (
+                      <div key={rIdx} className="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
+                        <div className="bg-slate-100 px-4 py-2 flex items-center justify-between border-b border-slate-200">
+                          <span className="text-xs font-bold text-slate-700 uppercase tracking-wide">
+                            Item #{rIdx + 1}
+                          </span>
+                        </div>
+                        {rowScalarFields.length > 0 && (
+                          <table className="w-full bg-white">
+                            <TableHead />
+                            <tbody className="divide-y divide-slate-100">
+                              {rowScalarFields.map(f => (
+                                <FieldRow key={f.key} field={f} />
+                              ))}
+                            </tbody>
+                          </table>
+                        )}
+                        {rowImgFields.map(f => (
+                          <div key={f.key} className="border-t border-slate-100 bg-white">
+                            <div className="px-4 py-2 bg-slate-50">
+                              <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">{f.label}</span>
+                            </div>
+                            <ImageStrip images={f.pictures} setPreview={setPreviewImage} setSelImage={setSelImage} />
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </div>
+              </SectionCard>
+            );
+          }
+
           // Separate scalar fields from images
-          const scalarFields = sec.fields.filter(f => !['single_image', 'multi_image'].includes(f.type) || f.isAvailable === 'no');
-          const imgFields = sec.fields.filter(f => ['single_image', 'multi_image'].includes(f.type) && f.pictures?.length > 0);
-          
+          const fields = sec.fields || [];
+          const scalarFields = fields.filter(f => !['single_image', 'multi_image'].includes(f.type) || f.isAvailable === 'no');
+          const imgFields = fields.filter(f => ['single_image', 'multi_image'].includes(f.type) && f.pictures?.length > 0);
+
           let obtained = 0;
           let total = 0;
-          sec.fields.forEach((f) => {
+          fields.forEach((f) => {
             obtained += Number(f.obtainedPoints) || 0;
             total += Number(f.maxPoints) || 0;
           });

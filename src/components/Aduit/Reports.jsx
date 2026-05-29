@@ -215,7 +215,7 @@ const Reports = () => {
           audit.shop?.email || "N/A",
           audit.auditDate ? new Date(audit.auditDate).toLocaleDateString("en-GB") : "N/A",
           audit.status || "N/A",
-          audit.status === "completed" ? audit.rating : 0,
+          audit.status === "completed" ? (audit.overallRating || audit.rating || 0) : 0,
         ];
 
         // Super-admin details
@@ -526,7 +526,7 @@ const Reports = () => {
                       </div>
                       {audit.status === "completed" && (
                         <div className="poppins-semibold text-yellow-500">
-                          Rating: {audit.rating}
+                          Rating: {audit.overallRating || audit.rating}
                         </div>
                       )}
                     </div>
@@ -642,7 +642,7 @@ const Reports = () => {
                           <div className="text-center space-y-1">
                             {audit.status === "completed" && (
                               <div className="poppins-semibold text-yellow-500 text-lg">
-                                {audit.rating}
+                                ⭐ {audit.overallRating || audit.rating}
                               </div>
                             )}
                             <div className="text-gray-800 text-xs">

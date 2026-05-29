@@ -109,12 +109,12 @@ const ShopAudits = () => {
                     </a>
                     <div
                       className={`mt-2 ${
-                        audit.status === "Completed"
+                        audit.status?.toLowerCase() === "completed"
                           ? "text-green-600"
                           : "text-red-600"
                       }`}
                     >
-                      {audit.status}
+                      {audit.status} {audit.status?.toLowerCase() === "completed" && `(⭐ ${audit.overallRating || audit.rating})`}
                     </div>
                     <div>{audit.shop.phone}</div>
                     <a
@@ -211,15 +211,15 @@ const ShopAudits = () => {
                         )}
                         <td
                           className={`border-b poppins-regular border-gray-200 text-sm ${
-                            audit.status === "Completed"
+                            audit.status?.toLowerCase() === "completed"
                               ? "text-green-600"
                               : "text-red-600"
                           }`}
                         >
                           <div className="poppins-regular text-center">
-                            {audit.status === "completed" && (
+                            {audit.status?.toLowerCase() === "completed" && (
                               <div className="poppins-semibold text-yellow-500">
-                                {audit.rating}
+                                ⭐ {audit.overallRating || audit.rating}
                               </div>
                             )}
                             <div className=" text-blue-800">{new Date(audit.auditDate).toLocaleDateString('en-GB')}</div>
