@@ -3,7 +3,7 @@ import { BsFillMicFill, BsStopFill } from 'react-icons/bs';
 import SignatureCanvas from 'react-signature-canvas';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getAudit, getPrevious } from '../../API/audits';
-import { sendSignatureToBackend, uploadAudioToBackend } from '../../API/Api';
+import { sendSignatureToBackend, uploadAudioToBackend, axiosintance } from '../../API/Api';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthProvider';
 import Loader from '../Loader';
@@ -378,6 +378,31 @@ const AuditReport = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const isSuperAdmin = user?.role === 'super-admin';
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownloadPDF = async () => {
+    setIsDownloading(true);
+    try {
+      const response = await axiosintance.get(`/audit/${auditId}/pdf`, {
+        responseType: 'blob'
+      });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Audit_Report_${auditData?.shop?.shopName || 'Report'}_${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toast.success("Report PDF downloaded successfully");
+    } catch (error) {
+      console.error("PDF Download error:", error);
+      toast.error("Failed to download PDF report");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   /* Load current audit + previous list */
   useEffect(() => {
@@ -455,6 +480,13 @@ const AuditReport = () => {
           <button onClick={() => navigate(-1)}
             className="flex items-center gap-1.5 text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-2 rounded-lg transition-colors">
             <ArrowLeftIcon className="w-4 h-4" /> Back
+          </button>
+          <button onClick={handleDownloadPDF} disabled={isDownloading}
+            className="flex items-center gap-1.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 disabled:bg-gray-400 px-3 py-2 rounded-lg transition-colors shadow-sm">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            {isDownloading ? "Downloading..." : "Download PDF"}
           </button>
           <h1 className="text-lg font-bold text-slate-800 flex-1">Audit Report</h1>
           <span className="text-sm text-slate-400 bg-slate-100 px-3 py-1.5 rounded-lg hidden sm:block">{fmt(auditData?.auditDate)}</span>

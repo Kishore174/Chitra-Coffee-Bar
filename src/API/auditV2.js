@@ -64,3 +64,9 @@ export const uploadAudioToBackendV2 = async (auditId, blob) => {
   });
   return response.data;
 };
+
+export const filterAuditsV2 = async (data) => {
+  const response = await axiosintance.post(`/audit-v2/filter`, data);
+  return response.data;
+};
+
