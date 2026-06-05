@@ -63,7 +63,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-      <ScrollToTop /> 
+        <ScrollToTop />
 
         {/* <div className="flex    min-h-screen">
         <SideMenu />
@@ -78,7 +78,7 @@ function App() {
           <Route path="*" element={<Page404 />} />
           <Route
             element={
-              <ProtectedRoute allowedRoles={["super-admin", "auditor"]} />
+              <ProtectedRoute allowedRoles={["super-admin", "auditor", "employee"]} />
             }
           >
             <Route path="/" element={<Main />}>
@@ -114,7 +114,7 @@ function App() {
               <Route path="kitchen/:auditId" element={<InsideKitchens />} />
             </Route>
           </Route>
-          <Route element={<ProtectedRoute allowedRoles={["auditor"]} />}>
+          <Route element={<ProtectedRoute allowedRoles={["auditor", "employee"]} />}>
             <Route path="/" element={<Main />}>
               <Route path="attendance" element={<Attendance />} />
               <Route path="leave-request" element={<LeaveRequest />} />
@@ -126,7 +126,7 @@ function App() {
               {/* <Route path="addshop" element={<AddShop />} /> */}
               <Route path="setting" element={<Setting />} />
               <Route path="employees" element={<Employees />} />
-              <Route path="add-employees" element={<AddEmployee/>} />
+              <Route path="add-employees" element={<AddEmployee />} />
               <Route path="reports" element={<Reports />} />
               {/* <Route path="routes" element={<Rotes />} />
               <Route path="set-routes" element={<SetRoutes />} /> */}
@@ -166,12 +166,12 @@ function App() {
 
 export default App;
 const ScrollToTop = () => {
-   const location = useLocation();
- 
-   useEffect(() => {
-     // Scroll to top whenever the route changes
-     window.scrollTo(0, 0);
-   }, [location]);
- 
-   return null;
- };
+  const location = useLocation();
+
+  useEffect(() => {
+    // Scroll to top whenever the route changes
+    window.scrollTo(0, 0);
+  }, [location]);
+
+  return null;
+};

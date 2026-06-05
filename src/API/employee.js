@@ -4,7 +4,7 @@ export const createEmployee = async (shopdata) => {
 
   // Append all fields to the formData object
   for (const key in shopdata) {
-    if (key !== 'routes') {
+    if (key !== 'routes' && key !== 'permissions') {
       formData.append(key, shopdata[key]);
     }
   }
@@ -13,6 +13,12 @@ export const createEmployee = async (shopdata) => {
   if (Array.isArray(shopdata.routes)) {
     shopdata.routes.forEach((route) => {
       formData.append('routes', route); // Append each route as a separate entry
+    });
+  }
+  
+  if (Array.isArray(shopdata.permissions)) {
+    shopdata.permissions.forEach((permission) => {
+      formData.append('permissions', permission);
     });
   }
   const response = await axiosintance.post(`/auditor-create`, formData);
@@ -32,7 +38,7 @@ export const updateEmployee = async (id, data) => {
   const {old_set,...rest} = data
   // Append all fields to the formData object
   for (const key in rest) {
-    if (key !== 'routes') {
+    if (key !== 'routes' && key !== 'permissions') {
       formData.append(key, rest[key]);
     }
   }
@@ -41,6 +47,12 @@ export const updateEmployee = async (id, data) => {
   if (Array.isArray(rest.routes)) {
     rest.routes.forEach((route) => {
       formData.append('routes', route); // Append each route as a separate entry
+    });
+  }
+  
+  if (Array.isArray(rest.permissions)) {
+    rest.permissions.forEach((permission) => {
+      formData.append('permissions', permission);
     });
   }
   const response = await axiosintance.put(`/auditor/${id}`, formData);
@@ -55,8 +67,8 @@ export const getProfile = async(id)=>{
   const response = await axiosintance.get(`/auditor/${id}`);
   return response.data;
 }
-export const updateProfile = async(id)=>{
-  const response = await axiosintance.patch(`/auditor/${id}/profile`);
+export const updateProfile = async(id, formData)=>{
+  const response = await axiosintance.patch(`/auditor/${id}/profile`, formData);
   return response.data;
 }
 

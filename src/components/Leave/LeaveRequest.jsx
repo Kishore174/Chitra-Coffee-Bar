@@ -238,10 +238,20 @@ const LeaveRequest = () => {
                   <span className="text-gray-500">Reason:</span> {leave.reason}
                 </p>
 
-                {leave.adminRemarks && (
-                  <p className="text-sm text-gray-600 mt-1 bg-gray-50 p-2 rounded">
-                    <span className="text-gray-500">Admin Remarks:</span> {leave.adminRemarks}
-                  </p>
+                {leave.status !== "pending" && (
+                  <div className="bg-gray-50 p-2 rounded mt-2 space-y-1">
+                    {leave.adminRemarks && (
+                      <p className="text-sm text-gray-700">
+                        <span className="text-gray-500">Remarks:</span> {leave.adminRemarks}
+                      </p>
+                    )}
+                    {leave.reviewedBy && (
+                      <p className="text-xs text-gray-600">
+                        <span className="text-gray-500">{leave.status === "approved" ? "Approved" : "Rejected"} By:</span> {leave.reviewedBy.name}
+                        {leave.reviewedAt && ` on ${dayjs(leave.reviewedAt).format("DD MMM YYYY, hh:mm A")}`}
+                      </p>
+                    )}
+                  </div>
                 )}
 
                 <p className="text-xs text-gray-400 mt-2">
