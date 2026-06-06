@@ -70,3 +70,7 @@ export const filterAuditsV2 = async (data) => {
   return response.data;
 };
 
+export const assignManualAuditsV2 = async (data) => {
+  const response = await axiosintance.post(`/audit-v2/assign`, data);
+  return response.data;
+};

@@ -24,8 +24,19 @@ export const getMyAttendance = async (month, year) => {
   return response.data;
 };
 
-export const getAllAttendance = async (date) => {
-  const response = await axiosintance.get(`/attendance/all${date ? `?date=${date}` : ""}`);
+export const getAllAttendance = async (date, startDate, endDate) => {
+  let url = `/attendance/all`;
+  const params = new URLSearchParams();
+  if (startDate && endDate) {
+    params.append('startDate', startDate);
+    params.append('endDate', endDate);
+  } else if (date) {
+    params.append('date', date);
+  }
+  if (params.toString()) {
+    url += `?${params.toString()}`;
+  }
+  const response = await axiosintance.get(url);
   return response.data;
 };
 

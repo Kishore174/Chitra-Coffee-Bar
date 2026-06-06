@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaCheckCircle, FaUserPlus, FaUserEdit, FaUserCircle, FaIdCard, FaLock, FaRoute } from "react-icons/fa";
+import { FaCheckCircle, FaUserPlus, FaUserEdit, FaUserCircle, FaIdCard, FaLock, FaRoute, FaBell, FaBriefcase, FaBuilding, FaMapMarkerAlt, FaCalendarDay } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import { createEmployee, updateEmployee } from "../../../../API/employee";
 import toast from "react-hot-toast";
@@ -19,14 +19,22 @@ const AddEmployee = () => {
       email: "",
       phone: "",
       address: "",
-      documentType: "aadhar",
-      documentFile: null,
+      profileFile: null,
+      dateOfJoining: "",
+      designation: "",
+      department: "",
+      workLocation: "",
+      aadhaarNo: "",
+      aadhaarFile: null,
+      panNo: "",
+      panFile: null,
       routes: [],
       drivingLicenseNo: "",
       drivingLicenseExpiryDate: "",
       drivingLicenseFile: null,
       role: "auditor",
       permissions: [],
+      alerts: [],
     }
   );
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -54,6 +62,12 @@ const AddEmployee = () => {
     { label: "Audit Config", value: "/audit-config" },
   ];
 
+  const AVAILABLE_ALERTS = [
+    { label: "Low Rating Alert", value: "low_rating" },
+    { label: "Expiry Product Alert", value: "expiry_product" },
+    { label: "Commercial Expiry Alert", value: "commercial_expiry" },
+  ];
+
   const handlePermissionToggle = (permValue) => {
     if (isView) return;
     const perms = formData.permissions || [];
@@ -61,6 +75,16 @@ const AddEmployee = () => {
       setFormData({ ...formData, permissions: perms.filter(p => p !== permValue) });
     } else {
       setFormData({ ...formData, permissions: [...perms, permValue] });
+    }
+  };
+
+  const handleAlertToggle = (alertValue) => {
+    if (isView) return;
+    const alts = formData.alerts || [];
+    if (alts.includes(alertValue)) {
+      setFormData({ ...formData, alerts: alts.filter(a => a !== alertValue) });
+    } else {
+      setFormData({ ...formData, alerts: [...alts, alertValue] });
     }
   };
 
@@ -100,15 +124,22 @@ const AddEmployee = () => {
         email: "",
         phone: "",
         address: "",
-        documentType: "aadhar",
-        documentFile: null,
-        route: "",
-        routes:[],
+        profileFile: null,
+        dateOfJoining: "",
+        designation: "",
+        department: "",
+        workLocation: "",
+        aadhaarNo: "",
+        aadhaarFile: null,
+        panNo: "",
+        panFile: null,
+        routes: [],
         drivingLicenseNo: "",
         drivingLicenseExpiryDate: "",
         drivingLicenseFile: null,
         role: "auditor",
         permissions: [],
+        alerts: [],
       });
 
       toast.success(res.message);
@@ -178,9 +209,24 @@ const AddEmployee = () => {
         {/* Unified Grid Form */}
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           
+          {/* General Information Section */}
+          <div className="col-span-1 md:col-span-2 lg:col-span-3 mt-2 border-b border-gray-100 pb-2">
+            <h3 className="text-md poppins-semibold text-gray-800 flex items-center gap-2"><FaUserCircle className="text-gray-400" /> Basic Details</h3>
+          </div>
+
           <div>
             <label className={labelClass}>Full Name <span className="text-[#da251d]">*</span></label>
-            <input type="text" name="name" placeholder="e.g. John Doe" value={formData.name} onChange={handleChange} disabled={isView} required className={inputClass} />
+            <input type="text" name="name" placeholder="e.g. John Doe" value={formData.name || ""} onChange={handleChange} disabled={isView} required className={inputClass} />
+          </div>
+
+          <div>
+            <label className={labelClass}>Photo Upload</label>
+            <div className="relative">
+              <input type="file" name="profileFile" onChange={handleFileChange} disabled={isView} accept="image/*" className="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300 transition-colors bg-gray-50 border border-gray-200 rounded-xl" />
+            </div>
+            {employee?.profile && (
+              <a href={employee.profile} target="_blank" rel="noopener noreferrer" className="text-[#da251d] hover:underline text-xs poppins-medium mt-2 inline-block">View Current Photo &rarr;</a>
+            )}
           </div>
 
           <div>
@@ -193,18 +239,43 @@ const AddEmployee = () => {
           </div>
 
           <div>
-            <label className={labelClass}>Email Address <span className="text-[#da251d]">*</span></label>
-            <input type="email" name="email" placeholder="e.g. john@example.com" value={formData.email} onChange={handleChange} disabled={isView} required className={inputClass} />
+            <label className={labelClass}>Email Address (Mail) <span className="text-[#da251d]">*</span></label>
+            <input type="email" name="email" placeholder="e.g. john@example.com" value={formData.email || ""} onChange={handleChange} disabled={isView} required className={inputClass} />
           </div>
 
           <div>
             <label className={labelClass}>Mobile Number <span className="text-[#da251d]">*</span></label>
-            <input type="tel" name="phone" placeholder="e.g. 9876543210" value={formData.phone} onChange={handleChange} disabled={isView} required className={inputClass} />
+            <input type="tel" name="phone" placeholder="e.g. 9876543210" value={formData.phone || ""} onChange={handleChange} disabled={isView} required className={inputClass} />
           </div>
 
           <div>
             <label className={labelClass}>Residential Address <span className="text-[#da251d]">*</span></label>
-            <textarea name="address" placeholder="Enter full address" value={formData.address} onChange={handleChange} disabled={isView} required rows="1" className={`${inputClass} resize-none`}></textarea>
+            <textarea name="address" placeholder="Enter full address" value={formData.address || ""} onChange={handleChange} disabled={isView} required rows="1" className={`${inputClass} resize-none`}></textarea>
+          </div>
+
+          {/* Job Details Section */}
+          <div className="col-span-1 md:col-span-2 lg:col-span-3 mt-6 border-b border-gray-100 pb-2">
+            <h3 className="text-md poppins-semibold text-gray-800 flex items-center gap-2"><FaBriefcase className="text-gray-400" /> Job Details</h3>
+          </div>
+
+          <div>
+            <label className={labelClass}>Date of Joining</label>
+            <input type="date" name="dateOfJoining" value={formData.dateOfJoining || ""} onChange={handleChange} disabled={isView} className={inputClass} />
+          </div>
+
+          <div>
+            <label className={labelClass}>Designation</label>
+            <input type="text" name="designation" placeholder="e.g. Store Manager" value={formData.designation || ""} onChange={handleChange} disabled={isView} className={inputClass} />
+          </div>
+
+          <div>
+            <label className={labelClass}>Department</label>
+            <input type="text" name="department" placeholder="e.g. Operations" value={formData.department || ""} onChange={handleChange} disabled={isView} className={inputClass} />
+          </div>
+
+          <div>
+            <label className={labelClass}>Work Location</label>
+            <input type="text" name="workLocation" placeholder="e.g. HQ / Branch A" value={formData.workLocation || ""} onChange={handleChange} disabled={isView} className={inputClass} />
           </div>
 
           <div className="custom-dropdown relative">
@@ -249,44 +320,64 @@ const AddEmployee = () => {
             )}
           </div>
 
-          <div>
-            <label className={labelClass}>ID Document Type</label>
-            <select name="documentType" value={formData.documentType} onChange={handleChange} disabled={isView} className={inputClass}>
-              <option value="aadhar">Aadhar Card</option>
-              <option value="pan">PAN Card</option>
-            </select>
+          {/* Documents Section */}
+          <div className="col-span-1 md:col-span-2 lg:col-span-3 mt-6 border-b border-gray-100 pb-2">
+            <h3 className="text-md poppins-semibold text-gray-800 flex items-center gap-2"><FaIdCard className="text-gray-400" /> Identity & Documents</h3>
           </div>
 
           <div>
-            <label className={labelClass}>Upload ID Document</label>
+            <label className={labelClass}>Aadhaar Number <span className="text-[#da251d]">*</span></label>
+            <input type="text" name="aadhaarNo" placeholder="e.g. 1234 5678 9012" value={formData.aadhaarNo || ""} onChange={handleChange} disabled={isView} required className={inputClass} />
+          </div>
+
+          <div>
+            <label className={labelClass}>Upload Aadhaar Document <span className="text-[#da251d]">*</span></label>
             <div className="relative">
-              <input type="file" name="documentFile" onChange={handleFileChange} disabled={isView} className="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300 transition-colors bg-gray-50 border border-gray-200 rounded-xl" />
+              <input type="file" name="aadhaarFile" onChange={handleFileChange} disabled={isView} required={!employee?.aadhaarFile} className="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300 transition-colors bg-gray-50 border border-gray-200 rounded-xl" />
             </div>
-            {employee?.documentUrl && (
-              <a href={employee.documentUrl} target="_blank" rel="noopener noreferrer" className="text-[#da251d] hover:underline text-xs poppins-medium mt-2 inline-block">Preview current document &rarr;</a>
+            {employee?.aadhaarFile && (
+              <a href={employee.aadhaarFile} target="_blank" rel="noopener noreferrer" className="text-[#da251d] hover:underline text-xs poppins-medium mt-2 inline-block">Preview Aadhaar &rarr;</a>
             )}
           </div>
 
           <div>
-            <label className={labelClass}>Driving License Number <span className="text-[#da251d]">*</span></label>
-            <input type="text" name="drivingLicenseNo" placeholder="e.g. TN0120230000000" value={formData.drivingLicenseNo} onChange={handleChange} disabled={isView} required className={inputClass} />
+            <label className={labelClass}>PAN Number (Optional)</label>
+            <input type="text" name="panNo" placeholder="e.g. ABCDE1234F" value={formData.panNo || ""} onChange={handleChange} disabled={isView} className={inputClass} />
           </div>
 
           <div>
-            <label className={labelClass}>License Expiry Date <span className="text-[#da251d]">*</span></label>
-            <input type="date" name="drivingLicenseExpiryDate" value={formData.drivingLicenseExpiryDate} onChange={handleChange} disabled={isView} required className={inputClass} />
+            <label className={labelClass}>Upload PAN Document (Optional)</label>
+            <div className="relative">
+              <input type="file" name="panFile" onChange={handleFileChange} disabled={isView} className="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300 transition-colors bg-gray-50 border border-gray-200 rounded-xl" />
+            </div>
+            {employee?.panFile && (
+              <a href={employee.panFile} target="_blank" rel="noopener noreferrer" className="text-[#da251d] hover:underline text-xs poppins-medium mt-2 inline-block">Preview PAN &rarr;</a>
+            )}
           </div>
 
           <div>
-            <label className={labelClass}>Upload License</label>
+            <label className={labelClass}>Driving License Number (Optional)</label>
+            <input type="text" name="drivingLicenseNo" placeholder="e.g. TN0120230000000" value={formData.drivingLicenseNo || ""} onChange={handleChange} disabled={isView} className={inputClass} />
+          </div>
+
+          <div>
+            <label className={labelClass}>License Expiry Date (Optional)</label>
+            <input type="date" name="drivingLicenseExpiryDate" value={formData.drivingLicenseExpiryDate || ""} onChange={handleChange} disabled={isView} className={inputClass} />
+          </div>
+
+          <div>
+            <label className={labelClass}>Upload License (Optional)</label>
             <input type="file" name="drivingLicenseFile" onChange={handleFileChange} disabled={isView} className="w-full text-sm text-gray-500 file:mr-2 file:py-2.5 file:px-3 file:rounded-lg file:border-0 file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300 transition-colors bg-gray-50 border border-gray-200 rounded-xl" />
+            {employee?.drivingLicense && (
+              <a href={employee.drivingLicense} target="_blank" rel="noopener noreferrer" className="text-[#da251d] hover:underline text-xs poppins-medium mt-2 inline-block">Preview License &rarr;</a>
+            )}
           </div>
 
-          {/* Module Permissions */}
-          <div className="col-span-1 md:col-span-2 lg:col-span-3 mt-4 border-t border-gray-100 pt-6">
+          {/* List of Access / Module Permissions */}
+          <div className="col-span-1 md:col-span-2 lg:col-span-3 mt-6 border-t border-gray-100 pt-6">
             <div className="flex items-center space-x-2 mb-4">
               <FaLock className="text-gray-400" size={16} />
-              <h3 className="text-md poppins-semibold text-gray-800">Module Permissions</h3>
+              <h3 className="text-md poppins-semibold text-gray-800">List of Access (Permissions)</h3>
             </div>
             
             {formData.role === "super-admin" ? (
@@ -307,6 +398,25 @@ const AddEmployee = () => {
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Alerts */}
+          <div className="col-span-1 md:col-span-2 lg:col-span-3 mt-6 border-t border-gray-100 pt-6">
+            <div className="flex items-center space-x-2 mb-4">
+              <FaBell className="text-gray-400" size={16} />
+              <h3 className="text-md poppins-semibold text-gray-800">Alerts & Notifications</h3>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {AVAILABLE_ALERTS.map((alert) => (
+                <label key={alert.value} className={`flex items-center space-x-3 p-3 rounded-xl border transition-colors ${(formData.alerts || []).includes(alert.value) ? 'bg-red-50 border-red-200 text-[#da251d]' : 'bg-gray-50 border-gray-200 text-gray-600 hover:border-red-200'} ${isView ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}>
+                  <div className={`w-5 h-5 rounded border flex flex-shrink-0 items-center justify-center transition-colors ${(formData.alerts || []).includes(alert.value) ? 'border-[#da251d] bg-[#da251d]' : 'border-gray-300 bg-white'}`}>
+                    {(formData.alerts || []).includes(alert.value) && <FaCheckCircle size={12} className="text-white" />}
+                  </div>
+                  <input type="checkbox" className="hidden" checked={(formData.alerts || []).includes(alert.value)} onChange={() => handleAlertToggle(alert.value)} disabled={isView} />
+                  <span className="text-sm poppins-medium">{alert.label}</span>
+                </label>
+              ))}
+            </div>
           </div>
 
           {/* Submit */}

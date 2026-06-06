@@ -51,6 +51,8 @@ import AttendanceManagement from "./components/Attendance/AttendanceManagement";
 import LeaveRequest from "./components/Leave/LeaveRequest";
 import LeaveManagement from "./components/Leave/LeaveManagement";
 import DeviceManagement from "./components/Devices/DeviceManagement";
+import ScheduleAudit from "./components/Aduit/ScheduleAudit";
+
 
 function App() {
   useEffect(() => {
@@ -137,6 +139,7 @@ function App() {
               <Route path="attendance-management" element={<AttendanceManagement />} />
               <Route path="leave-management" element={<LeaveManagement />} />
               <Route path="devices" element={<DeviceManagement />} />
+              <Route path="schedule-audit" element={<ScheduleAudit />} />
             </Route>
           </Route>
           {/* <Route path="/login" */}

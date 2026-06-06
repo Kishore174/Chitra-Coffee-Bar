@@ -4,7 +4,7 @@ export const createEmployee = async (shopdata) => {
 
   // Append all fields to the formData object
   for (const key in shopdata) {
-    if (key !== 'routes' && key !== 'permissions') {
+    if (key !== 'routes' && key !== 'permissions' && key !== 'alerts') {
       formData.append(key, shopdata[key]);
     }
   }
@@ -19,6 +19,12 @@ export const createEmployee = async (shopdata) => {
   if (Array.isArray(shopdata.permissions)) {
     shopdata.permissions.forEach((permission) => {
       formData.append('permissions', permission);
+    });
+  }
+  
+  if (Array.isArray(shopdata.alerts)) {
+    shopdata.alerts.forEach((alert) => {
+      formData.append('alerts', alert);
     });
   }
   const response = await axiosintance.post(`/auditor-create`, formData);
@@ -38,7 +44,7 @@ export const updateEmployee = async (id, data) => {
   const {old_set,...rest} = data
   // Append all fields to the formData object
   for (const key in rest) {
-    if (key !== 'routes' && key !== 'permissions') {
+    if (key !== 'routes' && key !== 'permissions' && key !== 'alerts') {
       formData.append(key, rest[key]);
     }
   }
@@ -53,6 +59,12 @@ export const updateEmployee = async (id, data) => {
   if (Array.isArray(rest.permissions)) {
     rest.permissions.forEach((permission) => {
       formData.append('permissions', permission);
+    });
+  }
+  
+  if (Array.isArray(rest.alerts)) {
+    rest.alerts.forEach((alert) => {
+      formData.append('alerts', alert);
     });
   }
   const response = await axiosintance.put(`/auditor/${id}`, formData);

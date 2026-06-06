@@ -9,6 +9,7 @@ const LeaveRequest = () => {
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [successPopup, setSuccessPopup] = useState(false);
   const [formData, setFormData] = useState({
     leaveType: "casual",
     fromDate: "",
@@ -47,7 +48,7 @@ const LeaveRequest = () => {
     setLoading(true);
     try {
       const res = await createLeaveRequest(formData);
-      toast.success(res.message);
+      setSuccessPopup(true);
       setShowForm(false);
       setFormData({ leaveType: "casual", fromDate: "", toDate: "", reason: "" });
       fetchLeaveRequests();
@@ -193,6 +194,31 @@ const LeaveRequest = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Success Popup */}
+      {successPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm text-center p-6 relative">
+            <button
+              onClick={() => setSuccessPopup(false)}
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+            >
+              <MdClose size={20} />
+            </button>
+            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+              <svg className="h-8 w-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+            </div>
+            <h3 className="text-xl poppins-semibold text-gray-800 mb-2">Leave Request Submitted!</h3>
+            <p className="text-sm text-gray-500 mb-6">Your leave request has been successfully applied and is pending approval.</p>
+            <button
+              onClick={() => setSuccessPopup(false)}
+              className="w-full bg-green-500 hover:bg-green-600 text-white py-2.5 rounded-lg poppins-semibold transition"
+            >
+              Okay
+            </button>
           </div>
         </div>
       )}
