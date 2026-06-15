@@ -23,6 +23,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
     else if (path.startsWith('/leave-request')) requiredPerm = '/leave-request';
     else if (path.startsWith('/report')) requiredPerm = '/reports';
     else if (path.startsWith('/routes') || path.startsWith('/set-routes')) requiredPerm = '/routes';
+    else if (path.startsWith('/schedule-audit')) requiredPerm = '/schedule-audit';
 
     if (requiredPerm && !(data.permissions && data.permissions.includes(requiredPerm))) {
         return <Navigate to="/profile" replace />;

@@ -52,6 +52,7 @@ const AddEmployee = () => {
     { label: "Dashboard", value: "/dashboard" },
     { label: "My Shops", value: "/myshop" },
     { label: "Audits", value: "/audit" },
+    { label: "Schedule Audit", value: "/schedule-audit" },
     { label: "Attendance", value: "/attendance-management" },
     { label: "Leave Request", value: "/leave-management" },
     { label: "Reports", value: "/reports" },

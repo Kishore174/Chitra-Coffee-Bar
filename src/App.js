@@ -114,6 +114,7 @@ function App() {
               <Route path="dressing/:auditId" element={<Dressing />} />
               <Route path="outsideshop/:auditId" element={<OutSideShop />} />
               <Route path="kitchen/:auditId" element={<InsideKitchens />} />
+              <Route path="schedule-audit" element={<ScheduleAudit />} />
             </Route>
           </Route>
           <Route element={<ProtectedRoute allowedRoles={["auditor", "employee"]} />}>
@@ -139,7 +140,6 @@ function App() {
               <Route path="attendance-management" element={<AttendanceManagement />} />
               <Route path="leave-management" element={<LeaveManagement />} />
               <Route path="devices" element={<DeviceManagement />} />
-              <Route path="schedule-audit" element={<ScheduleAudit />} />
             </Route>
           </Route>
           {/* <Route path="/login" */}
