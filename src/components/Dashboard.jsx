@@ -27,6 +27,7 @@ const Dashboard = () => {
   const [leastShops, setLeastShops] = useState([]);
   const [auditorPerformance, setAuditorPerformance] = useState([]);
   const [expiredOutlets, setExpiredOutlets] = useState([]);
+  const [expiredModal, setExpiredModal] = useState({ isOpen: false, shopData: null });
 
 
   useEffect(() => {
@@ -282,7 +283,7 @@ const Dashboard = () => {
       )}
 
       {/* New Admin Widgets */}
-      {user && user.role === 'super-admin' && (
+      {user && (
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
           
           {/* Top Rating Shops */}
@@ -342,11 +343,27 @@ const Dashboard = () => {
               <h3 className="poppins-semibold text-gray-800 text-sm">Expire products using outlets</h3>
             </div>
             {expiredOutlets.length > 0 ? (
-              <ul className="space-y-3">
+              <ul className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                 {expiredOutlets.map((s, idx) => (
-                  <li key={idx} className="flex items-center text-sm poppins-medium text-gray-700">
-                    <span className="w-2 h-2 rounded-full bg-purple-500 mr-2"></span>
-                    {s.shopName}
+                  <li 
+                    key={idx} 
+                    onClick={() => setExpiredModal({ isOpen: true, shopData: s })}
+                    className="flex flex-col text-sm poppins-medium text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-100 cursor-pointer hover:bg-gray-100 hover:shadow-sm transition-all"
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center font-semibold text-gray-900">
+                        <span className="w-2 h-2 rounded-full bg-purple-500 mr-2"></span>
+                        {s.shopName}
+                      </div>
+                      <span className="bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded-full font-bold">
+                        {s.count || 1} Product{(s.count || 1) > 1 ? 's' : ''}
+                      </span>
+                    </div>
+                    {s.auditDate && (
+                      <div className="text-xs text-gray-500 mt-1 ml-4">
+                        Audit Date: {dayjs(s.auditDate).format('DD MMM YYYY')}
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -386,6 +403,46 @@ const Dashboard = () => {
             )}
           </div>
 
+        </div>
+      )}
+
+      {/* Expired Products Modal */}
+      {expiredModal.isOpen && expiredModal.shopData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden transform transition-all scale-100 opacity-100">
+            <div className="px-6 py-4 border-b border-gray-100 bg-purple-50/50 flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">{expiredModal.shopData.shopName}</h3>
+                <p className="text-xs text-gray-500">Expired Products Detail</p>
+              </div>
+              <button 
+                onClick={() => setExpiredModal({ isOpen: false, shopData: null })}
+                className="text-gray-400 hover:text-gray-600 transition-colors bg-white rounded-full p-1"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="p-6 max-h-96 overflow-y-auto space-y-3">
+              {expiredModal.shopData.expiredProducts && expiredModal.shopData.expiredProducts.map((prod, i) => (
+                <div key={i} className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                  <div className="font-medium text-sm text-gray-800">{prod.name}</div>
+                  <div className="text-xs font-semibold px-2 py-1 bg-red-100 text-red-700 rounded border border-red-200">
+                    Expiry: {prod.details}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-end">
+              <button 
+                onClick={() => setExpiredModal({ isOpen: false, shopData: null })}
+                className="px-5 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors shadow-sm shadow-purple-500/30"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -74,3 +74,8 @@ export const assignManualAuditsV2 = async (data) => {
   const response = await axiosintance.post(`/audit-v2/assign`, data);
   return response.data;
 };
+
+export const deleteAuditV2 = async (auditId) => {
+  const response = await axiosintance.delete(`/audit-v2/${auditId}`);
+  return response.data;
+};

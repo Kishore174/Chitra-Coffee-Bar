@@ -105,7 +105,7 @@ const Employees = () => {
               <table className="min-w-full w-full whitespace-nowrap">
                 <thead className="bg-[#da251d] text-white">
                   <tr>
-                    {['#', 'EMPLOYEE', 'LOCATION', 'CONTACT', 'DOCUMENTS', 'ACTIONS'].map((header, idx) => (
+                    {['#', 'EMPLOYEE', 'LOCATION', 'CONTACT', 'TIMING', 'ACTIONS'].map((header, idx) => (
                       <th key={idx} className={`px-6 py-4 text-left text-xs poppins-semibold uppercase tracking-wider ${idx === 0 ? 'rounded-tl-xl' : ''} ${idx === 5 ? 'rounded-tr-xl' : ''}`}>
                         {header}
                       </th>
@@ -138,10 +138,11 @@ const Employees = () => {
                           {employee.email || 'N/A'}
                         </a>
                       </td>
+
                       <td className="px-6 py-5">
-                        <span className="px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-xs poppins-medium">
-                          {employee.documentType || 'None'}
-                        </span>
+                        <div className="text-sm poppins-medium text-gray-700 whitespace-nowrap">
+                          {employee.shiftStartTime || "09:00"} - {employee.shiftEndTime || "18:00"}
+                        </div>
                       </td>
                       <td className="px-6 py-5">
                         <div className="flex items-center space-x-4">
@@ -195,12 +196,15 @@ const Employees = () => {
                     <p className="text-gray-700 poppins-medium">{employee.phone || 'N/A'}</p>
                     <a href={`mailto:${employee.email}`} className="text-[#da251d] hover:underline text-xs poppins-medium block truncate">{employee.email || 'N/A'}</a>
                   </div>
+                  <div className="pt-2 border-t border-gray-50 flex items-center justify-between">
+                    <div>
+                      <span className="text-gray-400 poppins-regular text-xs block mb-0.5">Timing</span>
+                      <p className="text-gray-700 poppins-medium">{employee.shiftStartTime || "09:00"} - {employee.shiftEndTime || "18:00"}</p>
+                    </div>
+                  </div>
                 </div>
                 
-                <div className="flex justify-between items-center mt-5 pt-4 border-t border-gray-100">
-                  <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs poppins-medium">
-                    {employee.documentType || 'None'}
-                  </span>
+                <div className="flex justify-end items-center mt-5 pt-4 border-t border-gray-100">
                   <div className="flex space-x-4">
                     <button className="text-blue-600" onClick={() => handleView(employee)}>
                       <FaEye size={18} />

@@ -35,6 +35,8 @@ const AddEmployee = () => {
       role: "auditor",
       permissions: [],
       alerts: [],
+      shiftStartTime: "09:00",
+      shiftEndTime: "18:00",
     }
   );
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -53,10 +55,15 @@ const AddEmployee = () => {
     { label: "My Shops", value: "/myshop" },
     { label: "Audits", value: "/audit" },
     { label: "Schedule Audit", value: "/schedule-audit" },
-    { label: "Attendance", value: "/attendance-management" },
-    { label: "Leave Request", value: "/leave-management" },
+    { label: "My Attendance", value: "/attendance" },
+    { label: "Manage Attendance", value: "/attendance-management" },
+    { label: "My Leave Request", value: "/leave-request" },
+    { label: "Manage Leaves", value: "/leave-management" },
+    { label: "My Complaints", value: "/complaint-request" },
+    { label: "Manage Complaints", value: "/complaint-management" },
     { label: "Reports", value: "/reports" },
     { label: "Routes", value: "/routes" },
+    { label: "Set Routes", value: "/set-routes" },
     { label: "Employees", value: "/employees" },
     { label: "Devices", value: "/devices" },
     { label: "Settings", value: "/setting" },
@@ -141,6 +148,8 @@ const AddEmployee = () => {
         role: "auditor",
         permissions: [],
         alerts: [],
+        shiftStartTime: "09:00",
+        shiftEndTime: "18:00",
       });
 
       toast.success(res.message);
@@ -176,6 +185,26 @@ const AddEmployee = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const calculateShiftHours = (start, end) => {
+    if (!start || !end) return "0 hrs 0 mins";
+    const [startH, startM] = start.split(":").map(Number);
+    const [endH, endM] = end.split(":").map(Number);
+    
+    let diffM = endM - startM;
+    let diffH = endH - startH;
+    
+    if (diffM < 0) {
+      diffM += 60;
+      diffH -= 1;
+    }
+    
+    if (diffH < 0) {
+      diffH += 24; // Handle overnight shifts
+    }
+    
+    return `${diffH} hrs ${diffM} mins`;
+  };
 
   const inputClass = "w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm poppins-regular focus:outline-none focus:bg-white focus:border-[#da251d] focus:ring-2 focus:ring-red-100 transition-all disabled:opacity-60 disabled:bg-gray-100 disabled:cursor-not-allowed";
   const labelClass = "block text-sm font-medium text-gray-700 poppins-medium mb-1.5";
@@ -275,51 +304,70 @@ const AddEmployee = () => {
           </div>
 
           <div>
+            <label className={labelClass}>Shift Start Time</label>
+            <input type="time" name="shiftStartTime" value={formData.shiftStartTime || "09:00"} onChange={handleChange} disabled={isView} className={inputClass} />
+          </div>
+
+          <div>
+            <label className={labelClass}>Shift End Time</label>
+            <input type="time" name="shiftEndTime" value={formData.shiftEndTime || "18:00"} onChange={handleChange} disabled={isView} className={inputClass} />
+          </div>
+
+          <div>
+            <label className={labelClass}>Total Shift Hours</label>
+            <div className={`${inputClass} bg-gray-100 flex items-center`}>
+              <span className="text-gray-600">{calculateShiftHours(formData.shiftStartTime || "09:00", formData.shiftEndTime || "18:00")}</span>
+            </div>
+          </div>
+
+          <div>
             <label className={labelClass}>Work Location</label>
             <input type="text" name="workLocation" placeholder="e.g. HQ / Branch A" value={formData.workLocation || ""} onChange={handleChange} disabled={isView} className={inputClass} />
           </div>
 
-          <div className="custom-dropdown relative">
-            <label className={labelClass}>Assigned Routes</label>
-            <div
-              className={`w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm poppins-regular flex items-center justify-between transition-all ${!isView ? 'cursor-pointer hover:border-[#da251d]' : 'opacity-60 cursor-not-allowed'}`}
-              onClick={() => !isView && setDropdownOpen(!dropdownOpen)}
-            >
-              <div className="flex flex-wrap gap-1">
-                {selectedOptions.length > 0 ? (
-                  selectedOptions.map((option) => (
-                    <span key={option._id} className="bg-white border border-gray-200 text-gray-700 text-xs poppins-medium rounded-lg px-2 py-1 flex items-center shadow-sm">
-                      {option.name}
-                      {!isView && (
-                        <button type="button" className="ml-1.5 text-gray-400 hover:text-red-500 transition-colors" onClick={(e) => { e.stopPropagation(); handleSelect(option); }}>&times;</button>
-                      )}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-gray-400">Select assigned routes</span>
-                )}
+          {formData.role !== "employee" && (
+            <div className="custom-dropdown relative">
+              <label className={labelClass}>Assigned Routes</label>
+              <div
+                className={`w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm poppins-regular flex items-center justify-between transition-all ${!isView ? 'cursor-pointer hover:border-[#da251d]' : 'opacity-60 cursor-not-allowed'}`}
+                onClick={() => !isView && setDropdownOpen(!dropdownOpen)}
+              >
+                <div className="flex flex-wrap gap-1">
+                  {selectedOptions.length > 0 ? (
+                    selectedOptions.map((option) => (
+                      <span key={option._id} className="bg-white border border-gray-200 text-gray-700 text-xs poppins-medium rounded-lg px-2 py-1 flex items-center shadow-sm">
+                        {option.name}
+                        {!isView && (
+                          <button type="button" className="ml-1.5 text-gray-400 hover:text-red-500 transition-colors" onClick={(e) => { e.stopPropagation(); handleSelect(option); }}>&times;</button>
+                        )}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-gray-400">Select assigned routes</span>
+                  )}
+                </div>
+                <span className="text-gray-400 ml-2">&#9662;</span>
               </div>
-              <span className="text-gray-400 ml-2">&#9662;</span>
-            </div>
 
-            {dropdownOpen && !isView && (
-              <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-100 rounded-xl shadow-lg max-h-56 overflow-y-auto z-20 py-1">
-                {selectRoute.map((option) => (
-                  <div
-                    key={option._id}
-                    className={`px-4 py-2.5 text-sm cursor-pointer hover:bg-gray-50 transition-colors flex items-center ${selectedOptions.includes(option) ? "bg-red-50/50 text-[#da251d]" : "text-gray-700"}`}
-                    onClick={() => handleSelect(option)}
-                  >
-                    <div className={`w-4 h-4 mr-3 rounded border flex items-center justify-center ${selectedOptions.includes(option) ? 'border-[#da251d] bg-[#da251d]' : 'border-gray-300'}`}>
-                      {selectedOptions.includes(option) && <FaCheckCircle size={10} className="text-white" />}
+              {dropdownOpen && !isView && (
+                <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-100 rounded-xl shadow-lg max-h-56 overflow-y-auto z-20 py-1">
+                  {selectRoute.map((option) => (
+                    <div
+                      key={option._id}
+                      className={`px-4 py-2.5 text-sm cursor-pointer hover:bg-gray-50 transition-colors flex items-center ${selectedOptions.includes(option) ? "bg-red-50/50 text-[#da251d]" : "text-gray-700"}`}
+                      onClick={() => handleSelect(option)}
+                    >
+                      <div className={`w-4 h-4 mr-3 rounded border flex items-center justify-center ${selectedOptions.includes(option) ? 'border-[#da251d] bg-[#da251d]' : 'border-gray-300'}`}>
+                        {selectedOptions.includes(option) && <FaCheckCircle size={10} className="text-white" />}
+                      </div>
+                      {option.name}
                     </div>
-                    {option.name}
-                  </div>
-                ))}
-                {selectRoute.length === 0 && <div className="px-4 py-3 text-sm text-gray-500 text-center">No unassigned routes available</div>}
-              </div>
-            )}
-          </div>
+                  ))}
+                  {selectRoute.length === 0 && <div className="px-4 py-3 text-sm text-gray-500 text-center">No unassigned routes available</div>}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Documents Section */}
           <div className="col-span-1 md:col-span-2 lg:col-span-3 mt-6 border-b border-gray-100 pb-2">

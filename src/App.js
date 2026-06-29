@@ -52,7 +52,9 @@ import LeaveRequest from "./components/Leave/LeaveRequest";
 import LeaveManagement from "./components/Leave/LeaveManagement";
 import DeviceManagement from "./components/Devices/DeviceManagement";
 import ScheduleAudit from "./components/Aduit/ScheduleAudit";
-
+import ComplaintManagement from "./components/Complaints/Complaints";
+import MyComplaints from "./components/Complaints/MyComplaints";
+import AddComplaint from "./components/Complaints/AddComplaint";
 
 function App() {
   useEffect(() => {
@@ -78,11 +80,7 @@ function App() {
           <Route path="/" element={<Login />} />
           {/* <Route path="signup" element={<Signup />} /> */}
           <Route path="*" element={<Page404 />} />
-          <Route
-            element={
-              <ProtectedRoute allowedRoles={["super-admin", "auditor", "employee"]} />
-            }
-          >
+          <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Main />}>
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="audit" element={<Table />} />
@@ -115,24 +113,16 @@ function App() {
               <Route path="outsideshop/:auditId" element={<OutSideShop />} />
               <Route path="kitchen/:auditId" element={<InsideKitchens />} />
               <Route path="schedule-audit" element={<ScheduleAudit />} />
-            </Route>
-          </Route>
-          <Route element={<ProtectedRoute allowedRoles={["auditor", "employee"]} />}>
-            <Route path="/" element={<Main />}>
+              <Route path="complaint-request" element={<MyComplaints />} />
+              <Route path="complaint-management" element={<ComplaintManagement />} />
+              <Route path="add-complaint" element={<AddComplaint />} />
+              <Route path="edit-complaint/:id" element={<AddComplaint />} />
               <Route path="attendance" element={<Attendance />} />
               <Route path="leave-request" element={<LeaveRequest />} />
-            </Route>
-          </Route>
-          <Route element={<ProtectedRoute allowedRoles={["super-admin"]} />}>
-            <Route path="/" element={<Main />}>
-              {/* <Route path="myshop" element={<MyShop />} /> */}
-              {/* <Route path="addshop" element={<AddShop />} /> */}
               <Route path="setting" element={<Setting />} />
               <Route path="employees" element={<Employees />} />
               <Route path="add-employees" element={<AddEmployee />} />
               <Route path="reports" element={<Reports />} />
-              {/* <Route path="routes" element={<Rotes />} />
-              <Route path="set-routes" element={<SetRoutes />} /> */}
               <Route path="backeryproducts" element={<BakerProducts />} />
               <Route path="brandName" element={<BrandName />} />
               <Route path="audit-config" element={<AuditConfigBuilder />} />

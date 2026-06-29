@@ -83,7 +83,7 @@ const AddShop = () => {
       navigate("/myshop");
     } catch (error) {
       console.log(error);
-      toast.error("Failed to save shop details.");
+      toast.error(error?.response?.data?.message || "Failed to save shop details.");
     } finally {
       setLoading(false);
     }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { HiPlus, HiTrash, HiPencil } from 'react-icons/hi'; // Plus, delete, and edit icons
 import { createBrand, deleteBrand, getBrand, updateBrand } from '../../../../API/settings';
 import toast from 'react-hot-toast';
-import { MdArrowBack } from 'react-icons/md';
+import { MdArrowBack, MdContentCopy } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
 const BrandName = () => {
@@ -72,8 +72,15 @@ useEffect(() => {
     setCurrentField({ ...currentField,  name: event.target.value });
   };
 
+  const handleCopyId = (id) => {
+    if (id) {
+      navigator.clipboard.writeText(id.toString());
+      toast.success("Brand ID copied!");
+    }
+  };
+
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-6">
+    <div className="mx-auto p-4 md:p-6">
     {/* Navigation and Add Button */}
     <div className="flex justify-between items-center mb-4">
       <button
@@ -102,6 +109,13 @@ useEffect(() => {
             {field.name}
           </span>
           <div className="flex items-center space-x-2">
+            <button
+              onClick={() => handleCopyId(field._id)}
+              className="text-gray-500 hover:text-gray-700 p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200 focus:outline-none"
+              title="Copy Brand ID"
+            >
+              <MdContentCopy size={18} />
+            </button>
             <button
               onClick={() => handleOpenDialog(field)}
               className="text-blue-500 hover:text-blue-700 p-1 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors duration-200 focus:outline-none"

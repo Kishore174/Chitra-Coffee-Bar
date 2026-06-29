@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import toast from 'react-hot-toast';
 import Loader from '../Loader';
 import { getAllShops } from '../../API/shop';
-import { getAllAuditsV2, assignManualAuditsV2 } from '../../API/auditV2';
+import { getAllAuditsV2, assignManualAuditsV2, deleteAuditV2 } from '../../API/auditV2';
 import { getAllAuditors } from '../../API/auditor';
 import { getRoute } from '../../API/createRoute';
 import { getExpiryAlerts } from '../../API/dashboard';
@@ -18,6 +18,7 @@ const ScheduleAudit = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRouteId, setSelectedRouteId] = useState('');
   const [selectedAuditorId, setSelectedAuditorId] = useState('');
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, auditId: null, shopName: '' });
 
   const EXPIRY_DAYS = 30;
 
@@ -42,7 +43,20 @@ const ScheduleAudit = () => {
       const routesData = routesRes?.data || [];
       const expiredProductShops = expiryRes?.data?.expiredProductAlerts?.map(s => s._id) || [];
 
-      setAuditors(auditorsData);
+      // Add a property to auditorsData to hold their today's audits
+      const todayStart = dayjs().startOf('day');
+      const todayEnd = dayjs().endOf('day');
+
+      const enhancedAuditors = auditorsData.map(auditor => {
+        const todayAudits = auditsData.filter(a => {
+          if (a.auditor?._id !== auditor._id) return false;
+          const aDate = dayjs(a.auditDate);
+          return aDate.isAfter(todayStart) && aDate.isBefore(todayEnd);
+        });
+        return { ...auditor, todayAudits };
+      });
+
+      setAuditors(enhancedAuditors);
       setRoutes(routesData);
 
       const processedShops = shopsData.map(shop => {
@@ -167,6 +181,23 @@ const ScheduleAudit = () => {
     }
   };
 
+  const handleRemoveAudit = (auditId, shopName) => {
+    setDeleteModal({ isOpen: true, auditId, shopName });
+  };
+
+  const confirmRemoveAudit = async () => {
+    const { auditId, shopName } = deleteModal;
+    try {
+      await deleteAuditV2(auditId);
+      toast.success(`Successfully removed scheduled audit for ${shopName}`);
+      fetchData(); // Refresh the list
+    } catch (err) {
+      toast.error(`Failed to remove audit: ` + (err.response?.data?.message || err.message));
+    } finally {
+      setDeleteModal({ isOpen: false, auditId: null, shopName: '' });
+    }
+  };
+
   const selectedRoute = routes.find(r => r._id === selectedRouteId);
   const shopsInSelectedRoute = selectedRoute ? selectedRoute.shops.map(s => s._id) : null;
 
@@ -286,8 +317,8 @@ const ScheduleAudit = () => {
                       <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/80 rounded-t-xl flex justify-between items-center">
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-gray-800">{auditor.name}</span>
-                          <span className="text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
-                            {assignedShops.length}
+                          <span className="text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full" title="Newly Assigned in Cart">
+                            {assignedShops.length} in cart
                           </span>
                         </div>
                         <button 
@@ -298,6 +329,26 @@ const ScheduleAudit = () => {
                           Schedule
                         </button>
                       </div>
+
+                      {auditor.todayAudits && auditor.todayAudits.length > 0 && (
+                        <div className="px-4 py-2 bg-blue-50 border-b border-blue-100 flex flex-wrap gap-1 items-center">
+                          <span className="text-xs font-semibold text-blue-800 mr-2">Today's Scheduled ({auditor.todayAudits.length}):</span>
+                          {auditor.todayAudits.map((a, idx) => (
+                            <div key={a._id || idx} className="flex items-center text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded border border-blue-200">
+                              <span>{a.shop?.shopName || 'Unknown Shop'} {a.status === 'completed' && '(Done)'}</span>
+                              {a.status !== 'completed' && (
+                                <button 
+                                  onClick={() => handleRemoveAudit(a._id, a.shop?.shopName)}
+                                  className="ml-1 text-blue-500 hover:text-red-600 transition-colors"
+                                  title="Remove Scheduled Audit"
+                                >
+                                  ×
+                                </button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                       
                       <div className="p-3 flex-1 overflow-y-auto space-y-2 bg-slate-50/30">
                         {assignedShops.length === 0 ? (
@@ -324,6 +375,35 @@ const ScheduleAudit = () => {
             </div>
           </div>
 
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl max-w-sm w-full shadow-2xl overflow-hidden p-6 text-center transform transition-all scale-100 opacity-100">
+            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+              <FaStoreSlash className="h-8 w-8 text-red-600" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Remove Scheduled Audit</h3>
+            <p className="text-sm text-gray-500 mb-6">
+              Are you sure you want to remove the scheduled audit for <span className="font-semibold text-gray-800">{deleteModal.shopName}</span>? This action cannot be undone.
+            </p>
+            <div className="flex space-x-3">
+              <button 
+                onClick={() => setDeleteModal({ isOpen: false, auditId: null, shopName: '' })}
+                className="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmRemoveAudit}
+                className="flex-1 px-4 py-2 bg-red-600 rounded-xl text-white font-medium hover:bg-red-700 shadow-md shadow-red-500/30 transition-all hover:-translate-y-0.5"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -65,7 +65,30 @@ const emptyConfig = () => ({
 });
 
 const inputCls =
-  "w-full border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-300";
+  "w-full border border-gray-200 bg-white rounded-xl p-2.5 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent shadow-sm hover:border-gray-300";
+
+const selectCls =
+  "w-full border border-gray-200 bg-white rounded-xl p-2.5 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent shadow-sm hover:border-gray-300 appearance-none";
+
+const ToggleSwitch = ({ checked, onChange, label, className = "" }) => (
+  <label className={`inline-flex items-center gap-3 cursor-pointer group ${className}`}>
+    <div className="relative flex-shrink-0">
+      <input
+        type="checkbox"
+        className="sr-only"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+      <div className={`block w-10 h-6 rounded-full transition-colors ${checked ? 'bg-red-500' : 'bg-gray-200 border border-gray-300'}`}></div>
+      <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm ${checked ? 'transform translate-x-4' : ''}`}></div>
+    </div>
+    {label && (
+      <span className="text-xs font-semibold text-gray-600 group-hover:text-gray-900 transition-colors">
+        {label}
+      </span>
+    )}
+  </label>
+);
 
 const AuditConfigBuilder = () => {
   const navigate = useNavigate();
@@ -317,380 +340,454 @@ const AuditConfigBuilder = () => {
   /* ------------------------------- list view ------------------------------ */
   if (view === "list") {
     return (
-      <div className="max-w-5xl mx-auto p-4 md:p-6">
-        <div className="flex justify-between items-center mb-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center text-gray-700 space-x-1 hover:text-red-600 transition"
-          >
-            <MdArrowBack className="w-5 h-5 md:w-6 md:h-6" />
-            <span className="text-sm md:text-lg font-medium">Back</span>
-          </button>
-          <button
-            onClick={startNew}
-            className="flex items-center gap-1 px-4 py-2 rounded bg-red-500 text-white shadow hover:bg-red-600 text-sm md:text-base"
-          >
-            <HiPlus size={18} /> New Config
-          </button>
-        </div>
-
-        <h1 className="text-lg md:text-xl font-semibold mb-4">Audit Configs</h1>
-
-        {configs.length === 0 ? (
-          <p className="text-gray-500 text-sm">
-            No configs yet. Create one to define the audit template.
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {configs.map((cfg) => (
-              <div
-                key={cfg._id}
-                className="border border-gray-200 shadow rounded-lg p-4 bg-white flex flex-col gap-2"
+      <div className="bg-white font-sans w-full">
+        <div className=" mx-auto p-4 md:p-6">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center text-gray-500 hover:text-red-500 transition-colors mb-2 group"
               >
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-gray-800">{cfg.name}</span>
-                  {cfg.isActive && (
-                    <span className="flex items-center gap-1 text-green-600 text-xs font-medium">
-                      <HiCheckCircle size={16} /> Active
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-gray-500">
-                  {cfg.sections?.length || 0} sections · weightage{" "}
-                  {cfg.totalWeightage ?? 0}%
-                </p>
-                {cfg.description && (
-                  <p className="text-xs text-gray-600">{cfg.description}</p>
-                )}
-                <div className="flex items-center gap-2 mt-2">
-                  {!cfg.isActive && (
-                    <button
-                      onClick={() => handleActivate(cfg._id)}
-                      className="px-2 py-1 text-xs rounded bg-green-100 text-green-700 hover:bg-green-200"
-                    >
-                      Set Active
-                    </button>
-                  )}
-                  <button
-                    onClick={() => startEdit(cfg)}
-                    className="p-1 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200"
-                    title="Edit"
-                  >
-                    <HiPencil size={16} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(cfg._id)}
-                    className="p-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200"
-                    title="Delete"
-                  >
-                    <HiTrash size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
+                <MdArrowBack className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" />
+                <span className="text-sm font-medium">Back</span>
+              </button>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 tracking-tight">
+                Audit Configurations
+              </h1>
+              <p className="text-sm text-gray-500 mt-1">
+                Manage and customize the templates used for your store audits.
+              </p>
+            </div>
+            <button
+              onClick={startNew}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-500 to-rose-500 text-white font-medium shadow-lg shadow-red-500/30 hover:shadow-red-500/50 transition-all hover:-translate-y-0.5"
+            >
+              <HiPlus size={18} /> Create Template
+            </button>
           </div>
-        )}
+
+          {/* List */}
+          {configs.length === 0 ? (
+            <div className="text-center py-20 bg-gray-50 rounded-3xl border border-gray-200">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100 shadow-sm">
+                <HiPlus className="text-gray-300 w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-800 mb-1">No templates found</h3>
+              <p className="text-gray-500 text-sm">Create your first audit configuration to get started.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {configs.map((cfg) => (
+                <div
+                  key={cfg._id}
+                  className="group bg-white rounded-2xl p-6 shadow-sm border border-gray-200 hover:shadow-xl hover:border-red-100 transition-all relative flex flex-col h-full hover:-translate-y-1"
+                >
+                  {cfg.isActive && (
+                    <div className="absolute top-0 right-0 bg-gradient-to-bl from-green-400 to-emerald-500 text-white px-3 py-1 rounded-bl-xl rounded-tr-2xl text-[10px] font-bold tracking-wider uppercase shadow-sm flex items-center gap-1 z-10">
+                      <HiCheckCircle size={14} /> Active
+                    </div>
+                  )}
+                  <div className="flex-1 z-10 relative">
+                    <h3 className="text-lg font-bold text-gray-800 mb-2 pr-16 leading-tight">
+                      {cfg.name}
+                    </h3>
+                    <p className="text-sm text-gray-500 line-clamp-2 mb-4">
+                      {cfg.description || "No description provided."}
+                    </p>
+
+                    <div className="flex items-center gap-4 text-xs font-medium text-gray-400">
+                      <div className="flex flex-col">
+                        <span className="text-gray-600 font-bold text-lg">{cfg.sections?.length || 0}</span>
+                        <span>Sections</span>
+                      </div>
+                      <div className="w-px h-8 bg-gray-100"></div>
+                      <div className="flex flex-col">
+                        <span className="text-gray-600 font-bold text-lg">{cfg.totalWeightage ?? 0}%</span>
+                        <span>Weightage</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 pt-4 border-t border-gray-100 flex items-center gap-2 justify-between z-10">
+                    {!cfg.isActive ? (
+                      <button
+                        onClick={() => handleActivate(cfg._id)}
+                        className="px-3 py-1.5 rounded-lg bg-green-50 text-green-600 text-xs font-semibold hover:bg-green-100 hover:text-green-700 transition-colors flex items-center gap-1"
+                      >
+                        <HiCheckCircle size={14} /> Set Active
+                      </button>
+                    ) : (
+                      <div className="px-3 py-1.5 text-xs font-medium text-green-600 bg-green-50 rounded-lg flex items-center gap-1 cursor-default">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                        Currently Active
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => startEdit(cfg)}
+                        className="p-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors hover:scale-105"
+                        title="Edit Template"
+                      >
+                        <HiPencil size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(cfg._id)}
+                        className="p-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors hover:scale-105"
+                        title="Delete Template"
+                      >
+                        <HiTrash size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     );
   }
 
   /* ------------------------------ editor view ----------------------------- */
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-6">
-      <div className="flex justify-between items-center mb-4">
-        <button
-          onClick={() => setView("list")}
-          className="flex items-center text-gray-700 space-x-1 hover:text-red-600 transition"
-        >
-          <MdArrowBack className="w-5 h-5 md:w-6 md:h-6" />
-          <span className="text-sm md:text-lg font-medium">Back</span>
-        </button>
-        <div className="flex items-center gap-3">
-          <span
-            className={`text-sm font-medium px-3 py-1 rounded ${totalWeightage === 100
-                ? "bg-green-100 text-green-700"
-                : totalWeightage > 100
-                ? "bg-red-100 text-red-700 font-semibold"
-                : "bg-amber-100 text-amber-700"
-              }`}
-          >
-            Total weightage: {totalWeightage}%
-          </span>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="px-4 py-2 rounded bg-red-500 text-white shadow hover:bg-red-600 disabled:opacity-60 text-sm md:text-base"
-          >
-            {saving ? "Saving..." : editing._id ? "Update Config" : "Save Config"}
-          </button>
-        </div>
-      </div>
-
-      {/* config meta */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4 grid gap-3 md:grid-cols-2">
-        <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">
-            Config name *
-          </label>
-          <input
-            className={inputCls}
-            value={editing.name}
-            onChange={(e) => setField("name", e.target.value)}
-            placeholder="e.g. Standard CCB Audit"
-          />
-        </div>
-        <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">
-            Description
-          </label>
-          <input
-            className={inputCls}
-            value={editing.description}
-            onChange={(e) => setField("description", e.target.value)}
-            placeholder="Optional"
-          />
-        </div>
-        <label className="flex items-center gap-2 text-sm text-gray-700">
-          <input
-            type="checkbox"
-            checked={editing.isActive}
-            onChange={(e) => setField("isActive", e.target.checked)}
-          />
-          Set as active config (used for new audits)
-        </label>
-      </div>
-
-      {/* sections */}
-      {editing.sections.map((sec, si) => (
-        <div
-          key={si}
-          className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4"
-        >
-          <div className="grid gap-3 md:grid-cols-12 mb-3 items-end">
-            <div className="md:col-span-6">
-              <label className="block text-xs font-medium text-gray-600 mb-1">
-                Section name *
-              </label>
-              <input
-                className={inputCls}
-                value={sec.sectionName}
-                onChange={(e) =>
-                  updateSection(si, "sectionName", e.target.value)
-                }
-                placeholder="e.g. Kitchen Hygiene"
-              />
-            </div>
-            <div className="md:col-span-3">
-              <label className="block text-xs font-medium text-gray-600 mb-1">
-                Weightage (%)
-              </label>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                className={inputCls}
-                value={sec.weightage}
-                onChange={(e) =>
-                  updateSection(si, "weightage", e.target.value)
-                }
-              />
-            </div>
-            <div className="md:col-span-2 flex items-center gap-2 pb-2">
-              <input
-                type="checkbox"
-                checked={sec.isRepeatable || false}
-                onChange={(e) =>
-                  updateSection(si, "isRepeatable", e.target.checked)
-                }
-              />
-              <span className="text-xs text-gray-600 font-medium">Repeatable</span>
-            </div>
-            <div className="md:col-span-1 flex justify-end pb-1">
-              <button
-                onClick={() => removeSection(si)}
-                className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 shrink-0"
-                title="Remove section"
-              >
-                <HiTrash size={16} />
-              </button>
+    <div className="bg-white pb-20 font-sans w-full">
+      <div className="sticky top-0 z-50 bg-white -mx-5 border border-gray-50">
+        <div className=" mx-auto p-4 md:p-6 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setView("list")}
+              className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
+            >
+              <MdArrowBack className="w-6 h-6" />
+            </button>
+            <div>
+              <h2 className="text-xl font-bold text-gray-800">
+                {editing._id ? "Edit Configuration" : "New Configuration"}
+              </h2>
+              <p className="text-xs text-gray-500">Build your audit template</p>
             </div>
           </div>
 
-          {/* fields */}
-          {sec.fields.map((f, fi) => (
-            <div
-              key={fi}
-              className="bg-white border border-gray-200 rounded-lg p-3 mb-3"
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-2">
+              <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Weightage</span>
+              <span
+                className={`text-sm font-bold px-3 py-1 rounded-full ${totalWeightage === 100
+                  ? "bg-green-100 text-green-700"
+                  : totalWeightage > 100
+                    ? "bg-red-100 text-red-700"
+                    : "bg-amber-100 text-amber-700"
+                  }`}
+              >
+                {totalWeightage}%
+              </span>
+            </div>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-500 to-rose-600 text-white font-medium shadow-lg shadow-red-500/30 hover:shadow-red-500/50 disabled:opacity-60 transition-all flex items-center gap-2 hover:-translate-y-0.5 active:translate-y-0"
             >
-              <div className="grid gap-2 md:grid-cols-12 items-end">
-                <div className="md:col-span-4">
-                  <label className="block text-[11px] font-medium text-gray-500 mb-1">
-                    Field label *
+              {saving ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <HiCheckCircle size={18} />
+              )}
+              {saving ? "Saving..." : "Save Config"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className=" mx-auto p-4 md:p-6 space-y-8">
+
+        {/* config meta */}
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+          <h3 className="text-lg font-bold text-gray-800 mb-6">General Information</h3>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Configuration Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                className={inputCls}
+                value={editing.name}
+                onChange={(e) => setField("name", e.target.value)}
+                placeholder="e.g. Daily Store Operations"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Description
+              </label>
+              <input
+                className={inputCls}
+                value={editing.description}
+                onChange={(e) => setField("description", e.target.value)}
+                placeholder="Briefly describe this template..."
+              />
+            </div>
+            <div className="md:col-span-2 pt-2">
+              <label className="inline-flex items-center gap-3 cursor-pointer group">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={editing.isActive}
+                    onChange={(e) => setField("isActive", e.target.checked)}
+                  />
+                  <div className={`block w-14 h-8 rounded-full transition-colors ${editing.isActive ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                  <div className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${editing.isActive ? 'transform translate-x-6' : ''}`}></div>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold text-gray-700 group-hover:text-gray-900 transition-colors">Set as Active Configuration</span>
+                  <span className="text-xs text-gray-500">Make this the default template for new audits</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* sections */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-bold text-gray-800">Audit Sections</h3>
+            <span className="text-sm text-gray-500">{editing.sections.length} sections total</span>
+          </div>
+
+          {editing.sections.map((sec, si) => (
+            <div
+              key={si}
+              className="bg-gray-50 border border-gray-200 rounded-2xl shadow-sm relative"
+            >
+              {/* Section Header */}
+              <div className="sticky top-[80px] z-40 bg-white p-5 border-b border-gray-200 rounded-t-2xl flex flex-col md:flex-row md:items-center gap-4 shadow-sm">
+                <div className="flex-1">
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
+                    Section Name <span className="text-red-500">*</span>
                   </label>
                   <input
-                    className={inputCls}
-                    value={f.label}
-                    onChange={(e) =>
-                      updateFieldIn(si, fi, "label", e.target.value)
-                    }
-                    placeholder="e.g. Kitchen Floor"
+                    className="w-full text-lg font-bold text-gray-800 bg-transparent border-none focus:ring-0 p-0 placeholder-gray-300 transition-colors hover:text-red-600 focus:text-red-600 outline-none"
+                    value={sec.sectionName}
+                    onChange={(e) => updateSection(si, "sectionName", e.target.value)}
+                    placeholder="e.g. Kitchen Hygiene"
                   />
                 </div>
-                <div className="md:col-span-3">
-                  <label className="block text-[11px] font-medium text-gray-500 mb-1">
-                    Type
-                  </label>
-                  <select
-                    className={inputCls}
-                    value={f.type}
-                    onChange={(e) =>
-                      updateFieldIn(si, fi, "type", e.target.value)
-                    }
-                  >
-                    {FIELD_TYPES.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-[11px] font-medium text-gray-500 mb-1">
-                    Max points
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    className={inputCls}
-                    value={f.maxPoints}
-                    onChange={(e) =>
-                      updateFieldIn(si, fi, "maxPoints", e.target.value)
-                    }
-                  />
-                </div>
-                <div className="md:col-span-2 flex flex-col gap-1 pb-2">
-                  <label className="flex items-center gap-2">
+
+                <div className="flex items-center gap-4">
+                  <div className="w-24">
+                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 text-center">
+                      Weight (%)
+                    </label>
                     <input
-                      type="checkbox"
-                      checked={f.required}
-                      onChange={(e) =>
-                        updateFieldIn(si, fi, "required", e.target.checked)
-                      }
+                      type="number"
+                      min="0"
+                      max="100"
+                      className="w-full bg-white border border-gray-200 rounded-xl p-2.5 text-center font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-400 shadow-sm"
+                      value={sec.weightage}
+                      onChange={(e) => updateSection(si, "weightage", e.target.value)}
                     />
-                    <span className="text-[11px] text-gray-600">Required</span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={f.requiresAvailabilityCheck || false}
-                      onChange={(e) =>
-                        updateFieldIn(si, fi, "requiresAvailabilityCheck", e.target.checked)
-                      }
+                  </div>
+
+                  <div className="flex items-center gap-2 h-full mt-4">
+                    <ToggleSwitch
+                      checked={sec.isRepeatable || false}
+                      onChange={(val) => updateSection(si, "isRepeatable", val)}
+                      label="Repeatable"
+                      className="p-2 rounded-lg hover:bg-gray-100"
                     />
-                    <span className="text-[11px] text-gray-600">Availability Check</span>
-                  </label>
-                </div>
-                <div className="md:col-span-1 flex justify-end pb-1">
-                  <button
-                    onClick={() => removeFieldFrom(si, fi)}
-                    className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200"
-                    title="Remove field"
-                  >
-                    <HiTrash size={14} />
-                  </button>
+                  </div>
+
+                  <div className="h-full mt-4">
+                    <button
+                      onClick={() => removeSection(si)}
+                      className="p-2.5 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                      title="Remove section"
+                    >
+                      <HiTrash size={18} />
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              {/* api endpoint for api_dropdown */}
-              {f.type === "api_dropdown" && (
-                <div className="mt-2 pl-3 border-l-2 border-gray-200">
-                  <label className="block text-[11px] font-medium text-gray-500 mb-1">
-                    API Endpoint (e.g. /products)
-                  </label>
-                  <input
-                    className={inputCls}
-                    value={f.apiEndpoint || ""}
-                    onChange={(e) =>
-                      updateFieldIn(si, fi, "apiEndpoint", e.target.value)
-                    }
-                    placeholder="e.g. /products"
-                  />
-                </div>
-              )}
+              {/* Section Fields */}
+              <div className="p-4 md:p-6 bg-gray-50/50 space-y-4">
+                {sec.fields.map((f, fi) => (
+                  <div
+                    key={fi}
+                    className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm relative group"
+                  >
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gray-200 to-gray-300 rounded-l-xl group-hover:from-red-300 group-hover:to-red-400 transition-colors"></div>
 
-              {/* options (dropdown / boolean) */}
-              {TYPES_WITH_OPTIONS.includes(f.type) && (
-                <div className="mt-3 pl-3 border-l-2 border-gray-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] font-semibold text-gray-500 uppercase">
-                      Options (points)
-                    </span>
-                    <button
-                      onClick={() => addOptionTo(si, fi)}
-                      className="flex items-center gap-1 text-xs text-red-600 hover:text-red-700"
-                    >
-                      <HiPlus size={14} /> Option
-                    </button>
-                  </div>
-                  {(f.options || []).map((o, oi) => (
-                    <div
-                      key={oi}
-                      className="grid grid-cols-12 gap-2 items-center mb-2"
-                    >
-                      <input
-                        className={`${inputCls} col-span-5`}
-                        value={o.label}
-                        onChange={(e) =>
-                          updateOptionIn(si, fi, oi, "label", e.target.value)
-                        }
-                        placeholder="Label (e.g. Good)"
-                      />
-                      <input
-                        className={`${inputCls} col-span-4`}
-                        value={o.value}
-                        onChange={(e) =>
-                          updateOptionIn(si, fi, oi, "value", e.target.value)
-                        }
-                        placeholder="Value (e.g. good)"
-                      />
-                      <input
-                        type="number"
-                        className={`${inputCls} col-span-2`}
-                        value={o.points}
-                        onChange={(e) =>
-                          updateOptionIn(si, fi, oi, "points", e.target.value)
-                        }
-                        placeholder="Pts"
-                      />
-                      <button
-                        onClick={() => removeOptionFrom(si, fi, oi)}
-                        className="col-span-1 p-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200 justify-self-center"
-                        title="Remove option"
-                      >
-                        <HiTrash size={12} />
-                      </button>
+                    <div className="grid gap-4 md:grid-cols-12 items-start pl-2">
+                      <div className="md:col-span-4">
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                          Field Label <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          className={inputCls}
+                          value={f.label}
+                          onChange={(e) => updateFieldIn(si, fi, "label", e.target.value)}
+                          placeholder="e.g. Floor Cleanliness"
+                        />
+                      </div>
+
+                      <div className="md:col-span-3">
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                          Type
+                        </label>
+                        <div className="relative">
+                          <select
+                            className={selectCls}
+                            value={f.type}
+                            onChange={(e) => updateFieldIn(si, fi, "type", e.target.value)}
+                          >
+                            {FIELD_TYPES.map((t) => (
+                              <option key={t} value={t}>
+                                {t.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                              </option>
+                            ))}
+                          </select>
+                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                          Max Pts
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          className={inputCls}
+                          value={f.maxPoints}
+                          onChange={(e) => updateFieldIn(si, fi, "maxPoints", e.target.value)}
+                        />
+                      </div>
+
+                      <div className="md:col-span-2 flex flex-col gap-3 pt-6">
+                        <ToggleSwitch
+                          checked={f.required || false}
+                          onChange={(val) => updateFieldIn(si, fi, "required", val)}
+                          label="Required"
+                        />
+                        <ToggleSwitch
+                          checked={f.requiresAvailabilityCheck || false}
+                          onChange={(val) => updateFieldIn(si, fi, "requiresAvailabilityCheck", val)}
+                          label="Avail. Check"
+                        />
+                      </div>
+
+                      <div className="md:col-span-1 flex justify-end pt-6">
+                        <button
+                          onClick={() => removeFieldFrom(si, fi)}
+                          className="p-2.5 rounded-xl text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all"
+                          title="Remove field"
+                        >
+                          <HiTrash size={18} />
+                        </button>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              )}
+
+                    {/* api endpoint for api_dropdown */}
+                    {f.type === "api_dropdown" && (
+                      <div className="mt-4 pl-4 ml-2 border-l-2 border-indigo-200">
+                        <label className="block text-xs font-bold text-indigo-500 uppercase tracking-wider mb-1.5">
+                          API Endpoint
+                        </label>
+                        <input
+                          className={`${inputCls} border-indigo-100 focus:ring-indigo-300`}
+                          value={f.apiEndpoint || ""}
+                          onChange={(e) => updateFieldIn(si, fi, "apiEndpoint", e.target.value)}
+                          placeholder="e.g. /api/v1/products"
+                        />
+                      </div>
+                    )}
+
+                    {/* options (dropdown / boolean) */}
+                    {TYPES_WITH_OPTIONS.includes(f.type) && (
+                      <div className="mt-4 bg-gray-50/80 rounded-xl p-4 border border-gray-100 ml-2">
+                        <div className="flex items-center justify-between mb-3 border-b border-gray-200 pb-2">
+                          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                            Dropdown Options
+                          </span>
+                          <button
+                            onClick={() => addOptionTo(si, fi)}
+                            className="flex items-center gap-1 text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 px-2 py-1 rounded-md transition-colors"
+                          >
+                            <HiPlus size={14} /> Add Option
+                          </button>
+                        </div>
+
+                        <div className="space-y-3 mt-3">
+                          {(f.options || []).map((o, oi) => (
+                            <div key={oi} className="flex gap-3 items-center">
+                              <div className="flex-1">
+                                <input
+                                  className={inputCls}
+                                  value={o.label}
+                                  onChange={(e) => updateOptionIn(si, fi, oi, "label", e.target.value)}
+                                  placeholder="Display Label (e.g. Excellent)"
+                                />
+                              </div>
+                              <div className="flex-1">
+                                <input
+                                  className={inputCls}
+                                  value={o.value}
+                                  onChange={(e) => updateOptionIn(si, fi, oi, "value", e.target.value)}
+                                  placeholder="Internal Value (e.g. excellent)"
+                                />
+                              </div>
+                              <div className="w-24">
+                                <input
+                                  type="number"
+                                  className={inputCls}
+                                  value={o.points}
+                                  onChange={(e) => updateOptionIn(si, fi, oi, "points", e.target.value)}
+                                  placeholder="Pts"
+                                />
+                              </div>
+                              <button
+                                onClick={() => removeOptionFrom(si, fi, oi)}
+                                className="p-2.5 rounded-xl text-gray-400 hover:bg-red-100 hover:text-red-500 transition-colors shrink-0"
+                                title="Remove option"
+                              >
+                                <HiTrash size={18} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                <button
+                  onClick={() => addFieldTo(si)}
+                  className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl border-2 border-dashed border-gray-300 text-gray-500 font-bold hover:border-red-400 hover:text-red-500 hover:bg-red-50 transition-all mt-4 hover:-translate-y-0.5 active:translate-y-0"
+                >
+                  <HiPlus size={20} /> Add New Field
+                </button>
+              </div>
             </div>
           ))}
 
           <button
-            onClick={() => addFieldTo(si)}
-            className="flex items-center gap-1 text-sm text-gray-700 hover:text-red-600"
+            onClick={addSection}
+            className="flex items-center justify-center gap-2 w-full py-4.5 rounded-2xl border-2 border-dashed border-red-300 text-red-500 font-bold hover:border-red-500 hover:bg-red-50 hover:shadow-md transition-all mt-8 bg-white hover:-translate-y-0.5 active:translate-y-0"
+            style={{ padding: '1rem' }}
           >
-            <HiPlus size={16} /> Add field
+            <HiPlus size={22} /> Add New Section
           </button>
         </div>
-      ))}
-
-      <button
-        onClick={addSection}
-        className="flex items-center gap-1 px-4 py-2 rounded border border-dashed border-gray-400 text-gray-700 hover:border-red-400 hover:text-red-600 w-full justify-center"
-      >
-        <HiPlus size={18} /> Add section
-      </button>
+      </div>
     </div>
   );
 };
