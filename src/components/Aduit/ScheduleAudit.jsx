@@ -19,6 +19,12 @@ const ScheduleAudit = () => {
   const [selectedRouteId, setSelectedRouteId] = useState('');
   const [selectedAuditorId, setSelectedAuditorId] = useState('');
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, auditId: null, shopName: '' });
+  const [expiredProductsModal, setExpiredProductsModal] = useState({ isOpen: false, shopName: '', products: [] });
+
+  const [filterNoAudit, setFilterNoAudit] = useState(false);
+  const [filterExpiry, setFilterExpiry] = useState(false);
+  const [filterLowRate, setFilterLowRate] = useState(false);
+  const [filterAgeing, setFilterAgeing] = useState(false);
 
   const EXPIRY_DAYS = 30;
 
@@ -39,9 +45,10 @@ const ScheduleAudit = () => {
 
       const shopsData = shopsRes?.data || [];
       const auditsData = auditsRes?.data || [];
-      const auditorsData = auditorsRes?.data || [];
+      const auditorsData = (auditorsRes?.data || []).filter(a => a.role === 'auditor');
       const routesData = routesRes?.data || [];
-      const expiredProductShops = expiryRes?.data?.expiredProductAlerts?.map(s => s._id) || [];
+      const expiredProductAlerts = expiryRes?.data?.expiredProductAlerts || [];
+      const expiredProductShops = expiredProductAlerts.map(s => s._id);
 
       // Add a property to auditorsData to hold their today's audits
       const todayStart = dayjs().startOf('day');
@@ -99,6 +106,9 @@ const ScheduleAudit = () => {
         }
 
         const hasExpiredProducts = expiredProductShops.includes(shop._id);
+        const expiredProductsList = hasExpiredProducts 
+          ? (expiredProductAlerts.find(s => s._id === shop._id)?.expiredProducts || [])
+          : [];
 
         return {
           ...shop,
@@ -111,6 +121,7 @@ const ScheduleAudit = () => {
           badgeType,
           badgeText,
           hasExpiredProducts,
+          expiredProductsList,
           assignedAuditorId: null // Track where it's dropped
         };
       });
@@ -141,6 +152,14 @@ const ScheduleAudit = () => {
   const handleDragStart = (e, shopId) => {
     e.dataTransfer.setData('shopId', shopId);
     e.target.classList.add('opacity-50');
+  };
+
+  const handleViewExpiredProducts = (shop) => {
+    setExpiredProductsModal({
+      isOpen: true,
+      shopName: shop.shopName,
+      products: shop.expiredProductsList
+    });
   };
 
   const handleDragEnd = (e) => {
@@ -205,6 +224,12 @@ const ScheduleAudit = () => {
     if (s.assignedAuditorId) return false;
     if (searchTerm && !s.shopName?.toLowerCase().includes(searchTerm.toLowerCase()) && !s.ownerName?.toLowerCase().includes(searchTerm.toLowerCase())) return false;
     if (shopsInSelectedRoute && !shopsInSelectedRoute.includes(s._id)) return false;
+
+    if (filterNoAudit && s.latestAudit) return false;
+    if (filterExpiry && !s.hasExpiredProducts) return false;
+    if (filterLowRate && (s.rating === null || s.rating >= 3)) return false;
+    if (filterAgeing && !(s.badgeType === 'expired' || s.badgeType === 'warning')) return false;
+
     return true;
   });
 
@@ -236,6 +261,32 @@ const ScheduleAudit = () => {
                 Available Shops ({unassignedShops.length})
               </h2>
               <div className="flex flex-col gap-2">
+                <div className="flex flex-wrap gap-2 mb-1">
+                  <button
+                    onClick={() => setFilterNoAudit(!filterNoAudit)}
+                    className={`px-2 py-1 text-xs rounded-full border transition-colors ${filterNoAudit ? 'bg-red-50 text-red-600 border-red-200' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+                  >
+                    No Audit
+                  </button>
+                  <button
+                    onClick={() => setFilterExpiry(!filterExpiry)}
+                    className={`px-2 py-1 text-xs rounded-full border transition-colors ${filterExpiry ? 'bg-red-50 text-red-600 border-red-200' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+                  >
+                    Expired Products
+                  </button>
+                  <button
+                    onClick={() => setFilterLowRate(!filterLowRate)}
+                    className={`px-2 py-1 text-xs rounded-full border transition-colors ${filterLowRate ? 'bg-red-50 text-red-600 border-red-200' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+                  >
+                    Low Rating (&lt;3)
+                  </button>
+                  <button
+                    onClick={() => setFilterAgeing(!filterAgeing)}
+                    className={`px-2 py-1 text-xs rounded-full border transition-colors ${filterAgeing ? 'bg-red-50 text-red-600 border-red-200' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+                  >
+                    Ageing (Overdue)
+                  </button>
+                </div>
                 <select
                   value={selectedRouteId}
                   onChange={(e) => setSelectedRouteId(e.target.value)}
@@ -272,6 +323,7 @@ const ScheduleAudit = () => {
                     shop={shop} 
                     onDragStart={(e) => handleDragStart(e, shop._id)}
                     onDragEnd={handleDragEnd}
+                    onViewExpiredProducts={handleViewExpiredProducts}
                   />
                 ))
               )}
@@ -363,6 +415,7 @@ const ScheduleAudit = () => {
                               compact 
                               onDragStart={(e) => handleDragStart(e, shop._id)}
                               onDragEnd={handleDragEnd}
+                              onViewExpiredProducts={handleViewExpiredProducts}
                             />
                           ))
                         )}
@@ -406,12 +459,43 @@ const ScheduleAudit = () => {
           </div>
         </div>
       )}
+
+      {/* Expired Products Modal */}
+      {expiredProductsModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl p-6 relative">
+            <h3 className="text-xl font-bold text-gray-900 mb-4 pr-6">Expired Products - {expiredProductsModal.shopName}</h3>
+            <div className="max-h-96 overflow-y-auto pr-2">
+              {expiredProductsModal.products?.length > 0 ? (
+                <ul className="space-y-3">
+                  {expiredProductsModal.products.map((prod, idx) => (
+                    <li key={idx} className="bg-red-50 p-3 rounded-lg border border-red-100">
+                      <p className="font-semibold text-gray-800 text-sm">{prod.name}</p>
+                      <p className="text-red-600 text-xs mt-1">Details: {prod.details}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500 text-sm">No expired products details available.</p>
+              )}
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button 
+                onClick={() => setExpiredProductsModal({ isOpen: false, shopName: '', products: [] })} 
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 // Reusable Shop Card Component
-const ShopCard = ({ shop, onDragStart, onDragEnd, compact = false }) => {
+const ShopCard = ({ shop, onDragStart, onDragEnd, compact = false, onViewExpiredProducts }) => {
   const badgeColors = {
     expired: 'bg-red-50 text-red-700 border-red-200',
     warning: 'bg-orange-50 text-orange-700 border-orange-200',
@@ -444,9 +528,12 @@ const ShopCard = ({ shop, onDragStart, onDragEnd, compact = false }) => {
       )}
 
       {shop.hasExpiredProducts && (
-        <p className="flex items-center text-[10px] text-purple-600 font-semibold mb-2 bg-purple-50 px-2 py-1 rounded w-fit border border-purple-200">
+        <div 
+          onClick={() => onViewExpiredProducts && onViewExpiredProducts(shop)}
+          className="flex items-center text-[10px] text-purple-600 font-semibold mb-2 bg-purple-50 px-2 py-1 rounded w-fit border border-purple-200 cursor-pointer hover:bg-purple-100 transition-colors"
+        >
           <FaStoreSlash className="mr-1" /> Expired Products Detected
-        </p>
+        </div>
       )}
 
       <div className="flex items-center justify-between mt-1">

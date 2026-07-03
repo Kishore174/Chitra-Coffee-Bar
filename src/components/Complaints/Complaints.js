@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { axiosintance } from "../../API/Api";
 import { toast } from "react-hot-toast";
-import { FaPlus, FaSearch, FaCommentDots, FaEye, FaEdit, FaTrashAlt, FaPaperclip, FaTimes } from 'react-icons/fa';
+import { FaPlus, FaSearch, FaCommentDots, FaEye, FaEdit, FaTrashAlt, FaPaperclip, FaTimes, FaDownload } from 'react-icons/fa';
 import Loader from "../Loader"; // Assuming Loader is at src/components/Loader
 
 const ITEMS_PER_PAGE = 5;
@@ -12,6 +12,8 @@ const ComplaintManagement = () => {
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [viewComplaint, setViewComplaint] = useState(null);
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, complaintId: null });
@@ -70,11 +72,26 @@ const ComplaintManagement = () => {
     return date.toLocaleDateString("en-GB");
   };
 
-  const filteredComplaints = complaints.filter(comp => 
-    comp.outlet?.shopName?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    comp.complaint?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    comp.registeredBy?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredComplaints = complaints.filter(comp => {
+    const matchesSearch = comp.outlet?.shopName?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      comp.complaint?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      comp.registeredBy?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+      
+    let matchesDate = true;
+    if (startDate || endDate) {
+      const compDate = new Date(comp.complaintDate);
+      if (startDate) {
+        matchesDate = matchesDate && compDate >= new Date(startDate);
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        matchesDate = matchesDate && compDate <= end;
+      }
+    }
+    
+    return matchesSearch && matchesDate;
+  });
 
   const totalPages = Math.ceil(filteredComplaints.length / ITEMS_PER_PAGE);
   const currentComplaints = filteredComplaints.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
@@ -83,6 +100,64 @@ const ComplaintManagement = () => {
   const tableHeaders = [
     '#', 'OUTLET', 'COMPLAINT', 'DATES', 'PERSONNEL', 'STATUS', 'CA/PA', 'REMARKS', 'ACTIONS'
   ];
+
+  const exportToCSV = () => {
+    try {
+      const headers = [
+        "S.No",
+        "Outlet",
+        "Complaint",
+        "Complaint Date",
+        "Target Date",
+        "Actual Date",
+        "Registered By",
+        "Responsibility",
+        "Status",
+        "CA/PA",
+        "Remarks"
+      ];
+
+      const rows = filteredComplaints.map((item, index) => {
+        return [
+          index + 1,
+          item.outlet?.shopName || "N/A",
+          item.complaint || "N/A",
+          formatDate(item.complaintDate),
+          formatDate(item.targetDate),
+          formatDate(item.actualDate),
+          item.registeredBy?.name || "N/A",
+          item.responsibility?.name || "N/A",
+          item.status || "Pending",
+          item.caPa || "N/A",
+          item.remarks || "N/A"
+        ];
+      });
+
+      const csvContent = [
+        headers.join(","),
+        ...rows.map(row =>
+          row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(",")
+        ),
+      ].join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Complaints_Report_${new Date().toISOString().split("T")[0]}.csv`;
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast.success("Exported successfully!");
+    } catch (err) {
+      console.error("Export error:", err);
+      toast.error("Failed to export data");
+    }
+  };
 
   return (
     <div className="p-4 md:p-8 min-h-screen bg-white">
@@ -99,6 +174,32 @@ const ComplaintManagement = () => {
         </div>
 
         <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 mt-6 md:mt-0 w-full md:w-auto">
+          <div className="flex items-center space-x-2">
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => { setStartDate(e.target.value); setCurrentPage(1); }}
+              className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600 focus:outline-none focus:border-[#da251d]"
+            />
+            <span className="text-gray-400 text-sm">to</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => { setEndDate(e.target.value); setCurrentPage(1); }}
+              className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600 focus:outline-none focus:border-[#da251d]"
+            />
+          </div>
+          <button 
+            onClick={exportToCSV}
+            disabled={filteredComplaints.length === 0}
+            className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors w-full md:w-auto ${
+              filteredComplaints.length === 0 
+                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                : 'bg-green-600 text-white hover:bg-green-700 shadow-sm'
+            }`}
+          >
+            <FaDownload /> Export CSV
+          </button>
           <div className="relative w-full md:w-64">
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input 
