@@ -20,6 +20,7 @@ const ScheduleAudit = () => {
   const [selectedAuditorId, setSelectedAuditorId] = useState('');
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, auditId: null, shopName: '' });
   const [expiredProductsModal, setExpiredProductsModal] = useState({ isOpen: false, shopName: '', products: [] });
+  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
 
   const [filterNoAudit, setFilterNoAudit] = useState(false);
   const [filterExpiry, setFilterExpiry] = useState(false);
@@ -50,17 +51,16 @@ const ScheduleAudit = () => {
       const expiredProductAlerts = expiryRes?.data?.expiredProductAlerts || [];
       const expiredProductShops = expiredProductAlerts.map(s => s._id);
 
-      // Add a property to auditorsData to hold their today's audits
+      // Add a property to auditorsData to hold all their pending/future audits
       const todayStart = dayjs().startOf('day');
-      const todayEnd = dayjs().endOf('day');
 
       const enhancedAuditors = auditorsData.map(auditor => {
-        const todayAudits = auditsData.filter(a => {
+        const auditorAudits = auditsData.filter(a => {
           if (a.auditor?._id !== auditor._id) return false;
           const aDate = dayjs(a.auditDate);
-          return aDate.isAfter(todayStart) && aDate.isBefore(todayEnd);
+          return aDate.valueOf() >= todayStart.valueOf();
         });
-        return { ...auditor, todayAudits };
+        return { ...auditor, allAudits: auditorAudits };
       });
 
       setAuditors(enhancedAuditors);
@@ -192,8 +192,9 @@ const ScheduleAudit = () => {
 
     try {
       const shopIds = assignedShops.map(s => s._id);
-      await assignManualAuditsV2({ auditorId: auditor._id, shopIds });
-      toast.success(`Successfully scheduled ${assignedShops.length} shop(s) for ${auditor.name}`);
+      const auditDate = weekDates[selectedDayIndex];
+      await assignManualAuditsV2({ auditorId: auditor._id, shopIds, auditDate });
+      toast.success(`Successfully scheduled ${assignedShops.length} shop(s) for ${auditor.name} on ${dayShortLabels[selectedDayIndex]}`);
       fetchData(); // Refresh the list from the server
     } catch (err) {
       toast.error(`Failed to schedule for ${auditor.name}: ` + (err.response?.data?.message || err.message));
@@ -231,6 +232,23 @@ const ScheduleAudit = () => {
     if (filterAgeing && !(s.badgeType === 'expired' || s.badgeType === 'warning')) return false;
 
     return true;
+  });
+
+  const getWeekDates = () => {
+    const dates = [];
+    const curr = new Date();
+    for (let i = 0; i < 7; i++) {
+      const nextDate = new Date(curr);
+      nextDate.setDate(curr.getDate() + i);
+      dates.push(nextDate);
+    }
+    return dates;
+  };
+  const weekDates = getWeekDates();
+  const dayShortLabels = weekDates.map(d => {
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    return `${dayNames[d.getDay()]} (${d.getDate()} ${monthNames[d.getMonth()]})`;
   });
 
   return (
@@ -348,6 +366,24 @@ const ScheduleAudit = () => {
                 ))}
               </select>
             </div>
+
+            {selectedAuditorId && (
+              <div className="flex gap-2 mb-4 overflow-x-auto pb-1 scrollbar-custom flex-shrink-0">
+                {dayShortLabels.map((label, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedDayIndex(index)}
+                    className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                      selectedDayIndex === index
+                        ? "bg-red-600 text-white shadow-sm"
+                        : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
             
             <div className="flex-1 overflow-y-auto pr-2 scrollbar-custom">
               {!selectedAuditorId ? (
@@ -382,25 +418,35 @@ const ScheduleAudit = () => {
                         </button>
                       </div>
 
-                      {auditor.todayAudits && auditor.todayAudits.length > 0 && (
-                        <div className="px-4 py-2 bg-blue-50 border-b border-blue-100 flex flex-wrap gap-1 items-center">
-                          <span className="text-xs font-semibold text-blue-800 mr-2">Today's Scheduled ({auditor.todayAudits.length}):</span>
-                          {auditor.todayAudits.map((a, idx) => (
-                            <div key={a._id || idx} className="flex items-center text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded border border-blue-200">
-                              <span>{a.shop?.shopName || 'Unknown Shop'} {a.status === 'completed' && '(Done)'}</span>
-                              {a.status !== 'completed' && (
-                                <button 
-                                  onClick={() => handleRemoveAudit(a._id, a.shop?.shopName)}
-                                  className="ml-1 text-blue-500 hover:text-red-600 transition-colors"
-                                  title="Remove Scheduled Audit"
-                                >
-                                  ×
-                                </button>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                      {(() => {
+                        const selectedDateStart = dayjs(weekDates[selectedDayIndex]).startOf('day');
+                        const selectedDateEnd = dayjs(weekDates[selectedDayIndex]).endOf('day');
+                        
+                        const dayAudits = auditor.allAudits?.filter(a => {
+                          const aDate = dayjs(a.auditDate);
+                          return aDate.isAfter(selectedDateStart) && aDate.isBefore(selectedDateEnd);
+                        }) || [];
+
+                        return dayAudits.length > 0 && (
+                          <div className="px-4 py-2 bg-blue-50 border-b border-blue-100 flex flex-wrap gap-1 items-center">
+                            <span className="text-xs font-semibold text-blue-800 mr-2">Scheduled for {dayShortLabels[selectedDayIndex]} ({dayAudits.length}):</span>
+                            {dayAudits.map((a, idx) => (
+                              <div key={a._id || idx} className="flex items-center text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded border border-blue-200">
+                                <span>{a.shop?.shopName || 'Unknown Shop'} {a.status === 'completed' && '(Done)'}</span>
+                                {a.status !== 'completed' && (
+                                  <button 
+                                    onClick={() => handleRemoveAudit(a._id, a.shop?.shopName)}
+                                    className="ml-1 text-blue-500 hover:text-red-600 transition-colors"
+                                    title="Remove Scheduled Audit"
+                                  >
+                                    ×
+                                  </button>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })()}
                       
                       <div className="p-3 flex-1 overflow-y-auto space-y-2 bg-slate-50/30">
                         {assignedShops.length === 0 ? (

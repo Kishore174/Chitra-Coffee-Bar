@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { filterAudits } from "../../API/audits";
+import { filterAuditsV2 } from "../../API/auditV2";
 import { useAuth } from "../../context/AuthProvider";
 import Loader from "../Loader";
 import { formatTime, calculateDuration, formatDuration } from "../../utils/tool";
@@ -42,11 +43,13 @@ const Reports = () => {
 
   const { user } = useAuth();
 
+  const [showOldAudits, setShowOldAudits] = useState(saved.showOldAudits || false);
+
   // Save filters to localStorage whenever they change
   useEffect(() => {
-    const filters = { fromDate, toDate, shopFilter, employeeFilter, districtFilter, statusFilter, minRating, maxRating, currentPage };
+    const filters = { fromDate, toDate, shopFilter, employeeFilter, districtFilter, statusFilter, minRating, maxRating, currentPage, showOldAudits };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(filters));
-  }, [fromDate, toDate, shopFilter, employeeFilter, districtFilter, statusFilter, minRating, maxRating, currentPage]);
+  }, [fromDate, toDate, shopFilter, employeeFilter, districtFilter, statusFilter, minRating, maxRating, currentPage, showOldAudits]);
 
   // Fetch shops and employees on mount
   useEffect(() => {
@@ -77,7 +80,7 @@ const Reports = () => {
         (key) => filterData[key] === undefined && delete filterData[key]
       );
 
-      const response = await filterAudits(filterData);
+      const response = showOldAudits ? await filterAudits(filterData) : await filterAuditsV2(filterData);
       setFilteredAudits(response.data.audits || []);
       setTotalPages(response.data.pagination?.totalPages || 1);
       setTotalItems(response.data.pagination?.totalItems || 0);
@@ -89,7 +92,12 @@ const Reports = () => {
     } finally {
       setFilterLoading(false);
     }
-  }, [fromDate, toDate, employeeFilter, shopFilter, statusFilter, minRating, maxRating, districtFilter, currentPage]);
+  }, [fromDate, toDate, employeeFilter, shopFilter, statusFilter, minRating, maxRating, districtFilter, currentPage, showOldAudits]);
+
+  // Refetch when showOldAudits changes
+  useEffect(() => {
+    applyBackendFilter();
+  }, [showOldAudits]);
 
   const resetFilters = () => {
     setFromDate("");
@@ -141,9 +149,153 @@ const Reports = () => {
         (key) => filterData[key] === undefined && delete filterData[key]
       );
 
-      const response = await filterAudits(filterData);
+      const response = showOldAudits ? await filterAudits(filterData) : await filterAuditsV2(filterData);
       const allFilteredAudits = response.data.audits || [];
 
+      if (!showOldAudits) {
+        // --- V2 EXPORT ---
+        const headers = [
+          "S.No",
+          "Shop Name",
+          "Owner Name",
+          "Address",
+          "Phone",
+          "Email",
+          "Audit Date",
+          "Config Name",
+          "Status",
+          "Overall Rating",
+          "Final %",
+          "Grade"
+        ];
+        
+        if (user?.role === "super-admin") {
+          headers.push("Auditor Name", "Auditor Phone", "Auditor Email", "In Time", "Out Time", "Duration");
+        }
+
+        // Section Summaries
+        const sectionNames = new Set();
+        allFilteredAudits.forEach(a => {
+          a.sections?.forEach(s => sectionNames.add(s.sectionName || "Section"));
+        });
+        const secHeaders = Array.from(sectionNames);
+        secHeaders.forEach(s => {
+          headers.push(`${s} Score`, `${s} %`);
+        });
+
+        // Detailed Fields
+        const fieldKeys = new Set();
+        allFilteredAudits.forEach(a => {
+           a.sections?.forEach(sec => {
+              const prefix = sec.sectionName || "Section";
+              if (sec.isRepeatable && sec.rows) {
+                 sec.rows.forEach((row, i) => {
+                    row.fields?.forEach(f => {
+                       fieldKeys.add(`${prefix} [${i+1}] - ${f.label || f.key}`);
+                       fieldKeys.add(`${prefix} [${i+1}] - ${f.label || f.key} (Remarks)`);
+                    });
+                 });
+              } else if (sec.fields) {
+                 sec.fields.forEach(f => {
+                    fieldKeys.add(`${prefix} - ${f.label || f.key}`);
+                    fieldKeys.add(`${prefix} - ${f.label || f.key} (Remarks)`);
+                 });
+              }
+           });
+        });
+        const fieldHeaders = Array.from(fieldKeys);
+        headers.push(...fieldHeaders);
+
+        const rows = allFilteredAudits.map((audit, index) => {
+           const row = [
+              index + 1,
+              audit.shop?.shopName || "N/A",
+              audit.shop?.ownerName || "N/A",
+              audit.shop?.address || "N/A",
+              audit.shop?.phone || "N/A",
+              audit.shop?.email || "N/A",
+              audit.auditDate ? new Date(audit.auditDate).toLocaleDateString("en-GB") : "N/A",
+              audit.configName || "N/A",
+              audit.status || "N/A",
+              audit.status === "completed" ? (audit.overallRating || 0) : 0,
+              audit.status === "completed" ? (audit.finalPercentage?.toFixed(2) || 0) : "N/A",
+              audit.status === "completed" ? (audit.overallGrade || "N/A") : "N/A",
+           ];
+           if (user?.role === "super-admin") {
+              row.push(
+                audit.auditor?.name || "N/A",
+                audit.auditor?.phone || "N/A",
+                audit.auditor?.email || "N/A",
+                formatTime(audit.inTime) || "N/A",
+                formatTime(audit.outTime) || "N/A",
+                formatDuration(calculateDuration(audit.inTime, audit.outTime)) || "N/A"
+              );
+           }
+           secHeaders.forEach(s => {
+              const sec = audit.sections?.find(x => x.sectionName === s);
+              if (sec) {
+                 row.push(`${sec.obtainedScore || 0}/${sec.totalScore || 0}`, `${Number(sec.percentage || 0).toFixed(1)}%`);
+              } else {
+                 row.push("N/A", "N/A");
+              }
+           });
+
+           // Flatten current audit fields for quick lookup
+           const auditFields = {};
+           const extractVal = (v) => {
+              if (v === null || v === undefined || v === '') return '';
+              if (Array.isArray(v)) return `${v.length} item(s)`;
+              if (typeof v === 'boolean') return v ? 'Yes' : 'No';
+              if (typeof v === 'object') return v.status || v.remark || JSON.stringify(v);
+              return String(v);
+           };
+
+           audit.sections?.forEach(sec => {
+              const prefix = sec.sectionName || "Section";
+              if (sec.isRepeatable && sec.rows) {
+                 sec.rows.forEach((r, i) => {
+                    r.fields?.forEach(f => {
+                       const val = f.isAvailable === 'no' ? 'Not Available' : extractVal(f.value);
+                       auditFields[`${prefix} [${i+1}] - ${f.label || f.key}`] = val;
+                       auditFields[`${prefix} [${i+1}] - ${f.label || f.key} (Remarks)`] = f.remarks || "";
+                    });
+                 });
+              } else if (sec.fields) {
+                 sec.fields.forEach(f => {
+                    const val = f.isAvailable === 'no' ? 'Not Available' : extractVal(f.value);
+                    auditFields[`${prefix} - ${f.label || f.key}`] = val;
+                    auditFields[`${prefix} - ${f.label || f.key} (Remarks)`] = f.remarks || "";
+                 });
+              }
+           });
+
+           fieldHeaders.forEach(h => {
+              row.push(auditFields[h] || "N/A");
+           });
+
+           return row;
+        });
+
+        const csvContent = [
+          headers.join(","),
+          ...rows.map(row =>
+            row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(",")
+          ),
+        ].join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `AuditV2_Reports_${fromDate || "All"}_to_${toDate || "All"}_${new Date().toISOString().split("T")[0]}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        setExportLoading(false);
+        return;
+      }
+
+      // --- V1 EXPORT ---
       // Basic headers
       const headers = [
         "S.No",
@@ -301,7 +453,20 @@ const Reports = () => {
   return (
     <div className="min-h-screen">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl poppins-semibold text-gray-800">Audits</h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-2xl poppins-semibold text-gray-800">
+            {showOldAudits ? "Old Audit Reports" : "Audit Reports V2"}
+          </h2>
+          <button
+            className="flex items-center bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg poppins-medium py-1.5 px-3 border border-gray-200 text-xs transition-colors"
+            onClick={() => {
+              setCurrentPage(1);
+              setShowOldAudits(!showOldAudits);
+            }}
+          >
+            {showOldAudits ? "Show V2" : "Show Old"}
+          </button>
+        </div>
         <span className="text-sm text-gray-500 poppins-regular">
           {totalItems > 0 && `Showing ${filteredAudits.length} of ${totalItems} results`}
         </span>
@@ -550,14 +715,14 @@ const Reports = () => {
                         </a>
                       </div>
                       <div>
-                        {audit.status !== "completed" ? (
-                          <Link to={`/add-audit/${audit._id}`}>
+                        {audit.status !== "completed" && user?.role !== "super-admin" ? (
+                          <Link to={showOldAudits ? `/add-audit/${audit._id}` : `/perform-audit/${audit._id}`}>
                             <button className="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-xs font-medium">
                               Continue
                             </button>
                           </Link>
                         ) : (
-                          <Link to={`/report/${audit._id}`}>
+                          <Link to={showOldAudits ? `/report/${audit?._id}` : `/report-v2/${audit?._id}`}>
                             <button className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium">
                               View
                             </button>
@@ -683,13 +848,13 @@ const Reports = () => {
                         <td className="px-4 py-4 text-sm text-center">
                           {audit.status !== "completed" &&
                           user?.role !== "super-admin" ? (
-                            <Link to={`/add-audit/${audit._id}`}>
+                            <Link to={showOldAudits ? `/add-audit/${audit._id}` : `/perform-audit/${audit._id}`}>
                               <button className="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors font-medium text-xs">
                                 Continue
                               </button>
                             </Link>
                           ) : (
-                            <Link to={`/report/${audit?._id}`}>
+                            <Link to={showOldAudits ? `/report/${audit?._id}` : `/report-v2/${audit?._id}`}>
                               <button className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors font-medium text-xs">
                                 View
                               </button>

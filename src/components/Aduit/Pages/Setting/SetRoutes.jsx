@@ -84,14 +84,28 @@ const SetRoutes = () => {
   while (paddedSet.length < 7) {
     paddedSet.push([]);
   }
-  const dayLabels = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const getWeekDates = () => {
+    const dates = [];
+    const curr = new Date();
+    const day = curr.getDay();
+    const diff = curr.getDate() - day + (day === 0 ? -6 : 1);
+    for (let i = 0; i < 7; i++) {
+      const nextDate = new Date(new Date().setDate(diff + i));
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      dates.push(`${nextDate.getDate()} ${monthNames[nextDate.getMonth()]}`);
+    }
+    return dates;
+  };
+  const weekDates = getWeekDates();
+
+  const dayLabels = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((d, i) => `${d} (${weekDates[i]})`);
 
   const flattenedShops = paddedSet.flat().map((shop) => shop);
   const filterShops = routeShops.filter((shop) =>
     !flattenedShops.some(flatShop => flatShop._id === shop._id)
   );
 
-  const dayShortLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const dayShortLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d, i) => `${d} (${weekDates[i]})`);
 
   return (
     <div className="w-full min-h-screen text-[24px]">

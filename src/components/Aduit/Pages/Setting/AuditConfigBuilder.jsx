@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { MdArrowBack } from "react-icons/md";
-import { HiPlus, HiTrash, HiPencil, HiCheckCircle } from "react-icons/hi";
+import { HiPlus, HiTrash, HiPencil, HiCheckCircle, HiArrowUp, HiArrowDown } from "react-icons/hi";
 import {
   createAuditConfig,
   getAuditConfigs,
@@ -197,6 +197,32 @@ const AuditConfigBuilder = () => {
       };
       return { ...prev, sections };
     });
+
+  const moveFieldUp = (si, fi) => {
+    if (fi === 0) return;
+    setEditing((prev) => {
+      const sections = [...prev.sections];
+      const fields = [...sections[si].fields];
+      const temp = fields[fi - 1];
+      fields[fi - 1] = fields[fi];
+      fields[fi] = temp;
+      sections[si] = { ...sections[si], fields };
+      return { ...prev, sections };
+    });
+  };
+
+  const moveFieldDown = (si, fi) => {
+    setEditing((prev) => {
+      const sections = [...prev.sections];
+      const fields = [...sections[si].fields];
+      if (fi === fields.length - 1) return prev;
+      const temp = fields[fi + 1];
+      fields[fi + 1] = fields[fi];
+      fields[fi] = temp;
+      sections[si] = { ...sections[si], fields };
+      return { ...prev, sections };
+    });
+  };
 
   const updateFieldIn = (si, fi, key, value) =>
     setEditing((prev) => {
@@ -685,7 +711,25 @@ const AuditConfigBuilder = () => {
                         />
                       </div>
 
-                      <div className="md:col-span-1 flex justify-end pt-6">
+                      <div className="md:col-span-1 flex justify-end gap-1 pt-6 items-center">
+                        <div className="flex flex-col gap-1">
+                          <button
+                            onClick={() => moveFieldUp(si, fi)}
+                            disabled={fi === 0}
+                            className={`p-1 rounded-md transition-all ${fi === 0 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-400 hover:bg-gray-100 hover:text-gray-700'}`}
+                            title="Move field up"
+                          >
+                            <HiArrowUp size={16} />
+                          </button>
+                          <button
+                            onClick={() => moveFieldDown(si, fi)}
+                            disabled={fi === sec.fields.length - 1}
+                            className={`p-1 rounded-md transition-all ${fi === sec.fields.length - 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-400 hover:bg-gray-100 hover:text-gray-700'}`}
+                            title="Move field down"
+                          >
+                            <HiArrowDown size={16} />
+                          </button>
+                        </div>
                         <button
                           onClick={() => removeFieldFrom(si, fi)}
                           className="p-2.5 rounded-xl text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all"
