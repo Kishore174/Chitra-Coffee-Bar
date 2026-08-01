@@ -16,20 +16,34 @@ const MyShop = () => {
   const itemsPerPage = 10;
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const [filteredShops, setFilteredShops] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const { user } = useAuth();
 
-  useEffect(() => {
+  const fetchShops = () => {
     setLoading(true);
     const getApi = user?.role === 'super-admin' ? getAllShops : getShopByAuditor;
-    getApi()
+    getApi({ page: currentPage, limit: itemsPerPage, search: searchTerm })
       .then((res) => {
-        setShops(res.data);
-        setFilteredShops(res.data);
+        if (res.data?.pagination) {
+          setShops(res.data.shops);
+          setTotalPages(res.data.pagination.totalPages);
+          setTotalItems(res.data.pagination.totalItems);
+        } else {
+          // fallback
+          setShops(res.data);
+          setTotalPages(1);
+          setTotalItems(res.data.length);
+        }
       })
       .catch((err) => toast.error(`Error: ${err.message}`))
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => {
+    fetchShops();
+  }, [currentPage, searchTerm]);
 
   const handleEdit = (shop) => navigate('/addshop', { state: { shop, isEdit: true } });
   const handleView = (shop) => navigate('/addshop', { state: { shop, isView: true } });
@@ -42,7 +56,7 @@ const MyShop = () => {
           toast.success(`${shopToDelete.shopName} has been deleted.`);
           const updated = shops.filter((s) => s._id !== shopToDelete._id);
           setShops(updated);
-          setFilteredShops(updated);
+          fetchShops(); // Refresh to get correct pagination
           setShopToDelete(null);
         })
         .catch((err) => toast.error(`Error: ${err.message}`));
@@ -51,22 +65,11 @@ const MyShop = () => {
   };
 
   const handleSearch = (e) => {
-    const term = e.target.value.toLowerCase();
-    setFilteredShops(
-      shops.filter((shop) =>
-        Object.keys(shop).some(
-          (key) => typeof shop[key] === 'string' && shop[key].toLowerCase().includes(term)
-        )
-      )
-    );
+    setSearchTerm(e.target.value);
     setCurrentPage(1);
   };
 
-  const totalPages = Math.ceil(filteredShops.length / itemsPerPage);
-  const paginatedShops = filteredShops.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const paginatedShops = shops; // Shops are already paginated from server
 
   return (
     <div className="min-h-screen px-4 py-6 max-w-screen-xl mx-auto">
@@ -79,7 +82,7 @@ const MyShop = () => {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 tracking-tight">My Shops</h1>
-            <p className="text-sm text-gray-500 mt-0.5">{filteredShops.length} locations found</p>
+            <p className="text-sm text-gray-500 mt-0.5">{totalItems} locations found</p>
           </div>
         </div>
 
@@ -279,8 +282,8 @@ const MyShop = () => {
             <div className="flex items-center justify-between mt-5 flex-wrap gap-3">
               <p className="text-sm text-gray-400">
                 Showing {(currentPage - 1) * itemsPerPage + 1}–
-                {Math.min(currentPage * itemsPerPage, filteredShops.length)} of{' '}
-                {filteredShops.length} shops
+                {Math.min(currentPage * itemsPerPage, totalItems)} of{' '}
+                {totalItems} shops
               </p>
 
               <div className="flex items-center gap-1">

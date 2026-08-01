@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
-import { dropDownRoutes, getRouteById, getRoutesByAuditor } from "../../../../API/createRoute";
+import { dropDownRoutes, getRouteById, getRoutesByAuditor, scheduleRoute } from "../../../../API/createRoute";
 import ShopCard from "./ShopCard";
 import Loader from "../../../Loader";
 import { useAuth } from "../../../../context/AuthProvider";
+import toast from "react-hot-toast";
 
 const SetRoutes = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,8 +48,8 @@ const SetRoutes = () => {
     try {
       setLoading(true)
       const res = await getRouteById(routeId);
-      setRouteShops(res.data?.shops);
-      setSet(res.data?.sets);
+      setRouteShops(res.data?.shops || []);
+      setSet(res.data?.sets || []);
       setLoading(false)
     } catch (error) {
       console.error("Error fetching routes:", error);
@@ -79,6 +80,21 @@ const SetRoutes = () => {
       getRouteDeatils(selectedOption._id);
     }
   };
+
+  const handleScheduleRoute = async (dayIndex) => {
+    if (!selectedOption?._id) return;
+    try {
+      setLoading(true);
+      const res = await scheduleRoute(selectedOption._id, dayIndex);
+      toast.success(res.message || 'Route scheduled successfully');
+    } catch (error) {
+      console.error('Error scheduling route:', error);
+      toast.error(error.response?.data?.message || 'Failed to schedule route');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Always ensure 7 sets (days)
   const paddedSet = [...set];
   while (paddedSet.length < 7) {
@@ -100,9 +116,9 @@ const SetRoutes = () => {
 
   const dayLabels = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((d, i) => `${d} (${weekDates[i]})`);
 
-  const flattenedShops = paddedSet.flat().map((shop) => shop);
-  const filterShops = routeShops.filter((shop) =>
-    !flattenedShops.some(flatShop => flatShop._id === shop._id)
+  const flattenedShops = paddedSet.flat().filter(Boolean);
+  const filterShops = (routeShops || []).filter((shop) =>
+    shop && !flattenedShops.some(flatShop => flatShop?._id === shop._id)
   );
 
   const dayShortLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d, i) => `${d} (${weekDates[i]})`);
@@ -117,8 +133,9 @@ const SetRoutes = () => {
 
       {/* Route Selector */}
       <div className="px-6 pb-4">
-        <div className="relative md:w-1/3 w-full">
-          <label className="block text-sm font-medium text-gray-600 mb-1">Select Route</label>
+        <div className="flex flex-col sm:flex-row gap-4 sm:items-end w-full">
+          <div className="relative md:w-1/3 w-full">
+            <label className="block text-sm font-medium text-gray-600 mb-1">Select Route</label>
           <div
             className="flex items-center justify-between bg-white border border-gray-300 rounded-lg px-4 py-3 cursor-pointer transition hover:border-red-400 hover:shadow-sm text-[16px]"
             onClick={() => setDropdownOpen((prev) => !prev)}
@@ -165,6 +182,7 @@ const SetRoutes = () => {
           )}
         </div>
       </div>
+    </div>
 
       {/* Days Grid */}
       {loading ? (
@@ -206,6 +224,7 @@ const SetRoutes = () => {
                     selSet={s}
                     index={index}
                     onRefresh={refreshRoute}
+                    onSchedule={handleScheduleRoute}
                   />
                 </div>
               ))}

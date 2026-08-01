@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { FaCalendarAlt, FaStar, FaStore, FaSearch, FaUserTie, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaStar, FaStore, FaSearch, FaUserTie, FaMapMarkerAlt, FaCheck, FaTimes } from 'react-icons/fa';
 import dayjs from 'dayjs';
 import toast from 'react-hot-toast';
 import Loader from '../Loader';
 import { getAllShops } from '../../API/shop';
-import { getAllAuditsV2, assignManualAuditsV2, deleteAuditV2 } from '../../API/auditV2';
+import { getAllAuditsV2, assignManualAuditsV2, deleteAuditV2, approveAuditV2 } from '../../API/auditV2';
 import { getAllAuditors } from '../../API/auditor';
 import { getRoute } from '../../API/createRoute';
 import { getExpiryAlerts } from '../../API/dashboard';
@@ -215,6 +215,16 @@ const ScheduleAudit = () => {
       toast.error(`Failed to remove audit: ` + (err.response?.data?.message || err.message));
     } finally {
       setDeleteModal({ isOpen: false, auditId: null, shopName: '' });
+    }
+  };
+
+  const handleApproveAudit = async (auditId) => {
+    try {
+      await approveAuditV2(auditId);
+      toast.success('Audit approved successfully');
+      fetchData(); // Refresh to update status
+    } catch (err) {
+      toast.error(`Failed to approve audit: ` + (err.response?.data?.message || err.message));
     }
   };
 
@@ -431,15 +441,24 @@ const ScheduleAudit = () => {
                           <div className="px-4 py-2 bg-blue-50 border-b border-blue-100 flex flex-wrap gap-1 items-center">
                             <span className="text-xs font-semibold text-blue-800 mr-2">Scheduled for {dayShortLabels[selectedDayIndex]} ({dayAudits.length}):</span>
                             {dayAudits.map((a, idx) => (
-                              <div key={a._id || idx} className="flex items-center text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded border border-blue-200">
-                                <span>{a.shop?.shopName || 'Unknown Shop'} {a.status === 'completed' && '(Done)'}</span>
+                              <div key={a._id || idx} className={`flex items-center text-[11px] px-2.5 py-1 rounded-md border ${a.status === 'pending_approval' ? 'bg-yellow-50 text-yellow-800 border-yellow-300 shadow-sm' : 'bg-blue-50 text-blue-800 border-blue-200'}`}>
+                                <span className="font-medium">{a.shop?.shopName || 'Unknown Shop'} {a.status === 'pending_approval' ? <span className="font-normal italic text-[10px] opacity-80 ml-1">(Pending Approval)</span> : a.status === 'completed' ? '(Done)' : ''}</span>
+                                {a.status === 'pending_approval' && (
+                                  <button 
+                                    onClick={() => handleApproveAudit(a._id)}
+                                    className="ml-2 bg-green-500 hover:bg-green-600 text-white rounded p-1 transition-colors shadow-sm flex items-center justify-center"
+                                    title="Approve Scheduled Audit"
+                                  >
+                                    <FaCheck size={10} />
+                                  </button>
+                                )}
                                 {a.status !== 'completed' && (
                                   <button 
                                     onClick={() => handleRemoveAudit(a._id, a.shop?.shopName)}
-                                    className="ml-1 text-blue-500 hover:text-red-600 transition-colors"
+                                    className={`ml-1 hover:text-white rounded p-1 transition-colors shadow-sm flex items-center justify-center ${a.status === 'pending_approval' ? 'text-red-600 bg-red-100 hover:bg-red-500' : 'text-blue-600 hover:bg-blue-600 hover:text-white'}`}
                                     title="Remove Scheduled Audit"
                                   >
-                                    ×
+                                    <FaTimes size={10} />
                                   </button>
                                 )}
                               </div>

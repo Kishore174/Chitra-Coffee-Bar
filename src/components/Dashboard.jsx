@@ -50,7 +50,9 @@ const Dashboard = () => {
               topRatedShops,
               leastRatedShops,
               auditorPerformance,
-              expiredProductsOutlets
+              expiredProductsOutlets,
+              fssaiAlerts,
+              commercialAlerts
             } = response.data;
             setRoutesCount(routesCount || 0);
             setAuditorsCount(auditorsCount || 0);
@@ -62,6 +64,12 @@ const Dashboard = () => {
             setLeastShops(leastRatedShops || []);
             setAuditorPerformance(auditorPerformance || []);
             setExpiredOutlets(expiredProductsOutlets || []);
+            
+            // Set alerts directly from the dashboard API
+            setFssaiAlerts(fssaiAlerts || []);
+            if (user?.role === 'super-admin') {
+              setCommercialAlerts(commercialAlerts || []);
+            }
           }
         } catch (err) {
           console.error('Error fetching dashboard data:', err);
@@ -71,21 +79,6 @@ const Dashboard = () => {
       };
       fetchDashboardData();
     }
-  }, [user]);
-
-  useEffect(() => {
-    const fetchAlerts = async () => {
-      try {
-        const res = await getExpiryAlerts();
-        setFssaiAlerts(res.data.fssaiAlerts || []);
-        if (user?.role === 'super-admin') {
-          setCommercialAlerts(res.data.commercialAlerts || []);
-        }
-      } catch (err) {
-        console.error('Error fetching expiry alerts:', err);
-      }
-    };
-    if (user) fetchAlerts();
   }, [user]);
 
   const visibleFssai = [...fssaiAlerts].sort((a, b) => new Date(a.fssiRenewalDate) - new Date(b.fssiRenewalDate));

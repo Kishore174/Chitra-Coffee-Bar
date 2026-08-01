@@ -33,3 +33,8 @@ export const getRoutesByAuditor = async (id) => {
   const response = await axiosintance.get(`/auditor/routes/${id}`);
   return response.data;
 };
+
+export const scheduleRoute = async (id, dayIndex) => {
+  const response = await axiosintance.post(`/audit-v2/schedule/${id}`, { dayIndex });
+  return response.data;
+};

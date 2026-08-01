@@ -11,12 +11,12 @@ export const createShop = async (shopdata) => {
   const response = await axiosintance.post(`/shop-create`, formData);
   return response.data;
 };
-export const getAllShops = async (allshops) => {
-  const response = await axiosintance.get(`/shops`, allshops);
+export const getAllShops = async (params) => {
+  const response = await axiosintance.get(`/shops`, { params });
   return response.data;
 };
-export const getShopByAuditor = async () => {
-  const response = await axiosintance.get(`/routes/shops`, );
+export const getShopByAuditor = async (params) => {
+  const response = await axiosintance.get(`/routes/shops`, { params });
   return response.data;
 };
 export const upDateShop = async (id, updateData) => {
@@ -30,7 +30,7 @@ export const upDateShop = async (id, updateData) => {
   const response = await axiosintance.put(`/shop/${id}`, formData);
   return response.data;
 };
-export const deleteShop = async (id, deleteShop) => {
-  const response = await axiosintance.delete(`/shop/${id}`, deleteShop);
+export const deleteShop = async (id) => {
+  const response = await axiosintance.delete(`/shop/${id}`);
   return response.data;
 };

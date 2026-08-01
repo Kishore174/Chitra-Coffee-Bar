@@ -79,3 +79,13 @@ export const deleteAuditV2 = async (auditId) => {
   const response = await axiosintance.delete(`/audit-v2/${auditId}`);
   return response.data;
 };
+
+export const getPendingApprovalsV2 = async () => {
+  const response = await axiosintance.get(`/audit-v2/pending-approvals`);
+  return response.data;
+};
+
+export const approveAuditV2 = async (auditId) => {
+  const response = await axiosintance.patch(`/audit-v2/${auditId}/approve`);
+  return response.data;
+};

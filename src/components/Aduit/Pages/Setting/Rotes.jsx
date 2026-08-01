@@ -249,16 +249,17 @@ const Routes = () => {
     }
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (routeToDelete) {
-      deleteRoute(routeToDelete._id)
-        .then(() => {
-          toast.success(`${routeToDelete.name} has been deleted.`);
-          setRouteCards(routeCards.filter((s) => s._id !== routeToDelete._id));
-          setRouteToDelete(null);
-        })
-        .catch((err) => toast.error(`Error: ${err.message}`));
-      setConfirmDialogOpen(false);
+      try {
+        const res = await deleteRoute(routeToDelete._id);
+        toast.success(res.message);
+        setRouteCards(routeCards.filter((card) => card._id !== routeToDelete._id));
+        setConfirmDialogOpen(false);
+        setRouteToDelete(null);
+      } catch (error) {
+        console.error('Error deleting route:', error);
+      }
     }
   };
 
