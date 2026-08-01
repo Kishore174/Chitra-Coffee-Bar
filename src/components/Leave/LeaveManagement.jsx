@@ -1,31 +1,50 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { getAllLeaveRequests, updateLeaveStatus } from "../../API/leaveRequest";
 import toast from "react-hot-toast";
 import dayjs from "dayjs";
-import { FaCheck, FaTimes, FaCalendarAlt, FaFilter } from "react-icons/fa";
+import { FaCheck, FaTimes, FaCalendarAlt, FaFilter, FaBell } from "react-icons/fa";
 import { MdClose } from "react-icons/md";
 
 const LeaveManagement = () => {
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filterStatus, setFilterStatus] = useState("");
+  const [startDate, setStartDate] = useState(dayjs().startOf('month').format("YYYY-MM-DD"));
+  const [endDate, setEndDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [remarksMap, setRemarksMap] = useState({});
   const [selectedLeave, setSelectedLeave] = useState(null);
+  const [newLeaveAlert, setNewLeaveAlert] = useState(null);
+  const prevLeavesRef = useRef(new Set());
 
-  const fetchLeaveRequests = useCallback(async () => {
-    setLoading(true);
+  const fetchLeaveRequests = useCallback(async (isBackground = false) => {
+    if (!isBackground) setLoading(true);
     try {
-      const res = await getAllLeaveRequests(filterStatus);
-      setLeaveRequests(res.data);
+      const res = await getAllLeaveRequests(filterStatus, startDate, endDate);
+      const fetchedLeaves = res.data || [];
+      
+      if (isBackground) {
+        // Find if there is any new pending leave
+        const newPending = fetchedLeaves.find(leave => leave.status === 'pending' && !prevLeavesRef.current.has(leave._id));
+        if (newPending) {
+            setNewLeaveAlert(newPending);
+        }
+      }
+
+      prevLeavesRef.current = new Set(fetchedLeaves.map(l => l._id));
+      setLeaveRequests(fetchedLeaves);
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      if (!isBackground) setLoading(false);
     }
-  }, [filterStatus]);
+  }, [filterStatus, startDate, endDate]);
 
   useEffect(() => {
     fetchLeaveRequests();
+    const interval = setInterval(() => {
+      fetchLeaveRequests(true);
+    }, 10000); // Poll every 10 seconds for new leaves
+    return () => clearInterval(interval);
   }, [fetchLeaveRequests]);
 
   const handleStatusUpdate = async (leaveId, status) => {
@@ -90,6 +109,39 @@ const LeaveManagement = () => {
         </div>
       </div>
 
+      <div className="bg-white rounded-xl shadow-sm border p-4 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <p className="text-sm font-semibold text-gray-600 mb-1">Select Date Range (Leave Applied / Overlapping)</p>
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2">
+              <FaCalendarAlt className="text-gray-400" />
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+              />
+            </div>
+            <span className="text-gray-500 font-semibold px-1">to</span>
+            <div className="flex items-center gap-2">
+              <FaCalendarAlt className="text-gray-400" />
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+              />
+            </div>
+            <button
+                onClick={() => { setStartDate(dayjs().startOf('month').format("YYYY-MM-DD")); setEndDate(dayjs().format("YYYY-MM-DD")); }}
+                className="text-sm text-red-500 hover:underline poppins-medium ml-1"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-white rounded-xl shadow-md p-6">
         {loading ? (
           <p className="text-center py-8 text-gray-500">Loading...</p>
@@ -139,10 +191,20 @@ const LeaveManagement = () => {
                   <span className="text-gray-500">Reason:</span> {leave.reason}
                 </p>
 
-                {leave.adminRemarks && leave.status !== "pending" && (
-                  <p className="text-sm bg-gray-50 p-2 rounded mt-2">
-                    <span className="text-gray-500">Remarks:</span> {leave.adminRemarks}
-                  </p>
+                {leave.status !== "pending" && (
+                  <div className="bg-gray-50 p-2 rounded mt-2 space-y-1">
+                    {leave.adminRemarks && (
+                      <p className="text-sm text-gray-700">
+                        <span className="text-gray-500">Remarks:</span> {leave.adminRemarks}
+                      </p>
+                    )}
+                    {leave.reviewedBy && (
+                      <p className="text-xs text-gray-600">
+                        <span className="text-gray-500">{leave.status === "approved" ? "Approved" : "Rejected"} By:</span> {leave.reviewedBy.name}
+                        {leave.reviewedAt && ` on ${dayjs(leave.reviewedAt).format("DD MMM YYYY, hh:mm A")}`}
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
             ))}
@@ -224,6 +286,43 @@ const LeaveManagement = () => {
                 className="flex-1 flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-2.5 rounded-lg text-sm poppins-medium transition"
               >
                 <FaCheck /> Approve
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* New Leave Alert Modal */}
+      {newLeaveAlert && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4 animate-fadeIn">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm text-center p-6 relative transform transition-all scale-100">
+            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4 shadow-inner">
+              <FaBell className="h-8 w-8 text-blue-500 animate-bounce" />
+            </div>
+            <h3 className="text-xl poppins-semibold text-gray-800 mb-2">New Leave Application!</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              <span className="poppins-semibold text-gray-800">{newLeaveAlert.auditor?.name}</span> has just applied for leave.
+            </p>
+            <div className="bg-gray-50 rounded-lg p-3 text-sm text-left mb-6 border border-gray-100">
+              <p><span className="text-gray-500">From:</span> <span className="poppins-medium">{dayjs(newLeaveAlert.fromDate).format("DD MMM YYYY")}</span></p>
+              <p><span className="text-gray-500">To:</span> <span className="poppins-medium">{dayjs(newLeaveAlert.toDate).format("DD MMM YYYY")}</span></p>
+              <p className="mt-1 text-gray-600 italic truncate">"{newLeaveAlert.reason}"</p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setNewLeaveAlert(null)}
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-lg poppins-medium transition"
+              >
+                Dismiss
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedLeave(newLeaveAlert);
+                  setNewLeaveAlert(null);
+                }}
+                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2.5 rounded-lg poppins-medium transition shadow-md shadow-blue-500/30"
+              >
+                Review Now
               </button>
             </div>
           </div>

@@ -11,6 +11,7 @@ import Login from "./components/Login";
 // import Signup from "./components/Signup";
 import AddAduit from "./components/Aduit/Pages/AddAduit";
 import TeaAduit from "./components/Aduit/Pages/audit/TeaAduit";
+import PerformAuditV2 from "./components/Aduit/Pages/audit/PerformAuditV2";
 import Coffee from "./components/Aduit/Pages/audit/Coffee";
 import LiveSnacks from "./components/Aduit/Pages/audit/LiveSnacks";
 import Bunzo from "./components/Aduit/Pages/audit/Bunzo";
@@ -29,9 +30,11 @@ import Stock from "./components/Aduit/Pages/Stock&Store/Stock";
 import { WallPainting } from "./components/Aduit/Pages/WallPanting/WallPanting";
 import Recording from "./components/Aduit/Pages/Recording/Recording";
 import AuditReport from "./components/Report/AuditReport";
+import AuditReportV2 from "./components/Report/AuditReportV2";
 import BakerProducts from "./components/Aduit/Pages/Setting/BakerProducts";
 import Dressing from "./components/Aduit/Pages/Dressing/Dressing";
 import BrandName from "./components/Aduit/Pages/Setting/BrandName";
+import AuditConfigBuilder from "./components/Aduit/Pages/Setting/AuditConfigBuilder";
 import { Toaster } from "react-hot-toast";
 import InsideKitchens from "./components/Aduit/Pages/Kitchen/InsideKitchens";
 import LiveSnacksName from "./components/Aduit/Pages/Setting/LiveSnacksName";
@@ -48,6 +51,10 @@ import AttendanceManagement from "./components/Attendance/AttendanceManagement";
 import LeaveRequest from "./components/Leave/LeaveRequest";
 import LeaveManagement from "./components/Leave/LeaveManagement";
 import DeviceManagement from "./components/Devices/DeviceManagement";
+import ScheduleAudit from "./components/Aduit/ScheduleAudit";
+import ComplaintManagement from "./components/Complaints/Complaints";
+import MyComplaints from "./components/Complaints/MyComplaints";
+import AddComplaint from "./components/Complaints/AddComplaint";
 
 function App() {
   useEffect(() => {
@@ -60,7 +67,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-      <ScrollToTop /> 
+        <ScrollToTop />
 
         {/* <div className="flex    min-h-screen">
         <SideMenu />
@@ -73,15 +80,12 @@ function App() {
           <Route path="/" element={<Login />} />
           {/* <Route path="signup" element={<Signup />} /> */}
           <Route path="*" element={<Page404 />} />
-          <Route
-            element={
-              <ProtectedRoute allowedRoles={["super-admin", "auditor"]} />
-            }
-          >
+          <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Main />}>
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="audit" element={<Table />} />
               <Route path="add-audit/:id" element={<AddAduit />} />
+              <Route path="perform-audit/:auditId" element={<PerformAuditV2 />} />
               <Route path="profile" element={<Profile />} />
               <Route path="tea/:auditId" element={<TeaAduit />} />
               <Route path="coffee/:auditId" element={<Coffee />} />
@@ -104,29 +108,24 @@ function App() {
               <Route path="wallpanting/:auditId" element={<WallPainting />} />
               <Route path="recording" element={<Recording />} />
               <Route path="report/:auditId" element={<AuditReport />} />
+              <Route path="report-v2/:auditId" element={<AuditReportV2 />} />
               <Route path="dressing/:auditId" element={<Dressing />} />
               <Route path="outsideshop/:auditId" element={<OutSideShop />} />
               <Route path="kitchen/:auditId" element={<InsideKitchens />} />
-            </Route>
-          </Route>
-          <Route element={<ProtectedRoute allowedRoles={["auditor"]} />}>
-            <Route path="/" element={<Main />}>
+              <Route path="schedule-audit" element={<ScheduleAudit />} />
+              <Route path="complaint-request" element={<MyComplaints />} />
+              <Route path="complaint-management" element={<ComplaintManagement />} />
+              <Route path="add-complaint" element={<AddComplaint />} />
+              <Route path="edit-complaint/:id" element={<AddComplaint />} />
               <Route path="attendance" element={<Attendance />} />
               <Route path="leave-request" element={<LeaveRequest />} />
-            </Route>
-          </Route>
-          <Route element={<ProtectedRoute allowedRoles={["super-admin"]} />}>
-            <Route path="/" element={<Main />}>
-              {/* <Route path="myshop" element={<MyShop />} /> */}
-              {/* <Route path="addshop" element={<AddShop />} /> */}
               <Route path="setting" element={<Setting />} />
               <Route path="employees" element={<Employees />} />
-              <Route path="add-employees" element={<AddEmployee/>} />
+              <Route path="add-employees" element={<AddEmployee />} />
               <Route path="reports" element={<Reports />} />
-              {/* <Route path="routes" element={<Rotes />} />
-              <Route path="set-routes" element={<SetRoutes />} /> */}
               <Route path="backeryproducts" element={<BakerProducts />} />
               <Route path="brandName" element={<BrandName />} />
+              <Route path="audit-config" element={<AuditConfigBuilder />} />
               <Route path="livesnackname" element={<LiveSnacksName />} />
               <Route path="attendance-management" element={<AttendanceManagement />} />
               <Route path="leave-management" element={<LeaveManagement />} />
@@ -160,12 +159,12 @@ function App() {
 
 export default App;
 const ScrollToTop = () => {
-   const location = useLocation();
- 
-   useEffect(() => {
-     // Scroll to top whenever the route changes
-     window.scrollTo(0, 0);
-   }, [location]);
- 
-   return null;
- };
+  const location = useLocation();
+
+  useEffect(() => {
+    // Scroll to top whenever the route changes
+    window.scrollTo(0, 0);
+  }, [location]);
+
+  return null;
+};

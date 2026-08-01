@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Line, Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { BuildingStorefrontIcon, ClipboardDocumentCheckIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
+import { FaExclamationTriangle, FaStar, FaStoreSlash, FaChartBar, FaSortAmountUp, FaSortAmountDown } from 'react-icons/fa';
 import { getDashboardAdmin, getDashboardAuditor, getExpiryAlerts } from '../API/dashboard';
 import { useAuth } from '../context/AuthProvider';
 import { Link, useNavigate } from 'react-router-dom';
 import ContentLoader from 'react-content-loader';
 import dayjs from 'dayjs';
-import { FaExclamationTriangle } from 'react-icons/fa';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -23,6 +23,11 @@ const Dashboard = () => {
   const [completedCount, setCompletedCount] = useState(0);
   const [fssaiAlerts, setFssaiAlerts] = useState([]);
   const [commercialAlerts, setCommercialAlerts] = useState([]);
+  const [topShops, setTopShops] = useState([]);
+  const [leastShops, setLeastShops] = useState([]);
+  const [auditorPerformance, setAuditorPerformance] = useState([]);
+  const [expiredOutlets, setExpiredOutlets] = useState([]);
+  const [expiredModal, setExpiredModal] = useState({ isOpen: false, shopData: null });
 
 
   useEffect(() => {
@@ -42,6 +47,12 @@ const Dashboard = () => {
               totalAudits,
               pendingAudit,
               completedAudits,
+              topRatedShops,
+              leastRatedShops,
+              auditorPerformance,
+              expiredProductsOutlets,
+              fssaiAlerts,
+              commercialAlerts
             } = response.data;
             setRoutesCount(routesCount || 0);
             setAuditorsCount(auditorsCount || 0);
@@ -49,6 +60,16 @@ const Dashboard = () => {
             setAuditsCount(totalAudits || 0);
             setPendingCount(pendingAudit || 0);
             setCompletedCount(completedAudits || 0);
+            setTopShops(topRatedShops || []);
+            setLeastShops(leastRatedShops || []);
+            setAuditorPerformance(auditorPerformance || []);
+            setExpiredOutlets(expiredProductsOutlets || []);
+            
+            // Set alerts directly from the dashboard API
+            setFssaiAlerts(fssaiAlerts || []);
+            if (user?.role === 'super-admin') {
+              setCommercialAlerts(commercialAlerts || []);
+            }
           }
         } catch (err) {
           console.error('Error fetching dashboard data:', err);
@@ -58,21 +79,6 @@ const Dashboard = () => {
       };
       fetchDashboardData();
     }
-  }, [user]);
-
-  useEffect(() => {
-    const fetchAlerts = async () => {
-      try {
-        const res = await getExpiryAlerts();
-        setFssaiAlerts(res.data.fssaiAlerts || []);
-        if (user?.role === 'super-admin') {
-          setCommercialAlerts(res.data.commercialAlerts || []);
-        }
-      } catch (err) {
-        console.error('Error fetching expiry alerts:', err);
-      }
-    };
-    if (user) fetchAlerts();
   }, [user]);
 
   const visibleFssai = [...fssaiAlerts].sort((a, b) => new Date(a.fssiRenewalDate) - new Date(b.fssiRenewalDate));
@@ -266,6 +272,170 @@ const Dashboard = () => {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* New Admin Widgets */}
+      {user && (
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          {/* Top Rating Shops */}
+          <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+            <div className="flex items-center gap-2 mb-4 border-b pb-2">
+              <FaSortAmountUp className="text-green-500" />
+              <h3 className="poppins-semibold text-gray-800 text-sm">Top rating shops of the month</h3>
+            </div>
+            {topShops.length > 0 ? (
+              <ul className="space-y-3">
+                {topShops.map((s, idx) => (
+                  <li key={s._id} className="flex justify-between items-center text-sm poppins-medium text-gray-700">
+                    <span className="flex items-center gap-2">
+                      <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">{idx + 1}</span>
+                      {s.shopName}
+                    </span>
+                    <span className="flex items-center gap-1 text-yellow-500">
+                      <FaStar /> {s.averageRating}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs text-gray-400 poppins-regular">No data for this month.</p>
+            )}
+          </div>
+
+          {/* Least Rating Shops */}
+          <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+            <div className="flex items-center gap-2 mb-4 border-b pb-2">
+              <FaSortAmountDown className="text-red-500" />
+              <h3 className="poppins-semibold text-gray-800 text-sm">Least Rating shops of the month</h3>
+            </div>
+            {leastShops.length > 0 ? (
+              <ul className="space-y-3">
+                {leastShops.map((s, idx) => (
+                  <li key={s._id} className="flex justify-between items-center text-sm poppins-medium text-gray-700">
+                    <span className="flex items-center gap-2">
+                      <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">{idx + 1}</span>
+                      {s.shopName}
+                    </span>
+                    <span className="flex items-center gap-1 text-yellow-500">
+                      <FaStar /> {s.averageRating}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs text-gray-400 poppins-regular">No data for this month.</p>
+            )}
+          </div>
+
+          {/* Expired Products */}
+          <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+            <div className="flex items-center gap-2 mb-4 border-b pb-2">
+              <FaStoreSlash className="text-purple-500" />
+              <h3 className="poppins-semibold text-gray-800 text-sm">Expire products using outlets</h3>
+            </div>
+            {expiredOutlets.length > 0 ? (
+              <ul className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                {expiredOutlets.map((s, idx) => (
+                  <li 
+                    key={idx} 
+                    onClick={() => setExpiredModal({ isOpen: true, shopData: s })}
+                    className="flex flex-col text-sm poppins-medium text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-100 cursor-pointer hover:bg-gray-100 hover:shadow-sm transition-all"
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center font-semibold text-gray-900">
+                        <span className="w-2 h-2 rounded-full bg-purple-500 mr-2"></span>
+                        {s.shopName}
+                      </div>
+                      <span className="bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded-full font-bold">
+                        {s.count || 1} Product{(s.count || 1) > 1 ? 's' : ''}
+                      </span>
+                    </div>
+                    {s.auditDate && (
+                      <div className="text-xs text-gray-500 mt-1 ml-4">
+                        Audit Date: {dayjs(s.auditDate).format('DD MMM YYYY')}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs text-gray-400 poppins-regular">No recent expired products detected.</p>
+            )}
+          </div>
+
+          {/* Auditor Performance */}
+          <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+            <div className="flex items-center gap-2 mb-4 border-b pb-2">
+              <FaChartBar className="text-blue-500" />
+              <h3 className="poppins-semibold text-gray-800 text-sm">Auditor's Performance (No of Audits per month)</h3>
+            </div>
+            {auditorPerformance.length > 0 ? (
+              <div className="w-full h-48">
+                <Bar 
+                  data={{
+                    labels: auditorPerformance.map(a => a.auditorName),
+                    datasets: [{
+                      label: 'Completed Audits',
+                      data: auditorPerformance.map(a => a.auditsCompleted),
+                      backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                      borderRadius: 4,
+                    }]
+                  }}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                  }}
+                />
+              </div>
+            ) : (
+              <p className="text-xs text-gray-400 poppins-regular">No audits completed this month.</p>
+            )}
+          </div>
+
+        </div>
+      )}
+
+      {/* Expired Products Modal */}
+      {expiredModal.isOpen && expiredModal.shopData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden transform transition-all scale-100 opacity-100">
+            <div className="px-6 py-4 border-b border-gray-100 bg-purple-50/50 flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">{expiredModal.shopData.shopName}</h3>
+                <p className="text-xs text-gray-500">Expired Products Detail</p>
+              </div>
+              <button 
+                onClick={() => setExpiredModal({ isOpen: false, shopData: null })}
+                className="text-gray-400 hover:text-gray-600 transition-colors bg-white rounded-full p-1"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="p-6 max-h-96 overflow-y-auto space-y-3">
+              {expiredModal.shopData.expiredProducts && expiredModal.shopData.expiredProducts.map((prod, i) => (
+                <div key={i} className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                  <div className="font-medium text-sm text-gray-800">{prod.name}</div>
+                  <div className="text-xs font-semibold px-2 py-1 bg-red-100 text-red-700 rounded border border-red-200">
+                    Expiry: {prod.details}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-end">
+              <button 
+                onClick={() => setExpiredModal({ isOpen: false, shopData: null })}
+                className="px-5 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors shadow-sm shadow-purple-500/30"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

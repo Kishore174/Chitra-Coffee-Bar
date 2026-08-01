@@ -87,6 +87,11 @@ const AddAudit = () => {
       
       
             <div className='p-6 mx-auto flex flex-col items-center'>
+              <Link to={`/perform-audit/${id}`} className='w-5/6 mb-4'>
+                <button className='bg-red-500 text-white w-full py-2 poppins-semibold rounded-md hover:bg-red-600 transition-colors'>
+                  Config Audit
+                </button>
+              </Link>
               <div className='flex flex-wrap gap-5 justify-center'>
                 {audits.map((audit) => (
                   <div key={audit.id} className='bg-white shadow-lg rounded-lg lg:w-56 md:w-52 w-full flex flex-col items-center p-3 transition-transform transform hover:scale-105 hover:shadow-xl'>

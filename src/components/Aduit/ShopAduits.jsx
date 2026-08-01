@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { BsArrowRight } from "react-icons/bs";
 import { assignAuditorsAudit, assignAuditRoute, getAllAudits, getAuditByAuditor, getAuditsAll } from "../../API/audits";
+import { getAuditDataV2, getAuditByAuditorV2, getAllAuditsV2 } from "../../API/auditV2";
 import {getRoutesByAuditor } from "../../API/createRoute"
 import { ScaleLoader } from "react-spinners";
 import { useAuth } from "../../context/AuthProvider";
@@ -22,28 +23,46 @@ const ShopAudits = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const [selectedRoute,setSelectedRoute] = useState('')
+  const [showOldAudits, setShowOldAudits] = useState(false);
 
   useEffect(() => {
-    
-        getAuditsAll()
-          .then((res) =>{
-             setAudits(res.data.filter(d=>d.shop?._id === shopId))
-             setSelectedRoute(res.data.find(d=>d.shop?._id === shopId)?.shop?.shopName)
-            })
-          .catch((err)=>console.log(err))
-          .finally(() => {
-            setLoading(false);
-          });
-
-  }, []);
+    setLoading(true);
+    if (showOldAudits) {
+      getAuditsAll()
+        .then((res) =>{
+           setAudits(res.data.filter(d=>d.shop?._id === shopId))
+           setSelectedRoute(res.data.find(d=>d.shop?._id === shopId)?.shop?.shopName)
+          })
+        .catch((err)=>console.log(err))
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      getAllAuditsV2()
+        .then((res) =>{
+           setAudits(res.data.filter(d=>d.shop?._id === shopId))
+           setSelectedRoute(res.data.find(d=>d.shop?._id === shopId)?.shop?.shopName)
+          })
+        .catch((err)=>console.log(err))
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [shopId, showOldAudits]);
 
 
   return (
     <div className="p-4 md:p-6 min-h-screen">
       <Link to='/myshop'><h2 className="text-xl poppins-semibold "><ArrowBack/> Back</h2></Link>
       <br />
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl poppins-semibold ">{selectedRoute} Audits</h2>
+        <button
+          className="bg-gray-100 text-gray-800 rounded poppins-semibold py-1 px-3 border border-gray-300 text-sm hover:bg-gray-200"
+          onClick={() => setShowOldAudits(!showOldAudits)}
+        >
+          {showOldAudits ? "Show V2" : "Show Old"}
+        </button>
         {/* {user && user.role === "super-admin" && audits.length < 0 && isScheduleDay ? (
           <button
             className={`${
@@ -90,12 +109,12 @@ const ShopAudits = () => {
                     </a>
                     <div
                       className={`mt-2 ${
-                        audit.status === "Completed"
+                        audit.status?.toLowerCase() === "completed"
                           ? "text-green-600"
                           : "text-red-600"
                       }`}
                     >
-                      {audit.status}
+                      {audit.status} {audit.status?.toLowerCase() === "completed" && `(⭐ ${audit.overallRating || audit.rating})`}
                     </div>
                     <div>{audit.shop.phone}</div>
                     <a
@@ -106,11 +125,11 @@ const ShopAudits = () => {
                     </a>
                     <div className="mt-2">
                       {audit.status !== "completed" ? (
-                        <Link to={`/add-audit/${audit._id}`}>
+                        <Link to={showOldAudits ? `/add-audit/${audit._id}` : `/perform-audit/${audit._id}`}>
                           <BsArrowRight className="text-red-600 text-2xl" />
                         </Link>
                       ) : (
-                        <Link to={`/report/${audit._id}`}>
+                        <Link to={showOldAudits ? `/report/${audit._id}` : `/report-v2/${audit._id}`}>
                           <button className="text-blue-500 poppins-regular">
                             View
                           </button>
@@ -192,15 +211,15 @@ const ShopAudits = () => {
                         )}
                         <td
                           className={`border-b poppins-regular border-gray-200 text-sm ${
-                            audit.status === "Completed"
+                            audit.status?.toLowerCase() === "completed"
                               ? "text-green-600"
                               : "text-red-600"
                           }`}
                         >
                           <div className="poppins-regular text-center">
-                            {audit.status === "completed" && (
+                            {audit.status?.toLowerCase() === "completed" && (
                               <div className="poppins-semibold text-yellow-500">
-                                {audit.rating}
+                                ⭐ {audit.overallRating || audit.rating}
                               </div>
                             )}
                             <div className=" text-blue-800">{new Date(audit.auditDate).toLocaleDateString('en-GB')}</div>
@@ -226,11 +245,11 @@ const ShopAudits = () => {
                         <td className="px-4 py-4 border-b poppins-regular border-gray-200 text-sm">
                           {audit.status !== "completed" &&
                           user?.role !== "super-admin" ? (
-                            <Link to={`/add-audit/${audit._id}`}>
+                            <Link to={showOldAudits ? `/add-audit/${audit._id}` : `/perform-audit/${audit._id}`}>
                               <BsArrowRight className="text-red-600 text-2xl" />
                             </Link>
                           ) : (
-                            <Link to={`/report/${audit?._id}`}>
+                            <Link to={showOldAudits ? `/report/${audit?._id}` : `/report-v2/${audit?._id}`}>
                               <button className="text-blue poppins-regular">
                                 View
                               </button>

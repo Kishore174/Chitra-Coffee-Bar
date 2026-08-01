@@ -4,7 +4,7 @@ import { addset } from '../../../../API/createRoute';
 import toast from 'react-hot-toast';
 import { deleteShopIntoSet } from '../../../../API/settings';
 
-const ShopCard = ({ shops, routeId, index, selSet, onRefresh }) => {
+const ShopCard = ({ shops, routeId, index, selSet, onRefresh, onSchedule }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRoutes, setSelectedRoutes] = useState([]);
@@ -45,11 +45,11 @@ const ShopCard = ({ shops, routeId, index, selSet, onRefresh }) => {
   };
 
   useEffect(() => {
-    setSelectedRoutes(selSet);
+    setSelectedRoutes((selSet || []).filter(Boolean));
   }, [selSet]);
 
-  const filteredShops = shops.filter((shop) =>
-    shop.shopName.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredShops = (shops || []).filter((shop) =>
+    shop?.shopName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -63,7 +63,7 @@ const ShopCard = ({ shops, routeId, index, selSet, onRefresh }) => {
                 key={route._id}
                 className="flex items-center gap-1 px-2.5 py-1 bg-gray-50 border border-gray-200 rounded-md text-xs text-gray-700 group hover:border-red-200 hover:bg-red-50 transition"
               >
-                <span className="truncate max-w-[120px]">{route.shopName}</span>
+                <span className="truncate max-w-[120px]">{route?.shopName}</span>
                 <button
                   className="text-gray-400 group-hover:text-red-500 transition flex-shrink-0"
                   onClick={() => handleRemoveRoute(route)}
@@ -83,12 +83,22 @@ const ShopCard = ({ shops, routeId, index, selSet, onRefresh }) => {
       {/* Card footer */}
       <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-t border-gray-100">
         <span className="text-xs text-gray-400">{selectedRoutes.length} shops</span>
-        <button
-          onClick={toggleModal}
-          className="px-3 py-1 bg-red-600 text-white text-xs rounded-md hover:bg-red-700 transition poppins-medium"
-        >
-          + Add Shop
-        </button>
+        <div className="flex gap-2">
+          {selectedRoutes.length > 0 && (
+            <button
+              onClick={() => onSchedule?.(index, selectedRoutes)}
+              className="px-3 py-1 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 transition poppins-medium"
+            >
+              Schedule
+            </button>
+          )}
+          <button
+            onClick={toggleModal}
+            className="px-3 py-1 bg-red-600 text-white text-xs rounded-md hover:bg-red-700 transition poppins-medium"
+          >
+            + Add Shop
+          </button>
+        </div>
       </div>
 
       {/* Modal */}
@@ -129,7 +139,7 @@ const ShopCard = ({ shops, routeId, index, selSet, onRefresh }) => {
                       key={route._id}
                       className="flex items-center gap-1 px-2.5 py-1 bg-red-50 border border-red-200 rounded-md text-xs text-red-700"
                     >
-                      <span className="truncate max-w-[140px]">{route.shopName}</span>
+                      <span className="truncate max-w-[140px]">{route?.shopName}</span>
                       <button
                         className="text-red-400 hover:text-red-600 flex-shrink-0"
                         onClick={() => handleRemoveRoute(route)}
@@ -158,7 +168,7 @@ const ShopCard = ({ shops, routeId, index, selSet, onRefresh }) => {
                     }`}
                     onClick={() => handleSelectRoute(route)}
                   >
-                    {route.shopName}
+                    {route?.shopName}
                   </div>
                 ))
               ) : (
