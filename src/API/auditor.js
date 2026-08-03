@@ -18,8 +18,8 @@ export const createAuditor = async (shopdata) => {
   const response = await axiosintance.post(`/auditor-create`, formData);
   return response.data;
 };
-export const getAllAuditors = async () => {
-  const response = await axiosintance.get(`/auditors`);
+export const getAllAuditors = async (params) => {
+  const response = await axiosintance.get(`/auditors`, { params });
   return response.data;
 };
 export const deleteAuditor = async (id) => {

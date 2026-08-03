@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { FaCalendarAlt, FaStar, FaStore, FaSearch, FaUserTie, FaMapMarkerAlt, FaCheck, FaTimes } from 'react-icons/fa';
 import dayjs from 'dayjs';
 import toast from 'react-hot-toast';
 import Loader from '../Loader';
 import { getAllShops } from '../../API/shop';
-import { getAllAuditsV2, assignManualAuditsV2, deleteAuditV2, approveAuditV2 } from '../../API/auditV2';
+import { assignManualAuditsV2, deleteAuditV2, approveAuditV2 } from '../../API/auditV2';
 import { getAllAuditors } from '../../API/auditor';
 import { getRoute } from '../../API/createRoute';
 import { getExpiryAlerts } from '../../API/dashboard';
@@ -28,48 +28,61 @@ const ScheduleAudit = () => {
   const [filterAgeing, setFilterAgeing] = useState(false);
 
   const EXPIRY_DAYS = 30;
+  const baseDataRef = useRef({ shops: [], auditors: [], routes: [], expiry: [] });
+
+  const fetchedRef = useRef(false);
 
   useEffect(() => {
-    fetchData();
+    if (!fetchedRef.current) {
+      fetchedRef.current = true;
+      fetchData();
+    }
   }, []);
 
-  const fetchData = async () => {
+  const fetchData = async (refreshOnly = false) => {
     setLoading(true);
     try {
-      const [shopsRes, auditsRes, auditorsRes, routesRes, expiryRes] = await Promise.all([
-        getAllShops(),
-        getAllAuditsV2(),
-        getAllAuditors(),
-        getRoute(),
-        getExpiryAlerts()
-      ]);
+      let shopsData, auditorsData, routesData, expiredProductAlerts;
 
-      const shopsData = shopsRes?.data || [];
-      const auditsData = auditsRes?.data || [];
-      const auditorsData = (auditorsRes?.data || []).filter(a => a.role === 'auditor');
-      const routesData = routesRes?.data || [];
-      const expiredProductAlerts = expiryRes?.data?.expiredProductAlerts || [];
+      if (!refreshOnly) {
+        const [shopsRes, auditorsRes, routesRes, expiryRes] = await Promise.all([
+          getAllShops({ withLatestAudit: true }),
+          getAllAuditors({ withFutureAudits: true }),
+          getRoute(),
+          getExpiryAlerts()
+        ]);
+        shopsData = shopsRes?.data || [];
+        auditorsData = (auditorsRes?.data || []).filter(a => a.role === 'auditor');
+        routesData = routesRes?.data || [];
+        expiredProductAlerts = expiryRes?.data?.expiredProductAlerts || [];
+
+        baseDataRef.current = {
+          shops: shopsData,
+          auditors: auditorsData,
+          routes: routesData,
+          expiry: expiredProductAlerts
+        };
+      } else {
+        const [shopsRes, auditorsRes] = await Promise.all([
+          getAllShops({ withLatestAudit: true }),
+          getAllAuditors({ withFutureAudits: true })
+        ]);
+        shopsData = shopsRes?.data || [];
+        auditorsData = (auditorsRes?.data || []).filter(a => a.role === 'auditor');
+        routesData = baseDataRef.current.routes;
+        expiredProductAlerts = baseDataRef.current.expiry;
+      }
       const expiredProductShops = expiredProductAlerts.map(s => s._id);
 
-      // Add a property to auditorsData to hold all their pending/future audits
-      const todayStart = dayjs().startOf('day');
-
       const enhancedAuditors = auditorsData.map(auditor => {
-        const auditorAudits = auditsData.filter(a => {
-          if (a.auditor?._id !== auditor._id) return false;
-          const aDate = dayjs(a.auditDate);
-          return aDate.valueOf() >= todayStart.valueOf();
-        });
-        return { ...auditor, allAudits: auditorAudits };
+        return { ...auditor, allAudits: auditor.allAudits || [] };
       });
 
       setAuditors(enhancedAuditors);
       setRoutes(routesData);
 
       const processedShops = shopsData.map(shop => {
-        const shopAudits = auditsData.filter(a => a.shop?._id === shop._id);
-        shopAudits.sort((a, b) => new Date(b.auditDate) - new Date(a.auditDate));
-        const latestAudit = shopAudits[0] || null;
+        const latestAudit = shop.latestAudit || null;
 
         let rating = null;
         let auditDate = null;
@@ -195,9 +208,12 @@ const ScheduleAudit = () => {
       const auditDate = weekDates[selectedDayIndex];
       await assignManualAuditsV2({ auditorId: auditor._id, shopIds, auditDate });
       toast.success(`Successfully scheduled ${assignedShops.length} shop(s) for ${auditor.name} on ${dayShortLabels[selectedDayIndex]}`);
-      fetchData(); // Refresh the list from the server
+      fetchData(true); // Refresh only audits
     } catch (err) {
       toast.error(`Failed to schedule for ${auditor.name}: ` + (err.response?.data?.message || err.message));
+      setShops(prevShops => prevShops.map(s => 
+        s.assignedAuditorId === auditor._id ? { ...s, assignedAuditorId: null } : s
+      ));
     }
   };
 
@@ -210,7 +226,7 @@ const ScheduleAudit = () => {
     try {
       await deleteAuditV2(auditId);
       toast.success(`Successfully removed scheduled audit for ${shopName}`);
-      fetchData(); // Refresh the list
+      fetchData(true); // Refresh only audits
     } catch (err) {
       toast.error(`Failed to remove audit: ` + (err.response?.data?.message || err.message));
     } finally {
@@ -222,7 +238,7 @@ const ScheduleAudit = () => {
     try {
       await approveAuditV2(auditId);
       toast.success('Audit approved successfully');
-      fetchData(); // Refresh to update status
+      fetchData(true); // Refresh only audits
     } catch (err) {
       toast.error(`Failed to approve audit: ` + (err.response?.data?.message || err.message));
     }
