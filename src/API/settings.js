@@ -7,6 +7,22 @@ export const getBrand = async (data) => {
   const response = await axiosintance.get(`/brands`, data);
   return response.data;
 };
+export const createBranch = async (data) => {
+  const response = await axiosintance.post(`/setting/branch/add`, data);
+  return response.data;
+};
+export const getBranches = async (data) => {
+  const response = await axiosintance.get(`/branches`, data);
+  return response.data;
+};
+export const updateBranch = async (id, data) => {
+  const response = await axiosintance.put(`/setting/branch/${id}`, data);
+  return response.data;
+};
+export const deleteBranch = async (id, data) => {
+  const response = await axiosintance.delete(`/setting/branch/${id}`, data);
+  return response.data;
+};
 export const createSnackBrand = async (data) => {
   const response = await axiosintance.post(`/setting/snack/add`, data);
   return response.data;

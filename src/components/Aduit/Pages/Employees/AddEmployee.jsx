@@ -5,7 +5,7 @@ import { createEmployee, updateEmployee } from "../../../../API/employee";
 import toast from "react-hot-toast";
 import { dropDownRoutes, getRoute } from "../../../../API/createRoute";
 import { MdArrowBack } from "react-icons/md";
-import { getUnassignedRoutes } from "../../../../API/settings";
+import { getUnassignedRoutes, getBranches } from "../../../../API/settings";
 
 const AddEmployee = () => {
   const navigate = useNavigate();
@@ -40,6 +40,7 @@ const AddEmployee = () => {
     }
   );
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [branches, setBranches] = useState([]);
 
   const [selectRoute, setSelectRoute] = useState([]);
   const handleSelect = (routeId) => {
@@ -172,6 +173,20 @@ const AddEmployee = () => {
       });
     }
   }, [employee]);
+
+  useEffect(() => {
+    const fetchBranchesData = async () => {
+      try {
+        const res = await getBranches();
+        if (res && res.data) {
+          setBranches(res.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch branches", error);
+      }
+    };
+    fetchBranchesData();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -322,7 +337,12 @@ const AddEmployee = () => {
 
           <div>
             <label className={labelClass}>Work Location</label>
-            <input type="text" name="workLocation" placeholder="e.g. HQ / Branch A" value={formData.workLocation || ""} onChange={handleChange} disabled={isView} className={inputClass} />
+            <select name="workLocation" value={formData.workLocation || ""} onChange={handleChange} disabled={isView} className={inputClass}>
+              <option value="" disabled>Select Branch / Location</option>
+              {branches.map((branch) => (
+                <option key={branch._id} value={branch.name}>{branch.name}</option>
+              ))}
+            </select>
           </div>
 
           {formData.role !== "employee" && (

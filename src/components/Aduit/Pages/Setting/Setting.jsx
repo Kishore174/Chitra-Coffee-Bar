@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { MdArrowBack, MdFastfood, MdLabel, MdLiveTv } from 'react-icons/md';
+import { MdArrowBack, MdFastfood, MdLabel, MdLiveTv, MdStore } from 'react-icons/md';
 
 const Setting = () => {
   const navigate = useNavigate();
@@ -9,6 +9,7 @@ const Setting = () => {
     { name: 'Snacks', icon: <MdFastfood className="h-8 w-8 text-red-500" />, path: '/backeryproducts' },
     { name: 'Brand Name', icon: <MdLabel className="h-8 w-8 text-red-500" />, path: '/brandname' },
     { name: 'Live Snacks', icon: <MdFastfood className="h-8 w-8 text-red-500" />, path: '/livesnackname' },
+    { name: 'Branches', icon: <MdStore className="h-8 w-8 text-red-500" />, path: '/branches' },
   ];
 
   return (

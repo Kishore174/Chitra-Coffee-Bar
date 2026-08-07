@@ -34,6 +34,7 @@ import AuditReportV2 from "./components/Report/AuditReportV2";
 import BakerProducts from "./components/Aduit/Pages/Setting/BakerProducts";
 import Dressing from "./components/Aduit/Pages/Dressing/Dressing";
 import BrandName from "./components/Aduit/Pages/Setting/BrandName";
+import Branches from "./components/Aduit/Pages/Setting/Branches";
 import AuditConfigBuilder from "./components/Aduit/Pages/Setting/AuditConfigBuilder";
 import { Toaster } from "react-hot-toast";
 import InsideKitchens from "./components/Aduit/Pages/Kitchen/InsideKitchens";
@@ -127,6 +128,7 @@ function App() {
               <Route path="brandName" element={<BrandName />} />
               <Route path="audit-config" element={<AuditConfigBuilder />} />
               <Route path="livesnackname" element={<LiveSnacksName />} />
+              <Route path="branches" element={<Branches />} />
               <Route path="attendance-management" element={<AttendanceManagement />} />
               <Route path="leave-management" element={<LeaveManagement />} />
               <Route path="devices" element={<DeviceManagement />} />
