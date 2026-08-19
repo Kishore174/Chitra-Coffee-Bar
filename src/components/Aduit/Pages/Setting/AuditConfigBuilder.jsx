@@ -53,6 +53,7 @@ const emptySection = () => ({
   sectionKey: "",
   weightage: 0,
   isRepeatable: false,
+  requiresAvailabilityCheck: false,
   fields: [],
 });
 
@@ -298,6 +299,7 @@ const AuditConfigBuilder = () => {
       sectionKey: sec.sectionKey || slugify(sec.sectionName),
       weightage: Number(sec.weightage) || 0,
       isRepeatable: !!sec.isRepeatable,
+      requiresAvailabilityCheck: !!sec.requiresAvailabilityCheck,
       fields: sec.fields.map((f) => ({
         label: f.label,
         key: f.key || slugify(f.label),
@@ -625,6 +627,12 @@ const AuditConfigBuilder = () => {
                       checked={sec.isRepeatable || false}
                       onChange={(val) => updateSection(si, "isRepeatable", val)}
                       label="Repeatable"
+                      className="p-2 rounded-lg hover:bg-gray-100"
+                    />
+                    <ToggleSwitch
+                      checked={sec.requiresAvailabilityCheck || false}
+                      onChange={(val) => updateSection(si, "requiresAvailabilityCheck", val)}
+                      label="Avail. Check"
                       className="p-2 rounded-lg hover:bg-gray-100"
                     />
                   </div>

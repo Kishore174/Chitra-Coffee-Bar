@@ -420,7 +420,12 @@ const AuditReportV2 = () => {
 
                     return (
                       <tr key={idx} className="hover:bg-slate-50 transition-colors">
-                        <td className="py-3 px-4 text-sm font-semibold text-slate-700">{sec.sectionName}</td>
+                        <td className="py-3 px-4 text-sm font-semibold text-slate-700">
+                          {sec.sectionName}
+                          {sec.requiresAvailabilityCheck && sec.isAvailable === "no" && (
+                            <span className="ml-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">N/A</span>
+                          )}
+                        </td>
                         <td className="py-3 px-4 text-sm text-slate-600">{obtained} / {total} pts</td>
                         <td className="py-3 px-4 text-sm text-slate-600">{perc.toFixed(2)}%</td>
                         <td className="py-3 px-4 text-sm text-slate-600">{wt}%</td>
@@ -504,25 +509,33 @@ const AuditReportV2 = () => {
           const perc = total > 0 ? (obtained / total) * 100 : 0;
 
           return (
-            <SectionCard key={idx} title={`${sec.sectionName} (${perc.toFixed(0)}%)`} defaultOpen={true}>
-              {scalarFields.length > 0 && (
-                <table className="w-full">
-                  <TableHead />
-                  <tbody className="divide-y divide-slate-100">
-                    {scalarFields.map(f => (
-                      <FieldRow key={f.key} field={f} />
-                    ))}
-                  </tbody>
-                </table>
-              )}
-              {imgFields.map(f => (
-                <div key={f.key} className="border-t border-slate-100">
-                  <div className="px-4 py-2 bg-slate-50">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">{f.label}</span>
-                  </div>
-                  <ImageStrip images={f.pictures} setPreview={setPreviewImage} setSelImage={setSelImage} />
+            <SectionCard key={idx} title={`${sec.sectionName} ${sec.requiresAvailabilityCheck && sec.isAvailable === "no" ? '(Not Available)' : `(${perc.toFixed(0)}%)`}`} defaultOpen={true}>
+              {sec.requiresAvailabilityCheck && sec.isAvailable === "no" ? (
+                <div className="px-5 py-4 text-sm text-red-600 font-bold bg-white">
+                  This section was marked as Not Available.
                 </div>
-              ))}
+              ) : (
+                <>
+                  {scalarFields.length > 0 && (
+                    <table className="w-full">
+                      <TableHead />
+                      <tbody className="divide-y divide-slate-100">
+                        {scalarFields.map(f => (
+                          <FieldRow key={f.key} field={f} />
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                  {imgFields.map(f => (
+                    <div key={f.key} className="border-t border-slate-100">
+                      <div className="px-4 py-2 bg-slate-50">
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">{f.label}</span>
+                      </div>
+                      <ImageStrip images={f.pictures} setPreview={setPreviewImage} setSelImage={setSelImage} />
+                    </div>
+                  ))}
+                </>
+              )}
             </SectionCard>
           );
         })}

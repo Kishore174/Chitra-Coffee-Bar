@@ -178,7 +178,7 @@ const Reports = () => {
         allFilteredAudits.forEach(a => {
           a.sections?.forEach(s => sectionNames.add(s.sectionName || "Section"));
         });
-        const secHeaders = Array.from(sectionNames);
+        const secHeaders = Array.from(sectionNames).sort((a, b) => a.localeCompare(b));
         secHeaders.forEach(s => {
           headers.push(`${s} Score`, `${s} %`);
         });
@@ -203,7 +203,7 @@ const Reports = () => {
               }
            });
         });
-        const fieldHeaders = Array.from(fieldKeys);
+        const fieldHeaders = Array.from(fieldKeys).sort((a, b) => a.localeCompare(b));
         headers.push(...fieldHeaders);
 
         const rows = allFilteredAudits.map((audit, index) => {

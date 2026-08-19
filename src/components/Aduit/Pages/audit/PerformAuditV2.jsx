@@ -46,6 +46,8 @@ const initSections = (sections, fromConfig) =>
     sectionName: sec.sectionName,
     sectionKey: sec.sectionKey,
     weightage: Number(sec.weightage) || 0,
+    requiresAvailabilityCheck: !!sec.requiresAvailabilityCheck,
+    isAvailable: fromConfig ? null : sec.isAvailable ?? null,
     fields: (sec.fields || []).map((f) => ({
       label: f.label,
       key: f.key,
@@ -122,6 +124,13 @@ const PerformAuditV2 = () => {
       return next;
     });
 
+  const setSectionAvailability = (si, value) =>
+    setSections((prev) => {
+      const next = [...prev];
+      next[si] = { ...next[si], isAvailable: value };
+      return next;
+    });
+
   const addFiles = (si, fi, fileList) => {
     const incoming = Array.from(fileList || []);
     if (!incoming.length) return;
@@ -147,10 +156,12 @@ const PerformAuditV2 = () => {
   const scored = sections.map((sec) => {
     let obtained = 0;
     let total = 0;
-    sec.fields.forEach((f) => {
-      obtained += Number(f.obtainedPoints) || 0;
-      total += Number(f.maxPoints) || 0;
-    });
+    if (!(sec.requiresAvailabilityCheck && sec.isAvailable === "no")) {
+      sec.fields.forEach((f) => {
+        obtained += Number(f.obtainedPoints) || 0;
+        total += Number(f.maxPoints) || 0;
+      });
+    }
     const percentage = total > 0 ? (obtained / total) * 100 : 0;
     const weightedScore = (percentage * sec.weightage) / 100;
     return { obtained, total, percentage, weightedScore };
@@ -161,6 +172,13 @@ const PerformAuditV2 = () => {
   const handleSubmit = async () => {
     // required-field validation
     for (const sec of sections) {
+      if (sec.requiresAvailabilityCheck && !sec.isAvailable) {
+        toast.error(`Please select availability for ${sec.sectionName}`);
+        return;
+      }
+      if (sec.requiresAvailabilityCheck && sec.isAvailable === "no") {
+        continue;
+      }
       for (const f of sec.fields) {
         if (!f.required) continue;
         const empty =
@@ -187,6 +205,8 @@ const PerformAuditV2 = () => {
         sectionName: sec.sectionName,
         sectionKey: sec.sectionKey,
         weightage: sec.weightage,
+        isAvailable: sec.isAvailable,
+        requiresAvailabilityCheck: sec.requiresAvailabilityCheck,
         fields: sec.fields.map((f) => {
           (f._files || []).forEach((file) => files.push({ key: f.key, file }));
           const rest = { ...f };
@@ -267,7 +287,39 @@ const PerformAuditV2 = () => {
             </span>
           </div>
 
-          {sec.fields.map((f, fi) => (
+          {sec.requiresAvailabilityCheck && (
+            <div className="mb-4 bg-white p-3 rounded-lg border border-gray-200">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Is this section available? <span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name={`sec-avail-${si}`}
+                    value="yes"
+                    checked={sec.isAvailable === "yes"}
+                    onChange={() => setSectionAvailability(si, "yes")}
+                    className="text-red-500 focus:ring-red-400"
+                  />
+                  <span className="text-sm font-medium text-gray-700">Yes</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name={`sec-avail-${si}`}
+                    value="no"
+                    checked={sec.isAvailable === "no"}
+                    onChange={() => setSectionAvailability(si, "no")}
+                    className="text-red-500 focus:ring-red-400"
+                  />
+                  <span className="text-sm font-medium text-gray-700">No</span>
+                </label>
+              </div>
+            </div>
+          )}
+
+          {(!sec.requiresAvailabilityCheck || sec.isAvailable === "yes") && sec.fields.map((f, fi) => (
             <div
               key={fi}
               className="bg-white border border-gray-200 rounded-lg p-3 mb-3"
