@@ -88,3 +88,8 @@ export const deleteAudit = async(auditId)=>{
   const response = await axiosintance.delete(`/audit/${auditId}`);
   return response.data;
 }
+
+export const resetEmployeePassword = async (id, newPassword) => {
+  const response = await axiosintance.put(`/auditor/${id}/reset-password`, { newPassword });
+  return response.data;
+};

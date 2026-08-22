@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { FaPlus, FaEye, FaEdit, FaTrashAlt, FaUsers, FaSearch } from 'react-icons/fa';
+import { FaPlus, FaEye, FaEdit, FaTrashAlt, FaUsers, FaSearch, FaKey } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
-import { deleteEmployee, getAllEmployees } from '../../../../API/employee';
+import { deleteEmployee, getAllEmployees, resetEmployeePassword } from '../../../../API/employee';
 import toast from 'react-hot-toast';
 import Loader from '../../../Loader';
 
@@ -12,6 +12,9 @@ const Employees = () => {
   const [employees, setEmployees] = useState([]);
   const [employeeToDelete, setEmployeeToDelete] = useState(null);
   const [isConfirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [isResetModalOpen, setResetModalOpen] = useState(false);
+  const [employeeToReset, setEmployeeToReset] = useState(null);
+  const [newPassword, setNewPassword] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
@@ -40,6 +43,26 @@ const Employees = () => {
   const handleDeleteClick = (employee) => {
     setEmployeeToDelete(employee);
     setConfirmDialogOpen(true);
+  };
+
+  const handleResetClick = (employee) => {
+    setEmployeeToReset(employee);
+    setNewPassword('');
+    setResetModalOpen(true);
+  };
+
+  const submitResetPassword = () => {
+    if (!newPassword.trim()) {
+      toast.error('Please enter a new password');
+      return;
+    }
+    resetEmployeePassword(employeeToReset._id, newPassword)
+      .then(() => {
+        toast.success(`Password for ${employeeToReset.name} has been reset.`);
+        setResetModalOpen(false);
+        setEmployeeToReset(null);
+      })
+      .catch((err) => toast.error(`Error: ${err.message}`));
   };
 
   useEffect(() => {
@@ -152,6 +175,9 @@ const Employees = () => {
                           <button onClick={() => handleEdit(employee)} className="text-green-500 hover:text-green-700 transition-colors" title="Edit">
                             <FaEdit size={16} />
                           </button>
+                          <button onClick={() => handleResetClick(employee)} className="text-yellow-500 hover:text-yellow-700 transition-colors" title="Reset Password">
+                            <FaKey size={16} />
+                          </button>
                           <button onClick={() => handleDeleteClick(employee)} className="text-[#da251d] hover:text-red-800 transition-colors" title="Delete">
                             <FaTrashAlt size={16} />
                           </button>
@@ -212,6 +238,9 @@ const Employees = () => {
                     <button className="text-green-500" onClick={() => handleEdit(employee)}>
                       <FaEdit size={18} />
                     </button>
+                    <button className="text-yellow-500" onClick={() => handleResetClick(employee)}>
+                      <FaKey size={18} />
+                    </button>
                     <button className="text-[#da251d]" onClick={() => handleDeleteClick(employee)}>
                       <FaTrashAlt size={18} />
                     </button>
@@ -265,6 +294,44 @@ const Employees = () => {
                     onClick={confirmDelete}
                   >
                     Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Reset Password Modal */}
+          {isResetModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 p-4">
+              <div className="bg-white p-6 rounded-xl shadow-xl max-w-sm w-full">
+                <h2 className="text-lg poppins-semibold text-gray-800 mb-2">Reset Password</h2>
+                <p className="text-sm text-gray-600 mb-4 poppins-regular">
+                  Enter a new password for <strong>{employeeToReset?.name}</strong>.
+                </p>
+                <div className="mb-6">
+                  <input
+                    type="text"
+                    placeholder="New Password"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#da251d] text-sm poppins-regular"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                </div>
+                <div className="flex justify-end space-x-3">
+                  <button 
+                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 poppins-medium transition-colors text-sm" 
+                    onClick={() => {
+                      setResetModalOpen(false);
+                      setNewPassword('');
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 shadow-sm poppins-medium transition-colors text-sm" 
+                    onClick={submitResetPassword}
+                  >
+                    Reset
                   </button>
                 </div>
               </div>
