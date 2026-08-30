@@ -278,7 +278,7 @@ const ScheduleAudit = () => {
   });
 
   return (
-    <div className="min-h-screen px-4 py-6 max-w-screen-xl mx-auto flex flex-col h-[calc(100vh-64px)] overflow-hidden">
+    <div className="h-full w-full flex flex-col overflow-hidden max-w-screen-xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 flex-shrink-0">
         <div className="flex items-center gap-3">

@@ -8,6 +8,8 @@ import { formatTime, calculateDuration, formatDuration } from "../../utils/tool"
 import { getProducts } from "../../API/settings";
 import { getAllShops } from "../../API/shop";
 import { getAllEmployees } from "../../API/employee";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const STORAGE_KEY = "reports_filters";
 
@@ -154,7 +156,48 @@ const Reports = () => {
 
       if (!showOldAudits) {
         // --- V2 EXPORT ---
-        const headers = [
+        const workbook = new ExcelJS.Workbook();
+        const sheet = workbook.addWorksheet("Audit Reports");
+
+        // 1. Collect all unique section names
+        const sectionNames = new Set();
+        allFilteredAudits.forEach(a => {
+          a.sections?.forEach(s => sectionNames.add(s.sectionName || "Section"));
+        });
+        const secList = Array.from(sectionNames).sort((a, b) => a.localeCompare(b));
+
+        // 2. Dynamically determine columns based on sections.
+        const sectionColumns = {}; 
+        
+        secList.forEach(s => {
+            let isRepeatable = false;
+            const fieldLabels = new Set();
+            
+            allFilteredAudits.forEach(a => {
+                const sec = a.sections?.find(x => x.sectionName === s);
+                if (sec) {
+                    if (sec.isRepeatable) {
+                        isRepeatable = true;
+                        sec.rows?.forEach(r => {
+                            r.fields?.forEach(f => {
+                                fieldLabels.add(f.label || f.key);
+                            });
+                        });
+                    }
+                }
+            });
+
+            if (isRepeatable) {
+                // Use field labels directly as headers (e.g., "Product", "Stock", "Expiry Date")
+                // Prefix the first column with the section name for clarity if we want, but field labels are cleaner.
+                sectionColumns[s] = { type: 'repeatable', cols: Array.from(fieldLabels) };
+            } else {
+                sectionColumns[s] = { type: 'non-repeatable', cols: [s, "Value", "Remarks"] };
+            }
+        });
+
+        // Let's create the header row.
+        const headerRow = [
           "S.No",
           "Shop Name",
           "Owner Name",
@@ -170,127 +213,136 @@ const Reports = () => {
         ];
         
         if (user?.role === "super-admin") {
-          headers.push("Auditor Name", "Auditor Phone", "Auditor Email", "In Time", "Out Time", "Duration");
+          headerRow.push("Auditor Name", "Auditor Phone", "Auditor Email", "In Time", "Out Time", "Duration");
         }
 
-        // Section Summaries
-        const sectionNames = new Set();
-        allFilteredAudits.forEach(a => {
-          a.sections?.forEach(s => sectionNames.add(s.sectionName || "Section"));
-        });
-        const secHeaders = Array.from(sectionNames).sort((a, b) => a.localeCompare(b));
-        secHeaders.forEach(s => {
-          headers.push(`${s} Score`, `${s} %`);
-        });
+        headerRow.push("Field", "Score %"); 
 
-        // Detailed Fields
-        const fieldKeys = new Set();
-        allFilteredAudits.forEach(a => {
-           a.sections?.forEach(sec => {
-              const prefix = sec.sectionName || "Section";
-              if (sec.isRepeatable && sec.rows) {
-                 sec.rows.forEach((row, i) => {
-                    row.fields?.forEach(f => {
-                       fieldKeys.add(`${prefix} [${i+1}] - ${f.label || f.key}`);
-                       fieldKeys.add(`${prefix} [${i+1}] - ${f.label || f.key} (Remarks)`);
-                    });
-                 });
-              } else if (sec.fields) {
-                 sec.fields.forEach(f => {
-                    fieldKeys.add(`${prefix} - ${f.label || f.key}`);
-                    fieldKeys.add(`${prefix} - ${f.label || f.key} (Remarks)`);
-                 });
-              }
-           });
-        });
-        const fieldHeaders = Array.from(fieldKeys).sort((a, b) => a.localeCompare(b));
-        headers.push(...fieldHeaders);
-
-        const rows = allFilteredAudits.map((audit, index) => {
-           const row = [
-              index + 1,
-              audit.shop?.shopName || "N/A",
-              audit.shop?.ownerName || "N/A",
-              audit.shop?.address || "N/A",
-              audit.shop?.phone || "N/A",
-              audit.shop?.email || "N/A",
-              audit.auditDate ? new Date(audit.auditDate).toLocaleDateString("en-GB") : "N/A",
-              audit.configName || "N/A",
-              audit.status || "N/A",
-              audit.status === "completed" ? (audit.overallRating || 0) : 0,
-              audit.status === "completed" ? (audit.finalPercentage?.toFixed(2) || 0) : "N/A",
-              audit.status === "completed" ? (audit.overallGrade || "N/A") : "N/A",
-           ];
-           if (user?.role === "super-admin") {
-              row.push(
-                audit.auditor?.name || "N/A",
-                audit.auditor?.phone || "N/A",
-                audit.auditor?.email || "N/A",
-                formatTime(audit.inTime) || "N/A",
-                formatTime(audit.outTime) || "N/A",
-                formatDuration(calculateDuration(audit.inTime, audit.outTime)) || "N/A"
-              );
-           }
-           secHeaders.forEach(s => {
-              const sec = audit.sections?.find(x => x.sectionName === s);
-              if (sec) {
-                 row.push(`${sec.obtainedScore || 0}/${sec.totalScore || 0}`, `${Number(sec.percentage || 0).toFixed(1)}%`);
-              } else {
-                 row.push("N/A", "N/A");
-              }
-           });
-
-           // Flatten current audit fields for quick lookup
-           const auditFields = {};
-           const extractVal = (v) => {
-              if (v === null || v === undefined || v === '') return '';
-              if (Array.isArray(v)) return `${v.length} item(s)`;
-              if (typeof v === 'boolean') return v ? 'Yes' : 'No';
-              if (typeof v === 'object') return v.status || v.remark || JSON.stringify(v);
-              return String(v);
-           };
-
-           audit.sections?.forEach(sec => {
-              const prefix = sec.sectionName || "Section";
-              if (sec.isRepeatable && sec.rows) {
-                 sec.rows.forEach((r, i) => {
-                    r.fields?.forEach(f => {
-                       const val = f.isAvailable === 'no' ? 'Not Available' : extractVal(f.value);
-                       auditFields[`${prefix} [${i+1}] - ${f.label || f.key}`] = val;
-                       auditFields[`${prefix} [${i+1}] - ${f.label || f.key} (Remarks)`] = f.remarks || "";
-                    });
-                 });
-              } else if (sec.fields) {
-                 sec.fields.forEach(f => {
-                    const val = f.isAvailable === 'no' ? 'Not Available' : extractVal(f.value);
-                    auditFields[`${prefix} - ${f.label || f.key}`] = val;
-                    auditFields[`${prefix} - ${f.label || f.key} (Remarks)`] = f.remarks || "";
-                 });
-              }
-           });
-
-           fieldHeaders.forEach(h => {
-              row.push(auditFields[h] || "N/A");
-           });
-
-           return row;
+        secList.forEach(s => {
+          // To distinguish sections in the header, we can add a super-header or just prepend the section name to the first column.
+          const sc = sectionColumns[s];
+          if (sc.type === 'repeatable' && sc.cols.length > 0) {
+              const modifiedCols = [...sc.cols];
+              modifiedCols[0] = `${s} (${modifiedCols[0]})`; // E.g., "Bakshanam Audit (Product)"
+              headerRow.push(...modifiedCols);
+          } else {
+              headerRow.push(...sc.cols);
+          }
         });
 
-        const csvContent = [
-          headers.join(","),
-          ...rows.map(row =>
-            row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(",")
-          ),
-        ].join("\n");
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `AuditV2_Reports_${fromDate || "All"}_to_${toDate || "All"}_${new Date().toISOString().split("T")[0]}.csv`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        sheet.addRow(headerRow).font = { bold: true };
+
+        const extractVal = (v) => {
+            if (v === null || v === undefined || v === '') return '';
+            if (Array.isArray(v)) return `${v.length} item(s)`;
+            if (typeof v === 'boolean') return v ? 'Yes' : 'No';
+            if (typeof v === 'object') return v.status || v.remark || JSON.stringify(v);
+            return String(v);
+        };
+
+        allFilteredAudits.forEach((audit, index) => {
+            // Basic Info (Row 1 for this audit)
+            const basicInfo = [
+                index + 1,
+                audit.shop?.shopName || "N/A",
+                audit.shop?.ownerName || "N/A",
+                audit.shop?.address || "N/A",
+                audit.shop?.phone || "N/A",
+                audit.shop?.email || "N/A",
+                audit.auditDate ? new Date(audit.auditDate).toLocaleDateString("en-GB") : "N/A",
+                audit.configName || "N/A",
+                audit.status || "N/A",
+                audit.status === "completed" ? (audit.overallRating || 0) : 0,
+                audit.status === "completed" ? (audit.finalPercentage?.toFixed(2) || 0) : "N/A",
+                audit.status === "completed" ? (audit.overallGrade || "N/A") : "N/A",
+            ];
+            if (user?.role === "super-admin") {
+                basicInfo.push(
+                    audit.auditor?.name || "N/A",
+                    audit.auditor?.phone || "N/A",
+                    audit.auditor?.email || "N/A",
+                    formatTime(audit.inTime) || "N/A",
+                    formatTime(audit.outTime) || "N/A",
+                    formatDuration(calculateDuration(audit.inTime, audit.outTime)) || "N/A"
+                );
+            }
+
+            // Extract section data
+            const auditSecScores = []; 
+            secList.forEach(s => {
+                const sec = audit.sections?.find(x => x.sectionName === s);
+                if (sec) {
+                    auditSecScores.push({ name: s, score: `${Number(sec.percentage || 0).toFixed(1)}%` });
+                }
+            });
+
+            const sectionItems = {}; 
+            secList.forEach(s => {
+                const sec = audit.sections?.find(x => x.sectionName === s);
+                sectionItems[s] = [];
+                const sc = sectionColumns[s];
+
+                if (sec) {
+                    if (sec.isRepeatable && sec.rows) {
+                        sec.rows.forEach((r) => {
+                            const rowItem = {};
+                            r.fields?.forEach(f => {
+                                rowItem[f.label || f.key] = f.isAvailable === 'no' ? 'Not Available' : extractVal(f.value);
+                            });
+                            // Map to the exact columns
+                            const rowVals = sc.cols.map(colName => rowItem[colName] || "");
+                            sectionItems[s].push(rowVals);
+                        });
+                    } else if (sec.fields) {
+                        sec.fields.forEach(f => {
+                            const val = f.isAvailable === 'no' ? 'Not Available' : extractVal(f.value);
+                            sectionItems[s].push([f.label || f.key, val, f.remarks || ""]);
+                        });
+                    }
+                }
+            });
+
+            // Calculate max rows needed for this audit
+            let maxRows = Math.max(1, auditSecScores.length);
+            secList.forEach(s => {
+                maxRows = Math.max(maxRows, sectionItems[s].length);
+            });
+
+            // Generate rows
+            for (let i = 0; i < maxRows; i++) {
+                const row = [];
+                
+                // Basic info only on first row
+                if (i === 0) {
+                    row.push(...basicInfo);
+                } else {
+                    for(let b=0; b<basicInfo.length; b++) row.push("");
+                }
+
+                // Section Scores
+                if (i < auditSecScores.length) {
+                    row.push(auditSecScores[i].name, auditSecScores[i].score);
+                } else {
+                    row.push("", "");
+                }
+
+                // Section Details
+                secList.forEach(s => {
+                    const sc = sectionColumns[s];
+                    if (i < sectionItems[s].length) {
+                        row.push(...sectionItems[s][i]);
+                    } else {
+                        for(let c=0; c<sc.cols.length; c++) row.push("");
+                    }
+                });
+
+                sheet.addRow(row);
+            }
+        });
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        saveAs(blob, `AuditV2_Reports_${fromDate || "All"}_to_${toDate || "All"}_${new Date().toISOString().split("T")[0]}.xlsx`);
         setExportLoading(false);
         return;
       }

@@ -3,6 +3,8 @@ import { getAllAttendance } from "../../API/attendance";
 import { getAllEmployees } from "../../API/employee";
 import { getLeavesByDate } from "../../API/leaveRequest";
 import dayjs from "dayjs";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 import {
   FaFingerprint,
   FaCalendarAlt,
@@ -155,31 +157,110 @@ const AttendanceManagement = () => {
     return absents;
   };
 
-  const handleExportCSV = () => {
-    let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Employee Name,Phone,Total Days in Range,Present Days,Checked In (Not Checked Out),Leave Days,Absent Days,Total Hours Worked\n";
+  const handleExportExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    
+    // Sheet 1: Summary
+    const summarySheet = workbook.addWorksheet("Summary");
+    summarySheet.columns = [
+      { header: "Employee Name", key: "name", width: 25 },
+      { header: "Phone", key: "phone", width: 15 },
+      { header: "Total Days in Range", key: "totalDays", width: 20 },
+      { header: "Present Days", key: "presentDays", width: 15 },
+      { header: "Checked In (Not Checked Out)", key: "checkedInDays", width: 25 },
+      { header: "Leave Days", key: "leaveDays", width: 15 },
+      { header: "Absent Days", key: "absentDays", width: 15 },
+      { header: "Total Hours Worked", key: "totalHours", width: 20 },
+    ];
+    
+    // Header style
+    summarySheet.getRow(1).font = { bold: true };
     
     mergedData.forEach(d => {
-        const row = [
-            `"${d.employee.name}"`,
-            `"${d.employee.phone}"`,
-            totalDays,
-            d.presentDays,
-            d.checkedInDays,
-            d.onLeaveDays,
-            d.absentDays,
-            d.totalHours.toFixed(2)
-        ];
-        csvContent += row.join(",") + "\n";
+      summarySheet.addRow({
+        name: d.employee.name,
+        phone: d.employee.phone,
+        totalDays: totalDays,
+        presentDays: d.presentDays,
+        checkedInDays: d.checkedInDays,
+        leaveDays: d.onLeaveDays,
+        absentDays: d.absentDays,
+        totalHours: d.totalHours.toFixed(2)
+      });
     });
 
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Attendance_Export_${startDate}_to_${endDate}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Sheet 2: Date-wise
+    const dateWiseSheet = workbook.addWorksheet("Date-wise");
+    const dateColumns = datesInRange.map(d => ({
+      header: dayjs(d).format("DD MMM YYYY"),
+      key: d,
+      width: 20
+    }));
+    
+    dateWiseSheet.columns = [
+      { header: "Employee Name", key: "name", width: 25 },
+      { header: "Phone", key: "phone", width: 15 },
+      ...dateColumns
+    ];
+    dateWiseSheet.getRow(1).font = { bold: true };
+    
+    employees.forEach(emp => {
+      const empId = String(emp._id);
+      const empAttendance = attendanceMap[empId] || [];
+      const empLeaves = leaveMap[empId] || [];
+      
+      const rowData = {
+        name: emp.name,
+        phone: emp.phone
+      };
+      
+      datesInRange.forEach(d => {
+        const dStr = dayjs(d).format("YYYY-MM-DD");
+        const record = empAttendance.find(a => dayjs(a.date).format("YYYY-MM-DD") === dStr);
+        const leave = empLeaves.find(l => dayjs(l.fromDate).format("YYYY-MM-DD") <= dStr && dayjs(l.toDate).format("YYYY-MM-DD") >= dStr);
+        
+        let text = "Absent";
+        if (record) {
+          const inTime = record.checkIn?.time ? dayjs(record.checkIn.time).format("hh:mm A") : "-";
+          const outTime = record.checkOut?.time ? dayjs(record.checkOut.time).format("hh:mm A") : "-";
+          const hours = record.totalHours ? record.totalHours.toFixed(1) + " hrs" : "-";
+
+          if (record.status === "checked-out") {
+            text = `Present\nIn: ${inTime}\nOut: ${outTime}\nWork: ${hours}`;
+          } else {
+            text = `Checked In\nIn: ${inTime}`;
+          }
+        } else if (leave) {
+          text = "On Leave";
+        }
+        
+        rowData[d] = text;
+      });
+      
+      const row = dateWiseSheet.addRow(rowData);
+      
+      // Color-coding and wrap text based on status
+      datesInRange.forEach((d, index) => {
+         const cell = row.getCell(3 + index);
+         const val = String(cell.value || "");
+         
+         cell.alignment = { wrapText: true, vertical: 'top' };
+         
+         if (val.startsWith("Present")) {
+            cell.font = { color: { argb: "FF008000" } }; // Green
+         } else if (val.startsWith("Absent")) {
+            cell.font = { color: { argb: "FFFF0000" } }; // Red
+         } else if (val.startsWith("On Leave")) {
+            cell.font = { color: { argb: "FF800080" } }; // Purple
+         } else if (val.startsWith("Checked In")) {
+            cell.font = { color: { argb: "FFFFA500" } }; // Orange
+         }
+      });
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    saveAs(blob, `Attendance_Export_${startDate}_to_${endDate}.xlsx`);
   };
 
   const getStatusInfo = (record, leave) => {
@@ -232,10 +313,10 @@ const AttendanceManagement = () => {
             <FaUsersSlash className="text-red-500" /> View Absents
           </button>
           <button
-            onClick={handleExportCSV}
+            onClick={handleExportExcel}
             className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition"
           >
-            <FaFileExport /> Export CSV
+            <FaFileExport /> Export Excel
           </button>
         </div>
       </div>
