@@ -160,58 +160,60 @@ const ComplaintManagement = () => {
   };
 
   return (
-    <div className="p-4 md:p-8 min-h-screen bg-white">
+    <div className="h-full flex flex-col overflow-hidden bg-white">
       {/* Header Area */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
-        <div className="flex items-center space-x-4">
-          <div className="bg-[#da251d] text-white w-12 h-12 rounded-xl flex items-center justify-center shadow-md">
-            <FaCommentDots size={24} />
+      <div className="p-4 md:p-8 pb-4 shrink-0">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="bg-[#da251d] text-white w-12 h-12 rounded-xl flex items-center justify-center shadow-md">
+              <FaCommentDots size={24} />
+            </div>
+            <div>
+              <h1 className="text-2xl poppins-semibold text-gray-900 tracking-tight">Manage Complaints</h1>
+              <p className="text-sm text-gray-500 poppins-regular mt-0.5">{filteredComplaints.length} complaints found</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl poppins-semibold text-gray-900 tracking-tight">Manage Complaints</h1>
-            <p className="text-sm text-gray-500 poppins-regular mt-0.5">{filteredComplaints.length} complaints found</p>
-          </div>
-        </div>
 
-        <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 mt-6 md:mt-0 w-full md:w-auto">
-          <div className="flex items-center space-x-2">
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => { setStartDate(e.target.value); setCurrentPage(1); }}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600 focus:outline-none focus:border-[#da251d]"
-            />
-            <span className="text-gray-400 text-sm">to</span>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => { setEndDate(e.target.value); setCurrentPage(1); }}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600 focus:outline-none focus:border-[#da251d]"
-            />
-          </div>
-          <button 
-            onClick={exportToCSV}
-            disabled={filteredComplaints.length === 0}
-            className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors w-full md:w-auto ${
-              filteredComplaints.length === 0 
-                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-green-600 text-white hover:bg-green-700 shadow-sm'
-            }`}
-          >
-            <FaDownload /> Export CSV
-          </button>
-          <div className="relative w-full md:w-64">
-            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input 
-              type="text" 
-              placeholder="Search complaints..." 
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#da251d] text-sm poppins-regular"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-            />
+          <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 mt-6 md:mt-0 w-full md:w-auto">
+            <div className="flex items-center space-x-2">
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => { setStartDate(e.target.value); setCurrentPage(1); }}
+                className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600 focus:outline-none focus:border-[#da251d]"
+              />
+              <span className="text-gray-400 text-sm">to</span>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => { setEndDate(e.target.value); setCurrentPage(1); }}
+                className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600 focus:outline-none focus:border-[#da251d]"
+              />
+            </div>
+            <button 
+              onClick={exportToCSV}
+              disabled={filteredComplaints.length === 0}
+              className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors w-full md:w-auto ${
+                filteredComplaints.length === 0 
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  : 'bg-green-600 text-white hover:bg-green-700 shadow-sm'
+              }`}
+            >
+              <FaDownload /> Export CSV
+            </button>
+            <div className="relative w-full md:w-64">
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input 
+                type="text" 
+                placeholder="Search complaints..." 
+                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#da251d] text-sm poppins-regular"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -219,15 +221,15 @@ const ComplaintManagement = () => {
       {loading ? (
         <Loader />
       ) : (
-        <>
+        <div className="flex-1 overflow-hidden flex flex-col px-4 md:px-8 pb-8">
           {/* Desktop/Tablet View */}
-          <div className="hidden md:block bg-white rounded-xl shadow-[0_2px_10px_rgb(0,0,0,0.06)] border border-gray-100">
-            <div className="overflow-x-auto">
-              <table className="min-w-full w-full whitespace-nowrap">
-                <thead className="bg-[#da251d] text-white">
+          <div className="hidden md:flex flex-col flex-1 bg-white rounded-xl shadow-[0_2px_10px_rgb(0,0,0,0.06)] border border-gray-100 overflow-hidden">
+            <div className="overflow-auto flex-1">
+              <table className="min-w-full w-full whitespace-nowrap relative">
+                <thead className="bg-[#da251d] text-white sticky top-0 z-10">
                   <tr>
                     {tableHeaders.map((header, idx) => (
-                      <th key={idx} className={`px-6 py-4 text-left text-xs poppins-semibold uppercase tracking-wider ${idx === 0 ? 'rounded-tl-xl' : ''} ${idx === tableHeaders.length - 1 ? 'rounded-tr-xl' : ''}`}>
+                      <th key={idx} className={`px-6 py-4 text-left text-xs poppins-semibold uppercase tracking-wider`}>
                         {header}
                       </th>
                     ))}
@@ -437,7 +439,7 @@ const ComplaintManagement = () => {
               ))}
             </div>
           )}
-        </>
+          </div>
       )}
 
       {viewComplaint && (

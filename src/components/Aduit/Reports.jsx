@@ -55,8 +55,8 @@ const Reports = () => {
 
   // Fetch shops and employees on mount
   useEffect(() => {
-    getAllShops().then((res) => setAllShops(res.data || [])).catch(() => {});
-    getAllEmployees().then((res) => setAllEmployees(res.data || [])).catch(() => {});
+    getAllShops().then((res) => setAllShops(res.data || [])).catch(() => { });
+    getAllEmployees().then((res) => setAllEmployees(res.data || [])).catch(() => { });
     applyBackendFilter();
   }, []);
 
@@ -167,33 +167,33 @@ const Reports = () => {
         const secList = Array.from(sectionNames).sort((a, b) => a.localeCompare(b));
 
         // 2. Dynamically determine columns based on sections.
-        const sectionColumns = {}; 
-        
-        secList.forEach(s => {
-            let isRepeatable = false;
-            const fieldLabels = new Set();
-            
-            allFilteredAudits.forEach(a => {
-                const sec = a.sections?.find(x => x.sectionName === s);
-                if (sec) {
-                    if (sec.isRepeatable) {
-                        isRepeatable = true;
-                        sec.rows?.forEach(r => {
-                            r.fields?.forEach(f => {
-                                fieldLabels.add(f.label || f.key);
-                            });
-                        });
-                    }
-                }
-            });
+        const sectionColumns = {};
 
-            if (isRepeatable) {
-                // Use field labels directly as headers (e.g., "Product", "Stock", "Expiry Date")
-                // Prefix the first column with the section name for clarity if we want, but field labels are cleaner.
-                sectionColumns[s] = { type: 'repeatable', cols: Array.from(fieldLabels) };
-            } else {
-                sectionColumns[s] = { type: 'non-repeatable', cols: [s, "Value", "Remarks"] };
+        secList.forEach(s => {
+          let isRepeatable = false;
+          const fieldLabels = new Set();
+
+          allFilteredAudits.forEach(a => {
+            const sec = a.sections?.find(x => x.sectionName === s);
+            if (sec) {
+              if (sec.isRepeatable) {
+                isRepeatable = true;
+                sec.rows?.forEach(r => {
+                  r.fields?.forEach(f => {
+                    fieldLabels.add(f.label || f.key);
+                  });
+                });
+              }
             }
+          });
+
+          if (isRepeatable) {
+            // Use field labels directly as headers (e.g., "Product", "Stock", "Expiry Date")
+            // Prefix the first column with the section name for clarity if we want, but field labels are cleaner.
+            sectionColumns[s] = { type: 'repeatable', cols: Array.from(fieldLabels) };
+          } else {
+            sectionColumns[s] = { type: 'non-repeatable', cols: [s, "Value", "Remarks"] };
+          }
         });
 
         // Let's create the header row.
@@ -211,133 +211,133 @@ const Reports = () => {
           "Final %",
           "Grade"
         ];
-        
+
         if (user?.role === "super-admin") {
           headerRow.push("Auditor Name", "Auditor Phone", "Auditor Email", "In Time", "Out Time", "Duration");
         }
 
-        headerRow.push("Field", "Score %"); 
+        headerRow.push("Field", "Score %");
 
         secList.forEach(s => {
           // To distinguish sections in the header, we can add a super-header or just prepend the section name to the first column.
           const sc = sectionColumns[s];
           if (sc.type === 'repeatable' && sc.cols.length > 0) {
-              const modifiedCols = [...sc.cols];
-              modifiedCols[0] = `${s} (${modifiedCols[0]})`; // E.g., "Bakshanam Audit (Product)"
-              headerRow.push(...modifiedCols);
+            const modifiedCols = [...sc.cols];
+            modifiedCols[0] = `${s} (${modifiedCols[0]})`; // E.g., "Bakshanam Audit (Product)"
+            headerRow.push(...modifiedCols);
           } else {
-              headerRow.push(...sc.cols);
+            headerRow.push(...sc.cols);
           }
         });
 
         sheet.addRow(headerRow).font = { bold: true };
 
         const extractVal = (v) => {
-            if (v === null || v === undefined || v === '') return '';
-            if (Array.isArray(v)) return `${v.length} item(s)`;
-            if (typeof v === 'boolean') return v ? 'Yes' : 'No';
-            if (typeof v === 'object') return v.status || v.remark || JSON.stringify(v);
-            return String(v);
+          if (v === null || v === undefined || v === '') return '-';
+          if (Array.isArray(v)) return v.length > 0 ? `${v.length} item(s)` : '-';
+          if (typeof v === 'boolean') return v ? 'Yes' : 'No';
+          if (typeof v === 'object') return v.status || v.remark || JSON.stringify(v);
+          return String(v);
         };
 
         allFilteredAudits.forEach((audit, index) => {
-            // Basic Info (Row 1 for this audit)
-            const basicInfo = [
-                index + 1,
-                audit.shop?.shopName || "N/A",
-                audit.shop?.ownerName || "N/A",
-                audit.shop?.address || "N/A",
-                audit.shop?.phone || "N/A",
-                audit.shop?.email || "N/A",
-                audit.auditDate ? new Date(audit.auditDate).toLocaleDateString("en-GB") : "N/A",
-                audit.configName || "N/A",
-                audit.status || "N/A",
-                audit.status === "completed" ? (audit.overallRating || 0) : 0,
-                audit.status === "completed" ? (audit.finalPercentage?.toFixed(2) || 0) : "N/A",
-                audit.status === "completed" ? (audit.overallGrade || "N/A") : "N/A",
-            ];
-            if (user?.role === "super-admin") {
-                basicInfo.push(
-                    audit.auditor?.name || "N/A",
-                    audit.auditor?.phone || "N/A",
-                    audit.auditor?.email || "N/A",
-                    formatTime(audit.inTime) || "N/A",
-                    formatTime(audit.outTime) || "N/A",
-                    formatDuration(calculateDuration(audit.inTime, audit.outTime)) || "N/A"
-                );
+          // Basic Info (Row 1 for this audit)
+          const basicInfo = [
+            index + 1,
+            audit.shop?.shopName || "N/A",
+            audit.shop?.ownerName || "N/A",
+            audit.shop?.address || "N/A",
+            audit.shop?.phone || "N/A",
+            audit.shop?.email || "N/A",
+            audit.auditDate ? new Date(audit.auditDate).toLocaleDateString("en-GB") : "N/A",
+            audit.configName || "N/A",
+            audit.status || "N/A",
+            audit.status === "completed" ? (audit.overallRating || 0) : 0,
+            audit.status === "completed" ? (audit.finalPercentage?.toFixed(2) || 0) : "N/A",
+            audit.status === "completed" ? (audit.overallGrade || "N/A") : "N/A",
+          ];
+          if (user?.role === "super-admin") {
+            basicInfo.push(
+              audit.auditor?.name || "N/A",
+              audit.auditor?.phone || "N/A",
+              audit.auditor?.email || "N/A",
+              formatTime(audit.inTime) || "N/A",
+              formatTime(audit.outTime) || "N/A",
+              formatDuration(calculateDuration(audit.inTime, audit.outTime)) || "N/A"
+            );
+          }
+
+          // Extract section data
+          const auditSecScores = [];
+          secList.forEach(s => {
+            const sec = audit.sections?.find(x => x.sectionName === s);
+            if (sec) {
+              auditSecScores.push({ name: s, score: `${Number(sec.percentage || 0).toFixed(1)}%` });
             }
+          });
 
-            // Extract section data
-            const auditSecScores = []; 
-            secList.forEach(s => {
-                const sec = audit.sections?.find(x => x.sectionName === s);
-                if (sec) {
-                    auditSecScores.push({ name: s, score: `${Number(sec.percentage || 0).toFixed(1)}%` });
-                }
-            });
+          const sectionItems = {};
+          secList.forEach(s => {
+            const sec = audit.sections?.find(x => x.sectionName === s);
+            sectionItems[s] = [];
+            const sc = sectionColumns[s];
 
-            const sectionItems = {}; 
-            secList.forEach(s => {
-                const sec = audit.sections?.find(x => x.sectionName === s);
-                sectionItems[s] = [];
-                const sc = sectionColumns[s];
-
-                if (sec) {
-                    if (sec.isRepeatable && sec.rows) {
-                        sec.rows.forEach((r) => {
-                            const rowItem = {};
-                            r.fields?.forEach(f => {
-                                rowItem[f.label || f.key] = f.isAvailable === 'no' ? 'Not Available' : extractVal(f.value);
-                            });
-                            // Map to the exact columns
-                            const rowVals = sc.cols.map(colName => rowItem[colName] || "");
-                            sectionItems[s].push(rowVals);
-                        });
-                    } else if (sec.fields) {
-                        sec.fields.forEach(f => {
-                            const val = f.isAvailable === 'no' ? 'Not Available' : extractVal(f.value);
-                            sectionItems[s].push([f.label || f.key, val, f.remarks || ""]);
-                        });
-                    }
-                }
-            });
-
-            // Calculate max rows needed for this audit
-            let maxRows = Math.max(1, auditSecScores.length);
-            secList.forEach(s => {
-                maxRows = Math.max(maxRows, sectionItems[s].length);
-            });
-
-            // Generate rows
-            for (let i = 0; i < maxRows; i++) {
-                const row = [];
-                
-                // Basic info only on first row
-                if (i === 0) {
-                    row.push(...basicInfo);
-                } else {
-                    for(let b=0; b<basicInfo.length; b++) row.push("");
-                }
-
-                // Section Scores
-                if (i < auditSecScores.length) {
-                    row.push(auditSecScores[i].name, auditSecScores[i].score);
-                } else {
-                    row.push("", "");
-                }
-
-                // Section Details
-                secList.forEach(s => {
-                    const sc = sectionColumns[s];
-                    if (i < sectionItems[s].length) {
-                        row.push(...sectionItems[s][i]);
-                    } else {
-                        for(let c=0; c<sc.cols.length; c++) row.push("");
-                    }
+            if (sec) {
+              if (sec.isRepeatable && sec.rows) {
+                sec.rows.forEach((r) => {
+                  const rowItem = {};
+                  r.fields?.forEach(f => {
+                    rowItem[f.label || f.key] = f.isAvailable === 'no' ? 'Not Available' : extractVal(f.value);
+                  });
+                  // Map to the exact columns
+                  const rowVals = sc.cols.map(colName => rowItem[colName] || "-");
+                  sectionItems[s].push(rowVals);
                 });
-
-                sheet.addRow(row);
+              } else if (sec.fields) {
+                sec.fields.forEach(f => {
+                  const val = f.isAvailable === 'no' ? 'Not Available' : extractVal(f.value);
+                  sectionItems[s].push([f.label || f.key, val, f.remarks || "-"]);
+                });
+              }
             }
+          });
+
+          // Calculate max rows needed for this audit
+          let maxRows = Math.max(1, auditSecScores.length);
+          secList.forEach(s => {
+            maxRows = Math.max(maxRows, sectionItems[s].length);
+          });
+
+          // Generate rows
+          for (let i = 0; i < maxRows; i++) {
+            const row = [];
+
+            // Basic info only on first row
+            if (i === 0) {
+              row.push(...basicInfo);
+            } else {
+              for (let b = 0; b < basicInfo.length; b++) row.push("");
+            }
+
+            // Section Scores
+            if (i < auditSecScores.length) {
+              row.push(auditSecScores[i].name, auditSecScores[i].score);
+            } else {
+              row.push("", "");
+            }
+
+            // Section Details
+            secList.forEach(s => {
+              const sc = sectionColumns[s];
+              if (i < sectionItems[s].length) {
+                row.push(...sectionItems[s][i]);
+              } else {
+                for (let c = 0; c < sc.cols.length; c++) row.push("");
+              }
+            });
+
+            sheet.addRow(row);
+          }
         });
 
         const buffer = await workbook.xlsx.writeBuffer();
@@ -463,9 +463,9 @@ const Reports = () => {
         );
         // Bakery products
         const bakeryProducts = audit.bakeryProducts?.map(p => {
-          
+
           const expiry = p.expiryDate ? new Date(p.expiryDate).toLocaleDateString("en-GB") : "N/A";
-          return `${products?.data?.find(pro=>pro._id===p.product)?.name || "Unknown"} (${p.quantity}, Exp: ${expiry})`;
+          return `${products?.data?.find(pro => pro._id === p.product)?.name || "Unknown"} (${p.quantity}, Exp: ${expiry})`;
         }).join("; ") || "N/A";
         row.push(bakeryProducts);
 
@@ -503,7 +503,7 @@ const Reports = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="h-full p-4 md:p-8 w-full bg-white flex flex-col overflow-hidden poppins-regular">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
           <h2 className="text-2xl poppins-semibold text-gray-800">
@@ -671,33 +671,30 @@ const Reports = () => {
           <button
             onClick={handleApply}
             disabled={filterLoading}
-            className={`px-6 py-2.5 rounded-lg font-semibold transition-colors ${
-              filterLoading
+            className={`px-6 py-2.5 rounded-lg font-semibold transition-colors ${filterLoading
                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                 : "bg-red-600 text-white hover:bg-red-700 shadow-sm"
-            }`}
+              }`}
           >
             {filterLoading ? "Loading..." : "Apply Filters"}
           </button>
           <button
             onClick={resetFilters}
             disabled={filterLoading}
-            className={`px-6 py-2.5 rounded-lg font-semibold transition-colors ${
-              filterLoading
+            className={`px-6 py-2.5 rounded-lg font-semibold transition-colors ${filterLoading
                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                 : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
-            }`}
+              }`}
           >
             Reset
           </button>
           <button
             onClick={exportToExcel}
             disabled={filteredAudits.length === 0 || exportLoading}
-            className={`px-6 py-2.5 rounded-lg font-semibold transition-colors ml-auto ${
-              filteredAudits.length === 0 || exportLoading
+            className={`px-6 py-2.5 rounded-lg font-semibold transition-colors ml-auto ${filteredAudits.length === 0 || exportLoading
                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                 : "bg-green-600 text-white hover:bg-green-700 shadow-sm"
-            }`}
+              }`}
           >
             {exportLoading ? "Exporting..." : "Export CSV"}
           </button>
@@ -723,13 +720,12 @@ const Reports = () => {
                         <div className="text-sm text-gray-500">{audit.shop?.ownerName}</div>
                       </div>
                       <span
-                        className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          audit.status === "completed"
+                        className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${audit.status === "completed"
                             ? "bg-green-100 text-green-700"
                             : audit.status === "in progress"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-red-100 text-red-700"
-                        }`}
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-red-100 text-red-700"
+                          }`}
                       >
                         {audit.status}
                       </span>
@@ -793,10 +789,10 @@ const Reports = () => {
           </div>
 
           {/* Table View for Larger Screens */}
-          <div className="hidden md:block mt-4">
-            <div className="overflow-x-auto rounded-xl shadow-sm border border-gray-100">
-              <table className="min-w-full bg-white">
-                <thead className="bg-red-600 text-white">
+          <div className="hidden md:flex flex-col mt-4 rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="overflow-auto">
+              <table className="min-w-full bg-white relative">
+                <thead className="bg-red-600 text-white sticky top-0 z-10">
                   <tr>
                     <th className="px-4 py-3.5 text-center text-xs font-semibold uppercase tracking-wider">
                       S.No
@@ -866,13 +862,12 @@ const Reports = () => {
                               {new Date(audit.auditDate).toLocaleDateString("en-GB")}
                             </div>
                             <span
-                              className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                audit.status === "completed"
+                              className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${audit.status === "completed"
                                   ? "bg-green-100 text-green-700"
                                   : audit.status === "in progress"
-                                  ? "bg-yellow-100 text-yellow-700"
-                                  : "bg-red-100 text-red-700"
-                              }`}
+                                    ? "bg-yellow-100 text-yellow-700"
+                                    : "bg-red-100 text-red-700"
+                                }`}
                             >
                               {audit.status}
                             </span>
@@ -899,7 +894,7 @@ const Reports = () => {
                         </td>
                         <td className="px-4 py-4 text-sm text-center">
                           {audit.status !== "completed" &&
-                          user?.role !== "super-admin" ? (
+                            user?.role !== "super-admin" ? (
                             <Link to={showOldAudits ? `/add-audit/${audit._id}` : `/perform-audit/${audit._id}`}>
                               <button className="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors font-medium text-xs">
                                 Continue
@@ -941,11 +936,10 @@ const Reports = () => {
               setCurrentPage(newPage);
               applyBackendFilter({ page: newPage });
             }}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              currentPage === 1
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${currentPage === 1
                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                 : "bg-white border border-gray-300 text-gray-700 hover:bg-red-50 hover:border-red-300"
-            }`}
+              }`}
           >
             Prev
           </button>
@@ -955,11 +949,10 @@ const Reports = () => {
               setCurrentPage(1);
               applyBackendFilter({ page: 1 });
             }}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              currentPage === 1
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${currentPage === 1
                 ? "bg-red-600 text-white"
                 : "bg-white border border-gray-300 text-gray-700 hover:bg-red-50"
-            }`}
+              }`}
           >
             1
           </button>
@@ -975,11 +968,10 @@ const Reports = () => {
                   setCurrentPage(page);
                   applyBackendFilter({ page });
                 }}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  currentPage === page
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${currentPage === page
                     ? "bg-red-600 text-white"
                     : "bg-white border border-gray-300 text-gray-700 hover:bg-red-50"
-                }`}
+                  }`}
               >
                 {page}
               </button>
@@ -993,11 +985,10 @@ const Reports = () => {
                 setCurrentPage(totalPages);
                 applyBackendFilter({ page: totalPages });
               }}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                currentPage === totalPages
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${currentPage === totalPages
                   ? "bg-red-600 text-white"
                   : "bg-white border border-gray-300 text-gray-700 hover:bg-red-50"
-              }`}
+                }`}
             >
               {totalPages}
             </button>
@@ -1010,11 +1001,10 @@ const Reports = () => {
               setCurrentPage(newPage);
               applyBackendFilter({ page: newPage });
             }}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              currentPage === totalPages
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${currentPage === totalPages
                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                 : "bg-white border border-gray-300 text-gray-700 hover:bg-red-50 hover:border-red-300"
-            }`}
+              }`}
           >
             Next
           </button>

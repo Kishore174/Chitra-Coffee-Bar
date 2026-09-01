@@ -92,7 +92,7 @@ const SideMenu = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
   return (
     <div>
       <div
-        className={`fixed z-50 overflow-y-auto scrollbar-custom h-screen bg-white shadow-lg w-64 transition-transform duration-300 ease-in-out 
+        className={`fixed z-50 overflow-y-auto h-screen bg-white shadow-lg w-64 transition-transform duration-300 ease-in-out 
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
       >
         <div className="">

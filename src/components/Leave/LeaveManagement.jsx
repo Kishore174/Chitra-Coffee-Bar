@@ -89,8 +89,8 @@ const LeaveManagement = () => {
   };
 
   return (
-    <div className="p-4 mx-auto">
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+    <div className="p-4 md:p-8 h-full w-full flex flex-col overflow-hidden bg-white poppins-regular">
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-3 flex-shrink-0">
         <h1 className="text-2xl poppins-semibold flex items-center gap-2">
           <FaCalendarAlt className="text-red-500" /> Leave Management
         </h1>
@@ -142,7 +142,7 @@ const LeaveManagement = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-md p-6">
+      <div className="bg-white rounded-xl shadow-md p-6 flex-1 overflow-auto">
         {loading ? (
           <p className="text-center py-8 text-gray-500">Loading...</p>
         ) : leaveRequests.length > 0 ? (

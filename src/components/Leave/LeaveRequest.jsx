@@ -98,8 +98,8 @@ const LeaveRequest = () => {
   };
 
   return (
-    <div className="p-4 mx-auto">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 md:p-8 h-full w-full flex flex-col overflow-hidden bg-white poppins-regular">
+      <div className="flex items-center justify-between mb-6 flex-shrink-0">
         <h1 className="text-2xl poppins-semibold">Leave Requests</h1>
         <button
           onClick={() => setShowForm(true)}
@@ -224,7 +224,7 @@ const LeaveRequest = () => {
       )}
 
       {/* Leave Requests List */}
-      <div className="bg-white rounded-xl shadow-md p-6">
+      <div className="bg-white rounded-xl shadow-md p-6 flex-1 overflow-auto">
         <h2 className="text-lg poppins-semibold mb-4 flex items-center gap-2">
           <FaCalendarAlt className="text-red-500" /> My Leave Requests
         </h2>

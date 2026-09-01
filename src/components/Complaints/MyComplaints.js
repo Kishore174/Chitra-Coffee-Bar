@@ -70,8 +70,8 @@ const MyComplaints = () => {
     return date.toLocaleDateString("en-GB");
   };
 
-  const filteredComplaints = complaints.filter(comp => 
-    comp.outlet?.shopName?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredComplaints = complaints.filter(comp =>
+    comp.outlet?.shopName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     comp.complaint?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     comp.registeredBy?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -85,7 +85,7 @@ const MyComplaints = () => {
   ];
 
   return (
-    <div className="p-4 md:p-8 min-h-screen bg-white">
+    <div className="p-4 md:p-8 h-full w-full flex flex-col overflow-hidden bg-white poppins-regular">
       {/* Header Area */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
         <div className="flex items-center space-x-4">
@@ -101,9 +101,9 @@ const MyComplaints = () => {
         <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 mt-6 md:mt-0 w-full md:w-auto">
           <div className="relative w-full md:w-64">
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input 
-              type="text" 
-              placeholder="Search complaints..." 
+            <input
+              type="text"
+              placeholder="Search complaints..."
               className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#da251d] text-sm poppins-regular"
               value={searchTerm}
               onChange={(e) => {
@@ -114,7 +114,7 @@ const MyComplaints = () => {
           </div>
           <Link to="/add-complaint" className="w-full md:w-auto whitespace-nowrap">
             <button className="w-full bg-[#da251d] hover:bg-red-700 text-white rounded-lg poppins-medium py-2 px-5 flex items-center justify-center transition-colors">
-              <FaPlus className="mr-2" /> 
+              <FaPlus className="mr-2" />
               Add Complaint
             </button>
           </Link>
@@ -126,8 +126,8 @@ const MyComplaints = () => {
       ) : (
         <>
           {/* Desktop/Tablet View */}
-          <div className="hidden md:block bg-white rounded-xl shadow-[0_2px_10px_rgb(0,0,0,0.06)] border border-gray-100">
-            <div className="overflow-x-auto">
+          <div className="hidden md:flex flex-col flex-1 bg-white rounded-xl shadow-[0_2px_10px_rgb(0,0,0,0.06)] border border-gray-100 overflow-hidden">
+            <div className="overflow-auto flex-1">
               <table className="min-w-full w-full whitespace-nowrap">
                 <thead className="bg-[#da251d] text-white">
                   <tr>
@@ -176,24 +176,23 @@ const MyComplaints = () => {
                       </td>
                       <td className="px-6 py-5">
                         <div className="text-sm text-gray-600 poppins-regular">
-                           <span className="font-semibold text-gray-800">Reg By:</span> {item.registeredBy?.name || "-"}
+                          <span className="font-semibold text-gray-800">Reg By:</span> {item.registeredBy?.name || "-"}
                         </div>
                         <div className="text-sm text-gray-600 poppins-regular mt-1">
-                           <span className="font-semibold text-gray-800">Resp:</span> {item.responsibility?.name || "-"}
+                          <span className="font-semibold text-gray-800">Resp:</span> {item.responsibility?.name || "-"}
                         </div>
                       </td>
                       <td className="px-6 py-5">
-                        <select 
+                        <select
                           value={item.status || "Pending"}
                           onChange={(e) => handleStatusChange(item._id, e.target.value)}
-                          className={`px-3 py-1 pr-8 rounded-full text-xs poppins-semibold outline-none cursor-pointer border ${
-                            item.status === 'Completed' ? 'bg-green-100 text-green-800 border-green-200' :
-                            item.status === 'Resolved' ? 'bg-green-100 text-green-800 border-green-200' :
-                            item.status === 'In Progress' ? 'bg-blue-100 text-blue-800 border-blue-200' :
-                            item.status === 'On Hold' ? 'bg-orange-100 text-orange-800 border-orange-200' :
-                            item.status === 'Closed' ? 'bg-gray-100 text-gray-800 border-gray-200' :
-                            'bg-yellow-100 text-yellow-800 border-yellow-200'
-                          }`}
+                          className={`px-3 py-1 pr-8 rounded-full text-xs poppins-semibold outline-none cursor-pointer border ${item.status === 'Completed' ? 'bg-green-100 text-green-800 border-green-200' :
+                              item.status === 'Resolved' ? 'bg-green-100 text-green-800 border-green-200' :
+                                item.status === 'In Progress' ? 'bg-blue-100 text-blue-800 border-blue-200' :
+                                  item.status === 'On Hold' ? 'bg-orange-100 text-orange-800 border-orange-200' :
+                                    item.status === 'Closed' ? 'bg-gray-100 text-gray-800 border-gray-200' :
+                                      'bg-yellow-100 text-yellow-800 border-yellow-200'
+                            }`}
                         >
                           <option value="Pending">Pending</option>
                           <option value="In Progress">In Progress</option>
@@ -249,9 +248,9 @@ const MyComplaints = () => {
                     <h2 className="text-base poppins-semibold text-gray-800">{item.outlet?.shopName || "-"}</h2>
                     <span className="text-xs text-gray-500 poppins-regular">{formatDate(item.complaintDate)}</span>
                   </div>
-                  <span className="text-sm text-gray-400 poppins-medium">#{ (currentPage - 1) * ITEMS_PER_PAGE + index + 1 }</span>
+                  <span className="text-sm text-gray-400 poppins-medium">#{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</span>
                 </div>
-                
+
                 <div className="space-y-2 mt-4 text-sm">
                   <div>
                     <span className="text-gray-400 poppins-regular text-xs block mb-0.5">Complaint</span>
@@ -277,23 +276,22 @@ const MyComplaints = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex justify-between items-center mt-5 pt-4 border-t border-gray-100">
                   <div className="flex items-center gap-2">
                     <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs poppins-medium">
-                       Tgt: {formatDate(item.targetDate)}
+                      Tgt: {formatDate(item.targetDate)}
                     </span>
-                    <select 
+                    <select
                       value={item.status || "Pending"}
                       onChange={(e) => handleStatusChange(item._id, e.target.value)}
-                      className={`px-2 py-1 pr-6 rounded-full text-[10px] poppins-semibold outline-none cursor-pointer border ${
-                        item.status === 'Completed' ? 'bg-green-100 text-green-800 border-green-200' :
-                        item.status === 'Resolved' ? 'bg-green-100 text-green-800 border-green-200' :
-                        item.status === 'In Progress' ? 'bg-blue-100 text-blue-800 border-blue-200' :
-                        item.status === 'On Hold' ? 'bg-orange-100 text-orange-800 border-orange-200' :
-                        item.status === 'Closed' ? 'bg-gray-100 text-gray-800 border-gray-200' :
-                        'bg-yellow-100 text-yellow-800 border-yellow-200'
-                      }`}
+                      className={`px-2 py-1 pr-6 rounded-full text-[10px] poppins-semibold outline-none cursor-pointer border ${item.status === 'Completed' ? 'bg-green-100 text-green-800 border-green-200' :
+                          item.status === 'Resolved' ? 'bg-green-100 text-green-800 border-green-200' :
+                            item.status === 'In Progress' ? 'bg-blue-100 text-blue-800 border-blue-200' :
+                              item.status === 'On Hold' ? 'bg-orange-100 text-orange-800 border-orange-200' :
+                                item.status === 'Closed' ? 'bg-gray-100 text-gray-800 border-gray-200' :
+                                  'bg-yellow-100 text-yellow-800 border-yellow-200'
+                        }`}
                     >
                       <option value="Pending">Pending</option>
                       <option value="In Progress">In Progress</option>
@@ -330,11 +328,10 @@ const MyComplaints = () => {
               {Array.from({ length: totalPages }, (_, index) => (
                 <button
                   key={index}
-                  className={`w-10 h-10 rounded-lg poppins-medium text-sm transition-colors flex items-center justify-center ${
-                    currentPage === index + 1 
-                      ? 'bg-[#da251d] text-white' 
+                  className={`w-10 h-10 rounded-lg poppins-medium text-sm transition-colors flex items-center justify-center ${currentPage === index + 1
+                      ? 'bg-[#da251d] text-white'
                       : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-                  }`}
+                    }`}
                   onClick={() => handlePageChange(index + 1)}
                 >
                   {index + 1}
@@ -365,22 +362,21 @@ const MyComplaints = () => {
                 <div><strong className="text-gray-900 block mb-1">Registered By:</strong> {viewComplaint.registeredBy?.name || "-"}</div>
                 <div><strong className="text-gray-900 block mb-1">Responsibility:</strong> {viewComplaint.responsibility?.name || "-"}</div>
                 {viewComplaint.actualDate && <div><strong className="text-[#22C55E] block mb-1">Actual Date:</strong> {formatDate(viewComplaint.actualDate)}</div>}
-                <div><strong className="text-gray-900 block mb-1">Status:</strong> 
-                  <span className={`px-2 py-1 rounded-full text-xs poppins-semibold ${
-                      viewComplaint.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                <div><strong className="text-gray-900 block mb-1">Status:</strong>
+                  <span className={`px-2 py-1 rounded-full text-xs poppins-semibold ${viewComplaint.status === 'Completed' ? 'bg-green-100 text-green-800' :
                       viewComplaint.status === 'Resolved' ? 'bg-green-100 text-green-800' :
-                      viewComplaint.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
-                      viewComplaint.status === 'On Hold' ? 'bg-orange-100 text-orange-800' :
-                      viewComplaint.status === 'Closed' ? 'bg-gray-100 text-gray-800' :
-                      'bg-yellow-100 text-yellow-800'
+                        viewComplaint.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                          viewComplaint.status === 'On Hold' ? 'bg-orange-100 text-orange-800' :
+                            viewComplaint.status === 'Closed' ? 'bg-gray-100 text-gray-800' :
+                              'bg-yellow-100 text-yellow-800'
                     }`}>
-                      {viewComplaint.status || "Pending"}
+                    {viewComplaint.status || "Pending"}
                   </span>
                 </div>
               </div>
               {viewComplaint.caPa && <div><strong className="text-gray-900 block mb-1">CA/PA:</strong> {viewComplaint.caPa}</div>}
               {viewComplaint.remarks && <div><strong className="text-gray-900 block mb-1">Remarks:</strong> {viewComplaint.remarks}</div>}
-              
+
               {viewComplaint.attachments && viewComplaint.attachments.length > 0 && (
                 <div className="mt-4 border-t border-gray-100 pt-4">
                   <strong className="text-gray-900 block mb-2">Attachments:</strong>
@@ -415,13 +411,13 @@ const MyComplaints = () => {
               Are you sure you want to delete this complaint? This action cannot be undone.
             </p>
             <div className="flex space-x-3">
-              <button 
+              <button
                 onClick={() => setDeleteModal({ isOpen: false, complaintId: null })}
                 className="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={confirmDelete}
                 className="flex-1 px-4 py-2 bg-red-600 rounded-xl text-white font-medium hover:bg-red-700 shadow-md shadow-red-500/30 transition-all hover:-translate-y-0.5"
               >

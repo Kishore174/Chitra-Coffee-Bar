@@ -169,7 +169,7 @@ const DeviceManagement = () => {
     const onlineCount = devices.filter(d => d.status === "online").length;
 
     return (
-        <div className="min-h-screen px-4 py-6 max-w-screen-xl mx-auto poppins-regular">
+        <div className="p-4 md:p-8 h-full w-full flex flex-col overflow-hidden bg-white poppins-regular">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div className="flex items-center gap-3">
@@ -202,7 +202,8 @@ const DeviceManagement = () => {
                 ) : (
                     <>
                         {/* Desktop Table */}
-                        <div className="hidden md:block bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div className="hidden md:flex flex-col flex-1 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                            <div className="overflow-auto flex-1">
                             <table className="w-full text-sm text-left">
                                 <thead className="bg-red-600 text-white">
                                     <tr>
@@ -307,6 +308,7 @@ const DeviceManagement = () => {
                                     )}
                                 </tbody>
                             </table>
+                            </div>
                         </div>
 
                         {/* Mobile Cards */}

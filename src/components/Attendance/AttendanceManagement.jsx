@@ -299,7 +299,7 @@ const AttendanceManagement = () => {
   const totalAbsent = isSingleDay ? mergedData.filter((d) => !d.record && !d.leave).length : mergedData.reduce((acc, curr) => acc + curr.absentDays, 0);
 
   return (
-    <div className="p-4 max-w-6xl mx-auto">
+    <div className="p-4 md:p-8 min-h-full w-full bg-white poppins-regular">
       {/* Header */}
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <h1 className="text-2xl poppins-semibold flex items-center gap-2">
@@ -391,7 +391,7 @@ const AttendanceManagement = () => {
       </div>
 
       {/* Auditor Attendance List */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md">
         {loading ? (
           <p className="text-center py-12 text-gray-500">Loading...</p>
         ) : mergedData.length > 0 ? (

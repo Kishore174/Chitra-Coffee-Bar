@@ -278,7 +278,7 @@ const ScheduleAudit = () => {
   });
 
   return (
-    <div className="h-full w-full flex flex-col overflow-hidden max-w-screen-xl mx-auto">
+    <div className="p-4 md:p-8 h-full w-full flex flex-col overflow-hidden bg-white">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 flex-shrink-0">
         <div className="flex items-center gap-3">
@@ -354,7 +354,7 @@ const ScheduleAudit = () => {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50/50 scrollbar-custom"
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50/50"
                  onDragOver={handleDragOver}
                  onDrop={(e) => handleDrop(e, null)} // Allow dropping back to unassigned
             >
@@ -394,7 +394,7 @@ const ScheduleAudit = () => {
             </div>
 
             {selectedAuditorId && (
-              <div className="flex gap-2 mb-4 overflow-x-auto pb-1 scrollbar-custom flex-shrink-0">
+              <div className="flex gap-2 mb-4 overflow-x-auto pb-1 flex-shrink-0">
                 {dayShortLabels.map((label, index) => (
                   <button
                     key={index}
@@ -411,7 +411,7 @@ const ScheduleAudit = () => {
               </div>
             )}
             
-            <div className="flex-1 overflow-y-auto pr-2 scrollbar-custom">
+            <div className="flex-1 overflow-y-auto pr-2">
               {!selectedAuditorId ? (
                 <div className="flex items-center justify-center h-full text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-xl">
                   Please select an auditor to assign shops

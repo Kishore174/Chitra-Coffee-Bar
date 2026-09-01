@@ -98,8 +98,7 @@ const Profile = () => {
   if (loading) return <Loader />;
 
   return (
-    <div className="min-h-full bg-white py-10 px-4 sm:px-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="p-4 md:p-8 h-full w-full flex flex-col overflow-y-auto bg-white poppins-regular">
         <h1 className="text-3xl font-bold text-gray-900 mb-8 poppins-semibold">My Profile</h1>
         
         <div className="flex flex-col lg:flex-row gap-8">
@@ -275,7 +274,6 @@ const Profile = () => {
           </div>
 
         </div>
-      </div>
     </div>
   );
 };

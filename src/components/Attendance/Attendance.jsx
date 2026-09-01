@@ -196,7 +196,7 @@ const Attendance = () => {
   const isCheckedOut = todayStatus?.status === "checked-out";
 
   return (
-    <div className="p-4 md:p-6 mx-auto">
+    <div className="p-4 md:p-8 min-h-full w-full bg-white poppins-regular">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl poppins-semibold text-gray-800">Attendance</h1>
@@ -423,7 +423,7 @@ const Attendance = () => {
       )}
 
       {/* ===== ATTENDANCE HISTORY ===== */}
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div className="bg-white shadow-lg rounded-lg">
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="poppins-semibold text-gray-800 flex items-center gap-2">
             <FaCalendarAlt className="text-red-500" /> History
