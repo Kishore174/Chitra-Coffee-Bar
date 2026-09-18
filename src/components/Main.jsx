@@ -8,10 +8,12 @@ const Main = () => {
 
   return (
     <div className='flex flex-1 h-screen overflow-hidden bg-gray-50/30'>
-      {/* Fixed Menu on the left */}
-      <div className='hidden lg:block lg:w-64 lg:flex-shrink-0'>
-        <SideMenu isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
-      </div>
+      {/* Side Menu Component (handles fixed desktop sidebar & mobile slide-out drawer) */}
+      <SideMenu isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+
+      {/* Desktop spacer for fixed sidebar */}
+      <div className='hidden lg:block lg:w-64 lg:flex-shrink-0' />
+
       {/* Main Content Area */}
       <div className='flex-1 flex flex-col w-full relative overflow-hidden'>
         <Navbar setIsMobileMenuOpen={setIsMobileMenuOpen} />

@@ -11,13 +11,14 @@ const Navbar = ({ setIsMobileMenuOpen }) => {
 
   return (
     <div className="relative w-full">
-      <div className="flex fixed z-40 items-center justify-between bg-white shadow p-4 h-16 w-full lg:w-[calc(100%-16rem)]">
+      <div className="flex fixed top-0 right-0 z-40 items-center justify-between bg-white shadow p-4 h-16 w-full lg:w-[calc(100%-16rem)]">
         <div>
           <div className="flex items-center">
             <div className="flex items-center">
               <button
+                type="button"
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="text-gray-700 lg:hidden"
+                className="text-gray-700 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 lg:hidden focus:outline-none"
                 aria-label="Open menu"
               >
                 <FaBars className="h-6 w-6 text-xl" />

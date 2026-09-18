@@ -87,17 +87,22 @@ const SideMenu = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
       localStorage.setItem('activeButton', currentItem.name);
       localStorage.setItem('activeRoute', location.pathname);
     }
+    setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
   return (
     <div>
       <div
-        className={`fixed z-50 overflow-y-auto h-screen bg-white shadow-lg w-64 transition-transform duration-300 ease-in-out 
+        className={`fixed top-0 left-0 inset-y-0 z-50 overflow-y-auto h-screen bg-white shadow-xl w-64 transition-transform duration-300 ease-in-out 
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
       >
         <div className="">
           <div className="p-2 relative">
-            <Link to="/dashboard" className="flex items-center space-x-4 border rounded-lg shadow-xs bg-white text-center hover:bg-gray-100 p-1 transition">
+            <Link
+              to="/dashboard"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="flex items-center space-x-4 border rounded-lg shadow-xs bg-white text-center hover:bg-gray-100 p-1 transition"
+            >
               <img
                 src={logo}
                 alt="User Profile"
@@ -109,10 +114,11 @@ const SideMenu = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
               </div>
             </Link>
             <button
-              className="absolute top-4 right-2 text-gray-500 lg:hidden"
+              className="absolute top-3.5 right-2 text-gray-500 hover:text-gray-800 p-2 rounded-lg hover:bg-gray-100 lg:hidden focus:outline-none"
               onClick={() => setIsMobileMenuOpen(false)}
+              aria-label="Close menu"
             >
-              <FaTimes />
+              <FaTimes className="w-5 h-5" />
             </button>
           </div>
 
