@@ -14,33 +14,55 @@ const AddEmployee = () => {
   const { employee, isEdit, isView } = location.state || {};
 
   const [formData, setFormData] = useState(
-    employee || {
-      name: "",
-      email: "",
-      phone: "",
-      address: "",
-      profileFile: null,
-      dateOfJoining: "",
-      designation: "",
-      department: "",
-      workLocation: "",
-      aadhaarNo: "",
-      aadhaarFile: null,
-      panNo: "",
-      panFile: null,
-      routes: [],
-      drivingLicenseNo: "",
-      drivingLicenseExpiryDate: "",
-      drivingLicenseFile: null,
-      role: "auditor",
-      permissions: [],
-      alerts: [],
-      shiftStartTime: "09:00",
-      shiftEndTime: "18:00",
-    }
+    employee
+      ? {
+          ...employee,
+          workLocations: employee.workLocations || (employee.workLocation ? [employee.workLocation] : []),
+        }
+      : {
+          name: "",
+          email: "",
+          phone: "",
+          address: "",
+          profileFile: null,
+          dateOfJoining: "",
+          designation: "",
+          department: "",
+          workLocations: [],
+          aadhaarNo: "",
+          aadhaarFile: null,
+          panNo: "",
+          panFile: null,
+          routes: [],
+          drivingLicenseNo: "",
+          drivingLicenseExpiryDate: "",
+          drivingLicenseFile: null,
+          role: "auditor",
+          permissions: [],
+          alerts: [],
+          shiftStartTime: "09:00",
+          shiftEndTime: "18:00",
+        }
   );
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
   const [branches, setBranches] = useState([]);
+
+  const handleLocationToggle = (branchName) => {
+    if (isView) return;
+    const currentLocs = formData.workLocations || [];
+    if (currentLocs.includes(branchName)) {
+      setFormData({
+        ...formData,
+        workLocations: currentLocs.filter((l) => l !== branchName),
+      });
+    } else {
+      setFormData({
+        ...formData,
+        workLocations: [...currentLocs, branchName],
+      });
+    }
+  };
 
   const [selectRoute, setSelectRoute] = useState([]);
   const handleSelect = (routeId) => {
@@ -137,7 +159,7 @@ const AddEmployee = () => {
         dateOfJoining: "",
         designation: "",
         department: "",
-        workLocation: "",
+        workLocations: [],
         aadhaarNo: "",
         aadhaarFile: null,
         panNo: "",
@@ -192,6 +214,7 @@ const AddEmployee = () => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".custom-dropdown")) {
         setDropdownOpen(false);
+        setLocationDropdownOpen(false);
       }
     };
 
@@ -335,14 +358,63 @@ const AddEmployee = () => {
             </div>
           </div>
 
-          <div>
-            <label className={labelClass}>Work Location</label>
-            <select name="workLocation" value={formData.workLocation || ""} onChange={handleChange} disabled={isView} className={inputClass}>
-              <option value="" disabled>Select Branch / Location</option>
-              {branches.map((branch) => (
-                <option key={branch._id} value={branch.name}>{branch.name}</option>
-              ))}
-            </select>
+          <div className="custom-dropdown relative">
+            <label className={labelClass}>Work Locations / Branches</label>
+            <div
+              className={`w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm poppins-regular flex items-center justify-between transition-all min-h-[44px] ${!isView ? 'cursor-pointer hover:border-[#da251d]' : 'opacity-60 cursor-not-allowed'}`}
+              onClick={() => !isView && setLocationDropdownOpen(!locationDropdownOpen)}
+            >
+              <div className="flex flex-wrap gap-1.5">
+                {formData.workLocations && formData.workLocations.length > 0 ? (
+                  formData.workLocations.map((loc) => (
+                    <span
+                      key={loc}
+                      className="bg-red-50 border border-red-200 text-[#da251d] text-xs poppins-medium rounded-lg px-2.5 py-1 flex items-center shadow-sm"
+                    >
+                      {loc}
+                      {!isView && (
+                        <button
+                          type="button"
+                          className="ml-1.5 text-red-400 hover:text-red-700 font-bold transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleLocationToggle(loc);
+                          }}
+                        >
+                          &times;
+                        </button>
+                      )}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-gray-400">Select Branches / Locations</span>
+                )}
+              </div>
+              <span className="text-gray-400 ml-2">&#9662;</span>
+            </div>
+
+            {locationDropdownOpen && !isView && (
+              <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-100 rounded-xl shadow-lg max-h-56 overflow-y-auto z-30 py-1">
+                {branches.map((branch) => {
+                  const isSelected = formData.workLocations?.includes(branch.name);
+                  return (
+                    <div
+                      key={branch._id}
+                      className={`px-4 py-2.5 text-sm cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between ${isSelected ? "bg-red-50/60 text-[#da251d] poppins-semibold" : "text-gray-700"}`}
+                      onClick={() => handleLocationToggle(branch.name)}
+                    >
+                      <div className="flex items-center">
+                        <div className={`w-4 h-4 mr-3 rounded border flex items-center justify-center ${isSelected ? 'border-[#da251d] bg-[#da251d]' : 'border-gray-300'}`}>
+                          {isSelected && <FaCheckCircle size={10} className="text-white" />}
+                        </div>
+                        <span>{branch.name}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+                {branches.length === 0 && <div className="px-4 py-3 text-sm text-gray-500 text-center">No branches available</div>}
+              </div>
+            )}
           </div>
 
           {formData.role !== "employee" && (

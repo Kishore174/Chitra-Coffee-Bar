@@ -146,8 +146,16 @@ const Employees = () => {
                         <div className="text-xs text-gray-400 poppins-regular mt-1 capitalize">{employee.role || 'Staff'}</div>
                       </td>
                       <td className="px-6 py-5">
-                        <div className="text-sm text-gray-600 poppins-regular truncate max-w-[200px]" title={employee?.address}>
-                          {employee?.address || 'N/A'}
+                        <div className="flex flex-wrap gap-1 max-w-[220px]">
+                          {employee.workLocations && employee.workLocations.length > 0 ? (
+                            employee.workLocations.map((loc, idx) => (
+                              <span key={idx} className="bg-red-50 text-[#da251d] text-xs poppins-medium px-2 py-0.5 rounded-md border border-red-100 shadow-sm">
+                                {loc}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-sm text-gray-500 poppins-regular">{employee?.address || 'N/A'}</span>
+                          )}
                         </div>
                         {employee.mapLink && (
                           <a href={employee.mapLink} className="text-[#da251d] hover:underline text-xs poppins-medium mt-1 inline-block" target="_blank" rel="noopener noreferrer">
@@ -211,10 +219,20 @@ const Employees = () => {
                 
                 <div className="space-y-2 mt-4 text-sm">
                   <div>
-                    <span className="text-gray-400 poppins-regular text-xs block mb-0.5">Location</span>
-                    <p className="text-gray-700 poppins-medium">{employee?.address || 'N/A'}</p>
+                    <span className="text-gray-400 poppins-regular text-xs block mb-1">Work Locations</span>
+                    <div className="flex flex-wrap gap-1">
+                      {employee.workLocations && employee.workLocations.length > 0 ? (
+                        employee.workLocations.map((loc, idx) => (
+                          <span key={idx} className="bg-red-50 text-[#da251d] text-xs poppins-medium px-2 py-0.5 rounded-md border border-red-100">
+                            {loc}
+                          </span>
+                        ))
+                      ) : (
+                        <p className="text-gray-700 poppins-medium">{employee?.address || 'N/A'}</p>
+                      )}
+                    </div>
                     {employee.mapLink && (
-                      <a href={employee.mapLink} className="text-[#da251d] hover:underline text-xs poppins-medium mt-0.5 inline-block" target="_blank" rel="noopener noreferrer">View map &rarr;</a>
+                      <a href={employee.mapLink} className="text-[#da251d] hover:underline text-xs poppins-medium mt-1 inline-block" target="_blank" rel="noopener noreferrer">View map &rarr;</a>
                     )}
                   </div>
                   <div className="pt-2 border-t border-gray-50">
